@@ -36,11 +36,10 @@ class Deme
 		
 // computing functions
 		void quickBreed();
+		void Breed();
 		void getFitnessVector(vector<double>& fitnessVector);
-		
-		
 		void permutation(); // permutation function
-		void integrateVectorMigrants(vector<Individual>& migBuffer);
+		void integrateMigrantVector(vector<Individual>& migBuffer);
 		
 // plotting functions
 		void showDeme();
@@ -120,6 +119,52 @@ void Deme::quickBreed(){
 	}
 }
 
+void Deme::Breed(){
+	vector<double> fitnessVector;
+	getFitnessVector(fitnessVector);
+	double RandMax = fitnessVector[DEMEsize-1];
+	
+	map<double, int> parentPick;
+	vector<int> couples[2];
+	
+	for(int i=0;i < DEMEsize*2;i++){
+// 		cout << (selectionRand() * RandMax) << " \n";
+		parentPick[selectionRand() * RandMax] = i;
+	}
+	
+	int i = 0;
+	int par_index = 0, parent = 0;
+	auto pos=parentPick.begin();
+	
+	while(pos!=parentPick.end()){
+		
+		if(fitnessVector[i] > pos->first){
+			if(pos->second >= DEMEsize){
+				par_index = pos->second - DEMEsize;
+				parent = 1;
+			} else {
+				par_index = pos->second;
+				parent = 0;
+			}
+			couples[parent].push_back(par_index);
+			++pos;
+		} else {
+			i++;
+		}
+	}
+	
+	Individual metademe[DEMEsize];
+	for(int i=0;i<DEMEsize;i++){
+// 		cout << "HAPPY " << couples[0][i] << " and HAPPY " << couples[1][i] << " got " << i << endl;
+		metademe[i] = Individual(deme[couples[0][i]].makeGamete(),deme[couples[1][i]].makeGamete());
+	}
+	
+	for(int i=0;i<DEMEsize;i++){
+		deme[i] = metademe[i];
+	}
+}
+
+
 void Deme::permutation(){
 	int j = 0;
   for(int i = 0;i<DEMEsize;i++){
@@ -129,7 +174,7 @@ void Deme::permutation(){
 	}
 }
 
-void Deme::integrateVectorMigrants(vector<Individual>& migBuffer){
+void Deme::integrateMigrantVector(vector<Individual>& migBuffer){
 	int i = 0;
 	while((unsigned)i < migBuffer.size()){
 		deme[i] = migBuffer[i];
@@ -141,12 +186,13 @@ void Deme::integrateVectorMigrants(vector<Individual>& migBuffer){
 
 void Deme::getFitnessVector(vector<double>& fitnessVector){
 	double sum = 0;
-	for(int i;i < DEMEsize;i++){
-		sum =+ deme[i].getFitness();
+	for(int i = 0;i < DEMEsize;i++){
+		sum += deme[i].getFitness();
 		fitnessVector.push_back(sum);
 	}
 }
 		
+
 		
   // // // // // // // // // // // // // //
  // // // // plotting functions / // // //

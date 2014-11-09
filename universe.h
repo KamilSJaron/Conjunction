@@ -235,7 +235,7 @@ int Universe::migration(){
 			basicUnitCreator('r', 'B');
 		}
 // 		}
-		space[i->first]->integrateVectorMigrants(i->second);
+		space[i->first]->integrateMigrantVector(i->second);
 	}
 	return 0;
 }
