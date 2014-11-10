@@ -1,6 +1,8 @@
 #include "deme.h"
 // v0.141107
 
+using namespace std;
+
 // deme creator will have these arguments:
 // int dimension = 0 - 2 (popr 3, N, but 2 is working so far)
 // int edge_per_deme = 2 - F
@@ -12,12 +14,17 @@
 class Universe  
 {
 	public:
-// 		fctions
+// 		declarations / decl fctions
 		Universe(int dimension, int edges_per_deme, int number_of_demes_l_r,string edges_l_r, int number_of_demes_u_d, string edges_u_d);
 		Universe();
 		void basicUnitCreator(char type, char init);
-		int migration(); // in the int will be the errorcode
+		
+// 		computing functions
+		int migration(); // int will be the errorcode
 		void globalNaiveBreeding();
+		void globalBreeding();
+		bool Acheck(vector<Individual> buffer);
+		bool Bcheck(vector<Individual> buffer);
 		
 // 		plotting functions
 		void listOfDemes();
@@ -35,7 +42,7 @@ class Universe
 		int getIndex(int i);
 	
 	private:
-// 		fctions
+// 		inner fctions
 		int upper_border(int index, int max_index);
 		int lower_border(int index, int max_index);
 		int side_border(int reflexive, int extending);
@@ -64,7 +71,7 @@ Universe::Universe(){
 	edges_per_deme = 4;
 	number_of_demes_l_r = 6;
 	type_of_l_r_edges = "extending";
-	number_of_demes_u_d = 3;
+	number_of_demes_u_d = 1;
 	type_of_u_d_edges = "reflexive";
 }
 
@@ -226,12 +233,18 @@ int Universe::migration(){
 	for(auto i=bufferVectorMap.begin(); i!=bufferVectorMap.end(); ++i){
 // 		cout << i->first << endl;
 // 			if(there are only native individuals){
-// 				return 1;
+// 				continue;
 // 			} else {
 		if(index_next_left == i->first){
+// 			if(Acheck(i->second)){
+// 				continue;
+// 			}
 			basicUnitCreator('l', 'A');
 		} 
 		if(index_next_right == i->first){
+// 			if(Bcheck(i->second)){
+// 				continue;
+// 			}
 			basicUnitCreator('r', 'B');
 		}
 // 		}
@@ -246,6 +259,40 @@ void Universe::globalNaiveBreeding(){
 	}
 }
 
+void Universe::globalBreeding(){
+	vector<int> indexes;
+	for (auto i=space.begin(); i!=space.end(); ++i){
+		indexes.push_back(i->first);
+	}
+	
+// 	int index = 0;
+	int i_size = indexes.size();
+	
+// 	#pragma omp parallel for
+	for(int i = 0; i < i_size; i++){
+		space[i]->Breed();
+	}
+}
+
+bool Universe::Acheck(vector< Individual > buffer){
+	for(int i = 0; (unsigned)i < buffer.size(); i++){
+		if(buffer[i].Acheck()){
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
+
+bool Universe::Bcheck(vector< Individual > buffer){
+	for(int i = 0; (unsigned)i < buffer.size(); i++){
+		if(buffer[i].Bcheck()){
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
 
 // // // // // // // // // // // // // //
 // // // // setting functions // // // //

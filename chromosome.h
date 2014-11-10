@@ -1,6 +1,6 @@
 #include <map>
 #include <random>
-const int RESOLUTION = 101; /*RESOLUTION is Ls in Baird 94; it has to work with one loci case*/
+const int RESOLUTION = 1001; /*RESOLUTION is Ls in Baird 94; it has to work with one loci case*/
 // v0.141107
 
 using namespace std;
@@ -46,7 +46,8 @@ class Chromosome
 		 * @return void
 		 */
 		void plotChromosome(); /*ASCII visualisation*/
-		bool Acheck(); /*returns 1 if there are only A, 0 in other case*/
+		bool Acheck(); /*returns 0 if there are only A, 1 in other case*/
+		bool Bcheck();
 		int countB(); /*returns number of B loci in chromosome*/
 		vector<int> getSizesOfBBlocks(); /*returns vector of sizes of B blocks in chromosome*/
 		int getNumberOfJunctions(); /*returns number of Junctions in chromosome*/
@@ -97,6 +98,15 @@ void Chromosome::plotChromosome(){
 bool Chromosome::Acheck(){
 	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(pos->second == 'B'){
+			return 0;
+		}
+	}
+	return 1;
+}
+
+bool Chromosome::Bcheck(){
+	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+		if(pos->second == 'A'){
 			return 0;
 		}
 	}

@@ -21,17 +21,24 @@ int getChiasma(double R){
 class Individual  
 {
 	public:
+// 		decl
 		Individual();
 		Individual(char origin);
 		Individual(vector<Chromosome> gamete1, vector<Chromosome> gamete2);
 		~Individual(){genome[0].clear();genome[1].clear();};
+		
+// 		computing
+		vector<Chromosome> makeGamete(); //prepsat tak aby vector dostal pointrem
 		void replace_chromozome(int set, int position,map <int, char> input_chrom);
-		vector<Chromosome> makeGamete();
+		double getFitness();
+		bool Acheck();
+		bool Bcheck();
+		
+// 		plotting
 		void readGenotype();
 		void plotGenotype();
 		
-		static int totalVectCount;
-		double getFitness();
+// 		static int totalVectCount; //???
 	
 	private:
 		vector<Chromosome> genome[2];
@@ -203,6 +210,25 @@ double Individual::getFitness(){
 	return fitness;
 }
 
+bool Individual::Acheck(){
+	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
+		if(genome[0][i].Acheck() and genome[1][i].Acheck()){
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
+
+bool Individual::Bcheck(){
+	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
+		if(genome[0][i].Bcheck() and genome[1][i].Bcheck()){
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
 
 void Individual::readGenotype(){
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){

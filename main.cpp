@@ -31,35 +31,34 @@ int main()
 {
 	using namespace std; // std as default
 	srand (SEEDtoRAND); // setting a seed
-// 	Universe KamilWorld;
-// 	clock_t t1,t2;
+	Universe KamilWorld;
+	clock_t t1,t2;
 // 	
-// 	KamilWorld.setLREdgesType("reflexive");
-// 	KamilWorld.basicUnitCreator('b', 'A');
-// 	KamilWorld.basicUnitCreator('r', 'B');
+	KamilWorld.basicUnitCreator('b', 'A');
+	KamilWorld.basicUnitCreator('r', 'B');
 // 	KamilWorld.basicUnitCreator('l', 'A');
-// 	KamilWorld.basicUnitCreator('r', 'B');
-// 	KamilWorld.listOfDemes();
+	KamilWorld.listOfDemes();
 // 
 // 	KamilWorld.migration();
 // 	KamilWorld.plotOneDeme(0);
-// 	for(int i=0; i < 10;i++){
-// 		t1=clock();
-// 		cout << "Generation: " << i << " in ";
-// 		KamilWorld.migration();
-// 		KamilWorld.globalNaiveBreeding();
-// 		t2=clock();
-// 		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-// 	}
-	
+	for(int i=0; i < 10;i++){
+		t1=clock();
+		KamilWorld.migration();
+		KamilWorld.globalBreeding();
+		t2=clock();
+		cout << "Generation: " << i << " in ";
+		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+	}
+	KamilWorld.listOfDemes();
 // 	KamilWorld.listOfDemes();	
-// 	KamilWorld.plotOneDeme(0);
-	Deme smallDeme(42,'C');
-	smallDeme.plotDeme();
-	smallDeme.Breed();
-	smallDeme.plotDeme();
-	smallDeme.Breed();
-	smallDeme.plotDeme();
+	
+
+// 	Deme smallDeme(42,'C');
+// 	smallDeme.plotDeme();
+// 	smallDeme.Breed();
+// 	smallDeme.plotDeme();
+// 	smallDeme.Breed();
+// 	smallDeme.plotDeme();
 // 	smallDeme.Breed();
 // 	smallDeme.plotDeme();
 	return 0;
