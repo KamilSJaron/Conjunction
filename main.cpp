@@ -37,11 +37,11 @@ int main()
 	KamilWorld.basicUnitCreator('b', 'A');
 	KamilWorld.basicUnitCreator('r', 'B');
 // 	KamilWorld.basicUnitCreator('l', 'A');
+	
+// 	KamilWorld.globalBreeding();
 	KamilWorld.listOfDemes();
-// 
-// 	KamilWorld.migration();
 // 	KamilWorld.plotOneDeme(0);
-	for(int i=0; i < 10;i++){
+	for(int i=0; i < 100;i++){
 		t1=clock();
 		KamilWorld.migration();
 		KamilWorld.globalBreeding();
@@ -50,17 +50,7 @@ int main()
 		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 	}
 	KamilWorld.listOfDemes();
-// 	KamilWorld.listOfDemes();	
-	
 
-// 	Deme smallDeme(42,'C');
-// 	smallDeme.plotDeme();
-// 	smallDeme.Breed();
-// 	smallDeme.plotDeme();
-// 	smallDeme.Breed();
-// 	smallDeme.plotDeme();
-// 	smallDeme.Breed();
-// 	smallDeme.plotDeme();
 	return 0;
 }
 

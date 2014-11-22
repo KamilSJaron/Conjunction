@@ -52,9 +52,16 @@ Individual::Individual(){
 }
 
 Individual::Individual(char origin){
-	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
-		genome[0].push_back(Chromosome(origin));
-		genome[1].push_back(Chromosome(origin));
+	if(origin == 'A' or origin == 'B'){
+		for(int i=0;i<NUMBERofCHROMOSOMES;i++){
+			genome[0].push_back(Chromosome(origin));
+			genome[1].push_back(Chromosome(origin));
+		}
+	} else {
+		for(int i=0;i<NUMBERofCHROMOSOMES;i++){
+			genome[0].push_back('A');
+			genome[1].push_back('B');
+		}
 	}
 }
 

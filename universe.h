@@ -236,15 +236,15 @@ int Universe::migration(){
 // 				continue;
 // 			} else {
 		if(index_next_left == i->first){
-// 			if(Acheck(i->second)){
-// 				continue;
-// 			}
+			if(Acheck(i->second)){
+				continue;
+			}
 			basicUnitCreator('l', 'A');
 		} 
 		if(index_next_right == i->first){
-// 			if(Bcheck(i->second)){
-// 				continue;
-// 			}
+			if(Bcheck(i->second)){
+				continue;
+			}
 			basicUnitCreator('r', 'B');
 		}
 // 		}
@@ -265,12 +265,13 @@ void Universe::globalBreeding(){
 		indexes.push_back(i->first);
 	}
 	
-// 	int index = 0;
+	int index = 0;
 	int i_size = indexes.size();
 	
 // 	#pragma omp parallel for
 	for(int i = 0; i < i_size; i++){
-		space[i]->Breed();
+		index = indexes[i];
+		space[index]->Breed();
 	}
 }
 
