@@ -1,6 +1,7 @@
 #include "individual.h"
+#include "g2_gd.h"
 
-const int DEMEsize = 8;
+const int DEMEsize = 512;
 // comment demesize in manual, it should be divideable by 2*number_of_edges
 // comment demesize in manual, it should be power of 3 for easy square plotting (64, 216, 512, 1000, 1728, 4096)
 // v0.141107
@@ -43,8 +44,10 @@ class Deme
 		
 // plotting functions
 		void showDeme();
-		void plotDeme();
+		void viewDeme();
 		void plotHeadOfDeme();
+		void plotDeme();
+		void plotDeme(string filename);
 	
 	private:
 		void swap(int ind1, int ind2);
@@ -207,7 +210,7 @@ void Deme::showDeme(){
 	cout << endl;
 }
 
-void Deme::plotDeme(){
+void Deme::viewDeme(){
 	for(int i=0;i<DEMEsize;i++){
 		cout << "Individual: " << i+1 << endl;
 		deme[i].viewGenotype();
@@ -221,6 +224,32 @@ void Deme::plotHeadOfDeme(){
 	deme[1].viewGenotype();
 }
 
+void Deme::plotDeme(){
+	int line = 0, dev = 0;
+	int height = 1;
+	int width = 50;
+	dev = g2_open_X11(width*NUMBERofCHROMOSOMES,height*DEMEsize);
+	for(int i=0;i<DEMEsize;i++){
+		line = i + 1;
+		cout << "Individual: " << i+1 << endl;
+		deme[i].plotGenotype(dev, line, height, width, DEMEsize);
+	}
+}
+
+void Deme::plotDeme(string filename){
+	int line = 0, dev = 0;
+	int height = 1;
+	int width = 50;
+	dev  = g2_open_PS("pict.ps", g2_A4, g2_PS_land);
+// 	dev = g2_open_gd(filename,width*NUMBERofCHROMOSOMES,height*DEMEsize, g2_gd_png);
+// 	dev = g2_open_gd("rect.png", 300, 200, g2_gd_png);
+	for(int i=0;i<DEMEsize;i++){
+		line = i + 1;
+		cout << "Individual: " << i+1 << endl;
+		deme[i].plotGenotype(dev, line, height, width, DEMEsize);
+	}
+	g2_close(dev);
+}
    // // // // //
   //  PRIVATE //
  // // // // //

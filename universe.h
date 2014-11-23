@@ -29,7 +29,9 @@ class Universe
 // 		plotting functions
 		void listOfDemes();
 		void showOneDeme(int index);
+		void viewOneDeme(int index);
 		void plotOneDeme(int index);
+		void plotOneDeme(int index, string fileName);
 		void plotHeadOfDeme(int i);
 		void plotDemesOneByOne();
 		
@@ -343,8 +345,16 @@ void Universe::showOneDeme(int index){
 	space[index]->showDeme();
 }
 
+void Universe::viewOneDeme(int index){
+	space[index]->viewDeme();
+}
+
 void Universe::plotOneDeme(int index){
 	space[index]->plotDeme();
+}
+
+void Universe::plotOneDeme(int index, string fileName){
+	space[index]->plotDeme(fileName);
 }
 
 void Universe::plotHeadOfDeme(int index){
@@ -354,10 +364,11 @@ void Universe::plotHeadOfDeme(int index){
 void Universe::plotDemesOneByOne(){
 	for (auto i=space.begin(); i!=space.end(); ++i){
 		cout << "***** DEME " << i->first << " *****" << endl;
-		i->second->plotDeme();
+		i->second->viewDeme();
 		cin.get();
 	}
 }
+
 
 
 

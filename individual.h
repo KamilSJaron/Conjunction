@@ -41,6 +41,7 @@ class Individual
 		
 		/* GRAPHICS */
 		void plotGenotype();
+		void plotGenotype(int dev,int line,int height, int width, int demesize);
 		
 // 		static int totalVectCount; //???
 	
@@ -265,9 +266,11 @@ void Individual::viewGenotype(){
 
 void Individual::plotGenotype(){
 	char last_material_s1, last_material_s2;
+	int colA = 3, colB = 25, colH = 7;
 	int dev = 0, x1 = 1, x2 = 1;
-	int height = 200;
-	dev = g2_open_X11(512,height);
+	int height = 10 * NUMBERofCHROMOSOMES;
+	int width = 512;
+	dev = g2_open_X11(width,height);
 	g2_set_line_width(dev,10);
 // // 	A = modra populace; B = zluta
 	for(int i=0; i < NUMBERofCHROMOSOMES; i++){
@@ -277,8 +280,8 @@ void Individual::plotGenotype(){
 		last_material_s2 = pos2->second;
 		pos1++;
 		pos2++;
-		x1 = 0;
-		x2 = 0;
+		x1 = 1;
+		x2 = 1;
 		while(pos1->first != genome[0][i].end()->first){
 // 			cout << "COMPARING:" << pos1->first << " " << pos2->first << "\n";
 			if(pos1->first <= pos2->first){
@@ -289,17 +292,17 @@ void Individual::plotGenotype(){
 				}
 				if(last_material_s1 == last_material_s2){
 					if(last_material_s1 == 'A'){
-						g2_pen(dev,3);
+						g2_pen(dev,colA);
 					} else {
-						g2_pen(dev,25);
+						g2_pen(dev,colB);
 					}
 				} else {
-					g2_pen(dev,7);
+					g2_pen(dev,colH);
 				}
 // 				cout << x1 << ' ' << x2 << endl;
-				g2_line(dev,((double)x1 / RESOLUTION)*512,
+				g2_line(dev,((double)x1 / RESOLUTION)*width,
 								(height-(i*10))-5,
-								((double)x2 / RESOLUTION)*512,
+								((double)x2 / RESOLUTION)*width,
 								(height-(i*10))-5);
 				
 				last_material_s1 = pos1->second;
@@ -318,17 +321,17 @@ void Individual::plotGenotype(){
 				}
 				if(last_material_s1 == last_material_s2){
 					if(last_material_s1 == 'A'){
-						g2_pen(dev,3);
+						g2_pen(dev,colA);
 					} else {
-						g2_pen(dev,25);
+						g2_pen(dev,colB);
 					}
 				} else {
-					g2_pen(dev,7);
+					g2_pen(dev,colH);
 				}
 // 				cout << x1 << ' ' << x2 << endl;
-				g2_line(dev,((double)x1 / RESOLUTION)*512,
+				g2_line(dev,((double)x1 / RESOLUTION)*width,
 								(height-(i*10))-5,
-								((double)x2 / RESOLUTION)*512,
+								((double)x2 / RESOLUTION)*width,
 								(height-(i*10))-5);
 				last_material_s2 = pos2->second;
 				pos2++;
@@ -343,17 +346,17 @@ void Individual::plotGenotype(){
 			}
 			if(last_material_s1 == last_material_s2){
 				if(last_material_s1 == 'A'){
-					g2_pen(dev,3);
+					g2_pen(dev,colA);
 				} else {
-					g2_pen(dev,25);
+					g2_pen(dev,colB);
 				}
 			} else {
-				g2_pen(dev,7);
+				g2_pen(dev,colH);
 			}
 // 			cout << x1 << ' ' << x2 << endl;
-			g2_line(dev,((double)x1 / RESOLUTION)*512,
+			g2_line(dev,((double)x1 / RESOLUTION)*width,
 							(height-(i*10))-5,
-							((double)x2 / RESOLUTION)*512,
+							((double)x2 / RESOLUTION)*width,
 							(height-(i*10))-5);
 			last_material_s2 = pos2->second;
 			pos2++;
@@ -367,17 +370,17 @@ void Individual::plotGenotype(){
 			}
 			if(last_material_s1 == last_material_s2){
 				if(last_material_s1 == 'A'){
-					g2_pen(dev,3);
+					g2_pen(dev,colA);
 				} else {
-					g2_pen(dev,25);
+					g2_pen(dev,colB);
 				}
 			} else {
-				g2_pen(dev,7);
+				g2_pen(dev,colH);
 			}
 // 			cout << x1 << ' ' << x2 << endl;
-			g2_line(dev,((double)x1 / RESOLUTION)*512,
+			g2_line(dev,((double)x1 / RESOLUTION)*width,
 							(height-(i*10))-5,
-							((double)x2 / RESOLUTION)*512,
+							((double)x2 / RESOLUTION)*width,
 							(height-(i*10))-5);
 			last_material_s1 = pos1->second;
 			pos1++;
@@ -392,22 +395,161 @@ void Individual::plotGenotype(){
 		}
 		if(last_material_s1 == last_material_s2){
 			if(last_material_s1 == 'A'){
-					g2_pen(dev,3);
+					g2_pen(dev,colA);
 			} else {
-					g2_pen(dev,25);
+					g2_pen(dev,colB);
 			}
 		} else {
-			g2_pen(dev,7);
+			g2_pen(dev,colH);
 		}
-		g2_line(dev,((double)x1 / RESOLUTION)*512,
+		g2_line(dev,((double)x1 / RESOLUTION)*width,
 						(height-(i*10))-5,
-						((double)x2 / RESOLUTION)*512,
+						((double)x2 / RESOLUTION)*width,
 						(height-(i*10))-5);
 	}
 	return;
 }
 
-
+void Individual::plotGenotype(int dev,int line,int height, int width, int demesize){
+	char last_material_s1, last_material_s2;
+	int x_buf_1 = 1, x_buf_2 = 1;
+	int x1 = 1, x2 = 1, y = 1;
+	int colA = 3, colB = 25, colH = 7;
+	g2_set_line_width(dev,height);
+// // 	A = modra populace; B = zluta
+	for(int i=0; i < NUMBERofCHROMOSOMES; i++){
+		auto pos1=genome[0][i].begin();
+		auto pos2=genome[1][i].begin();
+		last_material_s1 = pos1->second;
+		last_material_s2 = pos2->second;
+		pos1++;
+		pos2++;
+		x_buf_1 = 1;
+		x_buf_2 = 1;
+		while(pos1->first != genome[0][i].end()->first){
+			if(pos1->first <= pos2->first){
+				if(x_buf_1 < x_buf_2){
+					x_buf_1 = pos1->first;
+				} else {
+					x_buf_2 = pos1->first;
+				}
+				if(last_material_s1 == last_material_s2){
+					if(last_material_s1 == 'A'){
+						g2_pen(dev,colA);
+					} else {
+						g2_pen(dev,colB);
+					}
+				} else {
+					g2_pen(dev,colH);
+				}
+				x1 = (((double)x_buf_1 / RESOLUTION)*width) + (i * width);
+				y = ((height*demesize) - (line * height)) - ((height - 1) / 2);
+				x2 = (((double)x_buf_2 / RESOLUTION)*width) + (i * width);
+				g2_line(dev,x1,y,x2,y);
+				
+				last_material_s1 = pos1->second;
+				pos1++;
+				continue;
+			}
+			if(pos2->first == genome[1][i].end()->first){
+				break;
+			}
+			
+			while((pos2->first <= pos1->first) and pos2->first != genome[1][i].end()->first){
+				if(x_buf_1 < x_buf_2){
+					x_buf_1 = pos2->first;
+				} else {
+					x_buf_2 = pos2->first;
+				}
+				if(last_material_s1 == last_material_s2){
+					if(last_material_s1 == 'A'){
+						g2_pen(dev,colA);
+					} else {
+						g2_pen(dev,colB);
+					}
+				} else {
+					g2_pen(dev,colH);
+				}
+				x1 = (((double)x_buf_1 / RESOLUTION)*width) + (i * width);
+				y = ((height*demesize) - (line * height)) - ((height - 1) / 2);
+				x2 = (((double)x_buf_2 / RESOLUTION)*width) + (i * width);
+				g2_line(dev,x1,y,x2,y);
+				
+				last_material_s2 = pos2->second;
+				pos2++;
+			}
+		}
+		
+		while(pos2->first != genome[1][i].end()->first){
+			if(x_buf_1 < x_buf_2){
+				x_buf_1 = pos2->first;
+			} else {
+				x_buf_2 = pos2->first;
+			}
+			if(last_material_s1 == last_material_s2){
+				if(last_material_s1 == 'A'){
+					g2_pen(dev,colA);
+				} else {
+					g2_pen(dev,colB);
+				}
+			} else {
+				g2_pen(dev,colH);
+			}
+			x1 = (((double)x_buf_1 / RESOLUTION)*width) + (i * width);
+			y = ((height*demesize) - (line * height)) - ((height - 1) / 2);
+			x2 = (((double)x_buf_2 / RESOLUTION)*width) + (i * width);
+			g2_line(dev,x1,y,x2,y);
+				
+			last_material_s2 = pos2->second;
+			pos2++;
+		}
+		
+		while(pos1->first != genome[0][i].end()->first){
+			if(x_buf_1 < x_buf_2){
+				x_buf_1 = pos1->first;
+			} else {
+				x_buf_2 = pos1->first;
+			}
+			if(last_material_s1 == last_material_s2){
+				if(last_material_s1 == 'A'){
+					g2_pen(dev,colA);
+				} else {
+					g2_pen(dev,colB);
+				}
+			} else {
+				g2_pen(dev,colH);
+			}
+			x1 = (((double)x_buf_1 / RESOLUTION)*width) + (i * width);
+			y = ((height*demesize) - (line * height)) - ((height - 1) / 2);
+			x2 = (((double)x_buf_2 / RESOLUTION)*width) + (i * width);
+			g2_line(dev,x1,y,x2,y);
+			
+			last_material_s1 = pos1->second;
+			pos1++;
+		}
+		
+		if(x_buf_1 < x_buf_2){
+				x_buf_1 = RESOLUTION;
+			} else {
+				x_buf_2 = RESOLUTION;
+		}
+		
+		if(last_material_s1 == last_material_s2){
+			if(last_material_s1 == 'A'){
+					g2_pen(dev,colA);
+			} else {
+					g2_pen(dev,colB);
+			}
+		} else {
+			g2_pen(dev,colH);
+		}
+		x1 = (((double)x_buf_1 / RESOLUTION)*width) + (i * width);
+		y = ((height*demesize) - (line * height)) - ((height - 1) / 2);
+		x2 = (((double)x_buf_2 / RESOLUTION)*width) + (i * width);
+		g2_line(dev,x1,y,x2,y);
+	}
+	return;
+}
 
 
 

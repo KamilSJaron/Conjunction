@@ -9,6 +9,8 @@
 #include <time.h>
 #include<g2.h>
 #include<g2_X11.h>
+#include<g2_PS.h>
+#include<g2_gd.h>
 
 #include "universe.h" // Class of individuals
 
@@ -33,30 +35,34 @@ int main()
 {
 	using namespace std; // std as default
 	srand (SEEDtoRAND); // setting a seed
-// 	Universe KamilWorld;
-// 	clock_t t1,t2;
-// // 	
-// 	KamilWorld.basicUnitCreator('b', 'A');
-// 	KamilWorld.basicUnitCreator('r', 'B');
-// // 	KamilWorld.basicUnitCreator('l', 'A');
+	Universe KamilWorld;
+	clock_t t1,t2;
 // 	
-// // 	KamilWorld.globalBreeding();
-// 	KamilWorld.listOfDemes();
-// // 	KamilWorld.plotOneDeme(0);
-// 	for(int i=0; i < 100;i++){
-// 		t1=clock();
-// 		KamilWorld.migration();
-// 		KamilWorld.globalBreeding();
-// 		t2=clock();
-// 		cout << "Generation: " << i << " in ";
-// 		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-// 	}
-// 	KamilWorld.listOfDemes();
-	Individual Eddie('C');
-	Individual Luis(Eddie.makeGamete(),Eddie.makeGamete());
+	KamilWorld.basicUnitCreator('b', 'A');
+	KamilWorld.basicUnitCreator('r', 'B');
+// 	KamilWorld.basicUnitCreator('l', 'A');
 	
-	Luis.readGenotype();
-	Luis.plotGenotype();
+// 	KamilWorld.globalBreeding();
+	KamilWorld.listOfDemes();
+// 	KamilWorld.plotOneDeme(0);
+	for(int i=0; i < 10;i++){
+		t1=clock();
+		KamilWorld.migration();
+		KamilWorld.globalBreeding();
+		t2=clock();
+		cout << "Generation: " << i << " in ";
+		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+	}
+	KamilWorld.listOfDemes();
+	KamilWorld.plotOneDeme(0);
+	cin.get();
+	KamilWorld.plotOneDeme(5);
+	cin.get();
+// 	Individual Eddie('C');
+// 	Individual Luis(Eddie.makeGamete(),Eddie.makeGamete());
+// 	
+// 	Luis.readGenotype();
+// 	Luis.plotGenotype();
 	
 	cin.get();
 	return 0;
