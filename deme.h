@@ -26,7 +26,7 @@ class Deme
 		Deme(int ind, char init);
 		Deme(int ind, vector<int> neigb){index = ind;neigbours = neigb;};
 		Deme(int ind, vector<int> neigb, char init);
-// 		~Deme(){delete deme;}; // ????
+		~Deme(){delete[] deme;}; // ????
 		
 // communication functions
 		vector<int> getNeigbours(){return neigbours;};
@@ -210,15 +210,15 @@ void Deme::showDeme(){
 void Deme::plotDeme(){
 	for(int i=0;i<DEMEsize;i++){
 		cout << "Individual: " << i+1 << endl;
-		deme[i].plotGenotype();
+		deme[i].viewGenotype();
 	}
 }
 
 void Deme::plotHeadOfDeme(){
 	cout << "Individual: 0" << endl;
-	deme[0].plotGenotype();
+	deme[0].viewGenotype();
 	cout << "Individual: 1" << endl;
-	deme[1].plotGenotype();
+	deme[1].viewGenotype();
 }
 
    // // // // //

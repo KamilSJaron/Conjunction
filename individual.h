@@ -1,6 +1,7 @@
 #include "chromosome.h"
+#include <g2.h>
 const int NUMBERofCHROMOSOMES = 1; /* mouse have 19+1, but now I am reproducing 84 results */
-const double RECOMBINATIONrate = 1.53;
+const double RECOMBINATIONrate = 4;
 const double SELECTIONpressure = 0.5;
 const double BETA = 1;
 
@@ -36,6 +37,9 @@ class Individual
 		
 // 		plotting
 		void readGenotype();
+		void viewGenotype();
+		
+		/* GRAPHICS */
 		void plotGenotype();
 		
 // 		static int totalVectCount; //???
@@ -112,10 +116,12 @@ vector<Chromosome> Individual::makeGamete(){
 		}
 		sort (recombination.begin(), recombination.end(), arrangeObject);
 		
+// 		cout << "Rolled: ";
 // 		for(int index=0;index<numberOfChaisma;index++){
-// 			cout << recombination[i] << ' ';
+// 			cout << recombination[index] << ' ';
 // 		}
 // 		cout << endl;
+		
 
 		if(recombination[0] != 0){
 // 			cout << "Writing " << 1 << ' ' << genome[starts_by][i].read(1) << endl;
@@ -141,7 +147,7 @@ vector<Chromosome> Individual::makeGamete(){
 					last_material_s1 = pos1->second;
 					pos1++;
 				}
-				while(pos2->first < rec_pos and pos2->first != genome[1][i].end()->first){
+				while(pos2->first <= rec_pos and pos2->first != genome[1][i].end()->first){
 					last_material_s2 = pos2->second;
 					pos2++;
 				}
@@ -160,7 +166,7 @@ vector<Chromosome> Individual::makeGamete(){
 					last_material_s2 = pos2->second;
 					pos2++;
 				}
-				while(pos1->first < rec_pos and pos1->first != genome[0][i].end()->first){
+				while(pos1->first <= rec_pos and pos1->first != genome[0][i].end()->first){
 					last_material_s1 = pos1->second;
 					pos1++;
 				}
@@ -247,12 +253,117 @@ void Individual::readGenotype(){
 	cout << endl;
 }
 
-void Individual::plotGenotype(){
+void Individual::viewGenotype(){
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
 		cout << "---Chromozome---set-1---number-" << i+1 << "---" << endl;
-		genome[0][i].plotChromosome();
+		genome[0][i].viewChromosome();
 		cout << "---Chromozome---set-2---number-" << i+1 << "---" << endl;
-		genome[1][i].plotChromosome();
+		genome[1][i].viewChromosome();
 	}
 	cout << endl;
 }
+
+void Individual::plotGenotype(){
+	char last_material_s1, last_material_s2;
+	int dev = 0, x1 = 1, x2 = 1;
+	dev = g2_open_X11(512,512);
+	g2_set_line_width(dev,1);
+// 	A = modra populace; B = zluta
+	for(int i=0; i < NUMBERofCHROMOSOMES; i++){
+		auto pos1=genome[0][i].begin();
+		pos1++;
+		auto pos2=genome[1][i].begin();
+		pos2++;
+		last_material_s1 = genome[0][i].read(1);
+		last_material_s2 = genome[1][i].read(1);
+		while(pos1->first != genome[0][i].end()->first){
+			cout << pos1->first << " " << pos2->first << endl;
+			if(pos1->first <= pos2->first){
+				if(x1 < x2){
+					x1 = pos1->first;
+				} else {
+					x2 = pos1->first;
+				}
+				if(last_material_s1 == last_material_s2){
+					if(last_material_s1 == 'A'){
+						g2_pen(dev,3);
+					} else {
+						g2_pen(dev,25);
+					}
+				} else {
+					g2_pen(dev,7);
+				}
+				g2_line(dev,((double)x1 / RESOLUTION)*512,512-i,((double)x2 / RESOLUTION)*512,512-i);
+				
+				last_material_s1 = pos1->second;
+				pos1++;
+				continue;
+			}
+			
+			while(pos2->first <= pos1->first){
+				if(x1 < x2){
+					x1 = pos2->first;
+				} else {
+					x2 = pos2->first;
+				}
+				if(last_material_s1 == last_material_s2){
+					if(last_material_s1 == 'A'){
+						g2_pen(dev,3);
+					} else {
+						g2_pen(dev,25);
+					}
+				} else {
+					g2_pen(dev,7);
+				}
+				g2_line(dev,((double)x1 / RESOLUTION)*512,512-i,((double)x2 / RESOLUTION)*512,512-i);
+				last_material_s2 = pos2->second;
+				pos2++;
+			}	
+		}
+		while(pos2->first <= pos1->first){
+			if(x1 < x2){
+				x1 = pos2->first;
+			} else {
+				x2 = pos2->first;
+			}
+			if(last_material_s1 == last_material_s2){
+				if(last_material_s1 == 'A'){
+					g2_pen(dev,3);
+				} else {
+					g2_pen(dev,25);
+				}
+			} else {
+				g2_pen(dev,7);
+			}
+			g2_line(dev,((double)x1 / RESOLUTION)*512,512-i,((double)x2 / RESOLUTION)*512,512-i);
+			last_material_s2 = pos2->second;
+			pos2++;
+		}
+		
+		if(x1 < x2){
+				x1 = RESOLUTION;
+			} else {
+				x2 = RESOLUTION;
+		}
+		if(last_material_s1 == last_material_s2){
+			if(last_material_s1 == 'A'){
+					g2_pen(dev,3);
+			} else {
+					g2_pen(dev,25);
+			}
+		} else {
+			g2_pen(dev,7);
+		}
+		g2_line(dev,((double)x1 / RESOLUTION)*512,512-i,((double)x2 / RESOLUTION)*512,512-i);
+	}
+}
+
+
+
+
+
+
+
+
+
+

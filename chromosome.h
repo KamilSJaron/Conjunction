@@ -28,29 +28,32 @@ int getResolution(){
 }
 
 /**
- * @brief CHROMOSOME is the lowest unit
- * 
+ * @brief CHROMOSOME is class consiting of map of junctions on chromosome.
+ * First junciton in every chromosome is 1:char where char is letter for begining of the chromosome.
+ * The class functions are sorted to blocks by purpose.
  * @author Kamil S Jaron
  */
 class Chromosome
 {
 	public:
-		Chromosome(){}; /*inic*/
+/* INITIATION */
+		Chromosome(){};
 		Chromosome(char starting_char){chromosome[1] = starting_char;}; /*inic*/
 		Chromosome(map <int, char> input_chrom){chromosome = input_chrom;}; /*inic*/
-		~Chromosome(){chromosome.clear();}; /*destr*/
+// 		~Chromosome(){chromosome.clear();}; /*destr*/
+
+/* PLOTTING METHODS */
 		void showChromosome(); /*writes all junctions*/
-		/**
-		 * @brief This method writes down all junctions of the chromosome
-		 * 
-		 * @return void
-		 */
-		void plotChromosome(); /*ASCII visualisation*/
+		void viewChromosome(); /*ASCII visualisation*/
+		
+/* COMPUTING METHODS */
 		bool Acheck(); /*returns 0 if there are only A, 1 in other case*/
 		bool Bcheck();
 		int countB(); /*returns number of B loci in chromosome*/
-		vector<int> getSizesOfBBlocks(); /*returns vector of sizes of B blocks in chromosome*/
 		int getNumberOfJunctions(); /*returns number of Junctions in chromosome*/
+		vector<int> getSizesOfBBlocks(); /*returns vector of sizes of B blocks in chromosome*/
+		
+/* COMUNICATION METHODS */
 		int getResolution(){return RESOLUTION;}; /* return resolution of the chromosome */
 		void clear(){chromosome.clear();};
 		char read(int i){return chromosome[i];};
@@ -69,7 +72,7 @@ void Chromosome::showChromosome(){
 	}
 }
 
-void Chromosome::plotChromosome(){
+void Chromosome::viewChromosome(){
 	if(RESOLUTION < 101){
 		cout << "Number of loci is too small for plotting" << endl;
 	} else {
