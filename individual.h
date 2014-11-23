@@ -1,7 +1,7 @@
 #include "chromosome.h"
 #include <g2.h>
-const int NUMBERofCHROMOSOMES = 1; /* mouse have 19+1, but now I am reproducing 84 results */
-const double RECOMBINATIONrate = 4;
+const int NUMBERofCHROMOSOMES = 20; /* mouse have 19+1, but now I am reproducing 84 results */
+const double RECOMBINATIONrate = 1.53;
 const double SELECTIONpressure = 0.5;
 const double BETA = 1;
 
@@ -266,8 +266,9 @@ void Individual::viewGenotype(){
 void Individual::plotGenotype(){
 	char last_material_s1, last_material_s2;
 	int dev = 0, x1 = 1, x2 = 1;
-	dev = g2_open_X11(512,512);
-	g2_set_line_width(dev,40);
+	int height = 200;
+	dev = g2_open_X11(512,height);
+	g2_set_line_width(dev,10);
 // // 	A = modra populace; B = zluta
 	for(int i=0; i < NUMBERofCHROMOSOMES; i++){
 		auto pos1=genome[0][i].begin();
@@ -276,6 +277,8 @@ void Individual::plotGenotype(){
 		last_material_s2 = pos2->second;
 		pos1++;
 		pos2++;
+		x1 = 0;
+		x2 = 0;
 		while(pos1->first != genome[0][i].end()->first){
 // 			cout << "COMPARING:" << pos1->first << " " << pos2->first << "\n";
 			if(pos1->first <= pos2->first){
@@ -293,8 +296,11 @@ void Individual::plotGenotype(){
 				} else {
 					g2_pen(dev,7);
 				}
-				cout << x1 << ' ' << x2 << endl;
-				g2_line(dev,((double)x1 / RESOLUTION)*512,512-i,((double)x2 / RESOLUTION)*512,512-i);
+// 				cout << x1 << ' ' << x2 << endl;
+				g2_line(dev,((double)x1 / RESOLUTION)*512,
+								(height-(i*10))-5,
+								((double)x2 / RESOLUTION)*512,
+								(height-(i*10))-5);
 				
 				last_material_s1 = pos1->second;
 				pos1++;
@@ -319,8 +325,11 @@ void Individual::plotGenotype(){
 				} else {
 					g2_pen(dev,7);
 				}
-				cout << x1 << ' ' << x2 << endl;
-				g2_line(dev,((double)x1 / RESOLUTION)*512,512-i,((double)x2 / RESOLUTION)*512,512-i);
+// 				cout << x1 << ' ' << x2 << endl;
+				g2_line(dev,((double)x1 / RESOLUTION)*512,
+								(height-(i*10))-5,
+								((double)x2 / RESOLUTION)*512,
+								(height-(i*10))-5);
 				last_material_s2 = pos2->second;
 				pos2++;
 			}
@@ -341,8 +350,11 @@ void Individual::plotGenotype(){
 			} else {
 				g2_pen(dev,7);
 			}
-			cout << x1 << ' ' << x2 << endl;
-			g2_line(dev,((double)x1 / RESOLUTION)*512,512-i,((double)x2 / RESOLUTION)*512,512-i);
+// 			cout << x1 << ' ' << x2 << endl;
+			g2_line(dev,((double)x1 / RESOLUTION)*512,
+							(height-(i*10))-5,
+							((double)x2 / RESOLUTION)*512,
+							(height-(i*10))-5);
 			last_material_s2 = pos2->second;
 			pos2++;
 		}
@@ -362,13 +374,16 @@ void Individual::plotGenotype(){
 			} else {
 				g2_pen(dev,7);
 			}
-			cout << x1 << ' ' << x2 << endl;
-			g2_line(dev,((double)x1 / RESOLUTION)*512,512-i,((double)x2 / RESOLUTION)*512,512-i);
+// 			cout << x1 << ' ' << x2 << endl;
+			g2_line(dev,((double)x1 / RESOLUTION)*512,
+							(height-(i*10))-5,
+							((double)x2 / RESOLUTION)*512,
+							(height-(i*10))-5);
 			last_material_s1 = pos1->second;
 			pos1++;
 		}
-		cout << pos1->first << " " << genome[0][i].end()->first << endl;
-		cout << pos2->first << " " << genome[1][i].end()->first << endl;
+// 		cout << pos1->first << " " << genome[0][i].end()->first << endl;
+// 		cout << pos2->first << " " << genome[1][i].end()->first << endl;
 		
 		if(x1 < x2){
 				x1 = RESOLUTION;
@@ -384,7 +399,10 @@ void Individual::plotGenotype(){
 		} else {
 			g2_pen(dev,7);
 		}
-		g2_line(dev,((double)x1 / RESOLUTION)*512,512-i,((double)x2 / RESOLUTION)*512,512-i);
+		g2_line(dev,((double)x1 / RESOLUTION)*512,
+						(height-(i*10))-5,
+						((double)x2 / RESOLUTION)*512,
+						(height-(i*10))-5);
 	}
 	return;
 }
