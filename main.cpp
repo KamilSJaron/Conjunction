@@ -1,6 +1,7 @@
 #include <iostream> // preprocessor directive
 #include <cmath>
 #include <string>  // strings
+#include <cstring> 
 #include <map>  // associative arrays
 #include <algorithm> // sort
 #include <fstream>
@@ -40,12 +41,12 @@ int main()
 // 	
 	KamilWorld.basicUnitCreator('b', 'A');
 	KamilWorld.basicUnitCreator('r', 'B');
-// 	KamilWorld.basicUnitCreator('l', 'A');
+	KamilWorld.basicUnitCreator('l', 'A');
 	
-// 	KamilWorld.globalBreeding();
+	KamilWorld.globalBreeding();
 	KamilWorld.listOfDemes();
-// 	KamilWorld.plotOneDeme(0);
-	for(int i=0; i < 10;i++){
+	KamilWorld.plotOneDeme(0);
+	for(int i=0; i < 3;i++){
 		t1=clock();
 		KamilWorld.migration();
 		KamilWorld.globalBreeding();
@@ -54,23 +55,30 @@ int main()
 		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 	}
 	KamilWorld.listOfDemes();
-	KamilWorld.plotOneDeme(0);
-	cin.get();
-	KamilWorld.plotOneDeme(1);
-	cin.get();
-	KamilWorld.plotOneDeme(2);
-	cin.get();
-	KamilWorld.plotOneDeme(3);
-	cin.get();
-	KamilWorld.plotOneDeme(4);
-	cin.get();
-// 	Individual Eddie('C');
-// 	Individual Luis(Eddie.makeGamete(),Eddie.makeGamete());
-// 	
-// 	Luis.readGenotype();
+	char filePattern[] = "../pictures/pictXX.png";
+	KamilWorld.plotDemesOneByOne(filePattern);
+
+// 	vector<Chromosome> gamete1;
+// 	vector<Chromosome> gamete2;
+// 	Individual EddieP1('A');
+// 	Individual EddieP2('B');
+// 	EddieP1.makeGamete(gamete1);
+// 	EddieP2.makeGamete(gamete2);
+// 	Individual Eddie(gamete1,gamete2);
+// 	Eddie.makeGamete(gamete1);
+// 	Eddie.makeGamete(gamete2);
+// 	Individual Luis(gamete1,gamete2);
+// 	Luis.makeGamete(gamete1);
+// 	Luis.makeGamete(gamete2);
+// 	Individual Luis_jr(gamete1,gamete2);
+// 
+// 	EddieP1.plotGenotype();
+// 	EddieP2.plotGenotype();
+// 	Eddie.plotGenotype();
 // 	Luis.plotGenotype();
+// 	Luis_jr.plotGenotype();
+// 	cin.get();
 	
-	cin.get();
 	return 0;
 }
 

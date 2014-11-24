@@ -47,7 +47,7 @@ class Deme
 		void viewDeme();
 		void plotHeadOfDeme();
 		void plotDeme();
-		void plotDeme(string filename);
+		void plotDeme(const char* filename);
 	
 	private:
 		void swap(int ind1, int ind2);
@@ -114,8 +114,11 @@ Deme::Deme(int ind, char init){
 
 void Deme::quickBreed(){
 	Individual metademe[DEMEsize];
+	vector<Chromosome> gamete1, gamete2;
 	for(int i=0;i<DEMEsize;i++){
-		metademe[i] = Individual(deme[pickAnIndividual()].makeGamete(),deme[pickAnIndividual()].makeGamete());
+		deme[pickAnIndividual()].makeGamete(gamete1);
+		deme[pickAnIndividual()].makeGamete(gamete2);
+		metademe[i] = Individual(gamete1,gamete2);
 	}
 	for(int i=0;i<DEMEsize;i++){
 		deme[i] = metademe[i];
@@ -124,6 +127,7 @@ void Deme::quickBreed(){
 
 void Deme::Breed(){
 	vector<double> fitnessVector;
+	vector<Chromosome> gamete1, gamete2;
 	getFitnessVector(fitnessVector);
 	double RandMax = fitnessVector[DEMEsize-1];
 	
@@ -159,7 +163,9 @@ void Deme::Breed(){
 	Individual metademe[DEMEsize];
 	for(int i=0;i<DEMEsize;i++){
 // 		cout << "HAPPY " << couples[0][i] << " and HAPPY " << couples[1][i] << " got " << i << endl;
-		metademe[i] = Individual(deme[couples[0][i]].makeGamete(),deme[couples[1][i]].makeGamete());
+		deme[couples[0][i]].makeGamete(gamete1);
+		deme[couples[1][i]].makeGamete(gamete2);
+		metademe[i] = Individual(gamete1,gamete2);
 	}
 	
 	for(int i=0;i<DEMEsize;i++){
@@ -229,23 +235,24 @@ void Deme::plotDeme(){
 	int height = 1;
 	int width = 50;
 	dev = g2_open_X11(width*NUMBERofCHROMOSOMES,height*DEMEsize);
+	g2_set_auto_flush(dev, 0);
 	for(int i=0;i<DEMEsize;i++){
 		line = i + 1;
-		cout << "Individual: " << i+1 << endl;
+// 		cout << "Individual: " << i+1 << endl;
 		deme[i].plotGenotype(dev, line, height, width, DEMEsize);
 	}
+	g2_flush(dev);
 }
 
-void Deme::plotDeme(string filename){
+void Deme::plotDeme(const char* filename){
+// 	cout << filename << endl;
 	int line = 0, dev = 0;
 	int height = 1;
 	int width = 50;
-	dev  = g2_open_PS("pict.ps", g2_A4, g2_PS_land);
-// 	dev = g2_open_gd(filename,width*NUMBERofCHROMOSOMES,height*DEMEsize, g2_gd_png);
-// 	dev = g2_open_gd("rect.png", 300, 200, g2_gd_png);
+	dev = g2_open_gd(filename,width*NUMBERofCHROMOSOMES,height*DEMEsize, g2_gd_png);
 	for(int i=0;i<DEMEsize;i++){
 		line = i + 1;
-		cout << "Individual: " << i+1 << endl;
+// 		cout << "Individual: " << i+1 << endl;
 		deme[i].plotGenotype(dev, line, height, width, DEMEsize);
 	}
 	g2_close(dev);

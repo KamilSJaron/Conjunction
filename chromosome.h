@@ -51,7 +51,7 @@ class Chromosome
 		bool Bcheck(); /*returns 1 if there are only B, 0 in other case*/
 		int countB(); /*returns number of B loci in chromosome*/
 		int getNumberOfJunctions(); /*returns number of Junctions in chromosome*/
-		void getSizesOfBBlocks(vector<int> sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
+		void getSizesOfBBlocks(vector<int>& sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
 
 /* COMUNICATION METHODS */
 		int getResolution(){return RESOLUTION;}; /* return resolution of the chromosome */
@@ -137,7 +137,7 @@ int Chromosome::getNumberOfJunctions(){
 	return chromosome.size() - 1;
 }
 
-void Chromosome::getSizesOfBBlocks(vector<int> sizes){
+void Chromosome::getSizesOfBBlocks(vector<int>& sizes){
 	sizes.clear();
 	char last_seq = 'A';
 	int last_val = 0;

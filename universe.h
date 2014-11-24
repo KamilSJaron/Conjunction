@@ -31,9 +31,11 @@ class Universe
 		void showOneDeme(int index);
 		void viewOneDeme(int index);
 		void plotOneDeme(int index);
-		void plotOneDeme(int index, string fileName);
+		void plotOneDeme(int index, const char*  fileName);
 		void plotHeadOfDeme(int i);
+		void viewDemesOneByOne();
 		void plotDemesOneByOne();
+		void plotDemesOneByOne(char fileNamepattern[]);
 		
 // 		parameter changing functions
 		void setHeight(int heig);
@@ -353,7 +355,7 @@ void Universe::plotOneDeme(int index){
 	space[index]->plotDeme();
 }
 
-void Universe::plotOneDeme(int index, string fileName){
+void Universe::plotOneDeme(int index, const char*  fileName){
 	space[index]->plotDeme(fileName);
 }
 
@@ -361,10 +363,69 @@ void Universe::plotHeadOfDeme(int index){
 	space[index]->plotHeadOfDeme();
 }
 
-void Universe::plotDemesOneByOne(){
+void Universe::viewDemesOneByOne(){
 	for (auto i=space.begin(); i!=space.end(); ++i){
 		cout << "***** DEME " << i->first << " *****" << endl;
 		i->second->viewDeme();
+		cin.get();
+	}
+}
+
+void Universe::plotDemesOneByOne(){
+	for (auto i=space.begin(); i!=space.end(); ++i){
+		cout << "***** DEME " << i->first << " *****" << endl;
+		i->second->plotDeme();
+		cin.get();
+	}
+}
+
+void Universe::plotDemesOneByOne(char fileNamepattern[]){
+	int len = strlen(fileNamepattern);
+  static char* newName = fileNamepattern;
+	char decimal = '0', unit = '0';
+/*potebuju nejak z paterny udelat specificky nazev ktery budu moct poslat jako argument do plotovaci fce*/
+	for (auto i=space.begin(); i!=space.end(); ++i){
+		if(i->first > 10){
+			decimal = '1';
+			if(i->first > 20){
+				decimal = '2';
+			}
+		}
+		cout << "Unit: " << i->first % 10 << ' '; 
+		if(i->first % 10 == 0){
+			unit = '0';
+		}
+		if (i->first % 10 == 1){
+			unit = '1';
+		}
+		if (i->first % 10 == 2){
+			unit = '2';
+		}
+		if (i->first % 10 == 3){
+			unit = '3';
+		}
+		if (i->first % 10 == 4){
+			unit = '4';
+		}
+		if (i->first % 10 == 5){
+			unit = '5';
+		}
+		if (i->first % 10 == 6){
+			unit = '6';
+		}
+		if (i->first % 10 == 7){
+			unit = '7';
+		}
+		if (i->first % 10 == 8){
+			unit = '8';
+		}
+		if (i->first % 10 == 9){
+			unit = '9';
+		}
+		fileNamepattern[len - 6] = decimal;
+		fileNamepattern[len - 5] = unit;
+		cout << "***** DEME " << i->first << " *****" << endl;
+		i->second->plotDeme(newName);
 		cin.get();
 	}
 }

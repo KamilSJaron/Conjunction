@@ -1,7 +1,7 @@
 #include "chromosome.h"
 #include <g2.h>
 const int NUMBERofCHROMOSOMES = 20; /* mouse have 19+1, but now I am reproducing 84 results */
-const double RECOMBINATIONrate = 1.53;
+const double RECOMBINATIONrate = 1;
 const double SELECTIONpressure = 0.5;
 const double BETA = 1;
 
@@ -22,28 +22,28 @@ int getChiasma(double R){
 class Individual  
 {
 	public:
-// 		decl
+/* DECLARATION */
 		Individual();
-		Individual(char origin);
-		Individual(vector<Chromosome> gamete1, vector<Chromosome> gamete2);
-		~Individual(){genome[0].clear();genome[1].clear();};
+		Individual(char origin); /* init Individual as 'A', 'B' or pure "AB" heterozygot*/
+		Individual(vector<Chromosome>& gamete1, vector<Chromosome>& gamete2); /*init Individual by gametes on imput */
+		~Individual(){genome[0].clear();genome[1].clear();}; /* destructor */
 		
-// 		computing
-		vector<Chromosome> makeGamete(); //prepsat tak aby vector dostal pointrem
+/* COMPUTIONG METHODS */
+		void makeGamete(vector<Chromosome>& gamete); //
 		void replace_chromozome(int set, int position,map <int, char> input_chrom);
 		double getFitness();
 		bool Acheck();
 		bool Bcheck();
 		
-// 		plotting
+/* ASCII PLOTTING METHODS */
 		void readGenotype();
 		void viewGenotype();
 		
-		/* GRAPHICS */
+/* GRAPHICS */
 		void plotGenotype();
 		void plotGenotype(int dev,int line,int height, int width, int demesize);
 		
-// 		static int totalVectCount; //???
+// 		static int totalVectCount; /* ??? I have no idea what this should mean, but I wont delete it for the case It really had some idea... */
 	
 	private:
 		vector<Chromosome> genome[2];
@@ -70,7 +70,7 @@ Individual::Individual(char origin){
 	}
 }
 
-Individual::Individual(vector<Chromosome> gamete1, vector<Chromosome> gamete2){
+Individual::Individual(vector<Chromosome>& gamete1, vector<Chromosome>& gamete2){
 	int i; 
 	for(i=0;i<NUMBERofCHROMOSOMES;i++){
 		genome[0].push_back(gamete1[i]);
@@ -82,29 +82,29 @@ void Individual::replace_chromozome(int set, int position, map <int, char>  inpu
 	genome[set][position] = input_chrom;
 }
 
-vector<Chromosome> Individual::makeGamete(){
+void Individual::makeGamete(vector<Chromosome>& gamete){
 // iniciatiaztion of variables
+	gamete.clear();
 	vector<int> recombination;
 	Chromosome recombinant_ch;
-	vector<Chromosome> gamete;
 	char last_material_s1, last_material_s2;
 	int rec_pos, numberOfChaisma, starts_by;
 
-// for every chromosome...
+/* for every chromosome... */
 // 	cout << NUMBERofCHROMOSOMES << endl;
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
-// it is very important to understand syntax genome[set][chromosome]
+/* it is very important to understand syntax genome[set][chromosome] */
 		numberOfChaisma = getChiasma(RECOMBINATIONrate);
+// 		cout << numberOfChaisma << ' ';
 		starts_by = tossAcoin();
 		
-// 		cout << "numberOfChaisma " << numberOfChaisma << " starts_by " << starts_by << endl; 
-// no chiasma mean inheritance of whole one parent chromosome
+/* no chiasma mean inheritance of whole one parent chromosome */
 		if(numberOfChaisma == 0){
 			gamete.push_back(genome[starts_by][i]);
 			continue;
 		}
 		
-// inicialization / restart of variables
+/* inicialization / restart of variables */
 		auto pos1=genome[0][i].begin();
 		auto pos2=genome[1][i].begin();
 		last_material_s1 = genome[0][i].read(1);
@@ -115,7 +115,7 @@ vector<Chromosome> Individual::makeGamete(){
 		for(int index=0;index<numberOfChaisma;index++){
 			recombination.push_back(recombPosition());
 		}
-		sort (recombination.begin(), recombination.end(), arrangeObject);
+		sort(recombination.begin(), recombination.end(), arrangeObject);
 		
 // 		cout << "Rolled: ";
 // 		for(int index=0;index<numberOfChaisma;index++){
@@ -209,7 +209,6 @@ vector<Chromosome> Individual::makeGamete(){
 // add recombined gamete to vector
 		gamete.push_back(recombinant_ch);
 	}
-	return gamete;
 }
 
 double Individual::getFitness(){
