@@ -56,7 +56,13 @@ int main()
 	KamilWorld.listOfDemes();
 	KamilWorld.plotOneDeme(0);
 	cin.get();
-	KamilWorld.plotOneDeme(5);
+	KamilWorld.plotOneDeme(1);
+	cin.get();
+	KamilWorld.plotOneDeme(2);
+	cin.get();
+	KamilWorld.plotOneDeme(3);
+	cin.get();
+	KamilWorld.plotOneDeme(4);
 	cin.get();
 // 	Individual Eddie('C');
 // 	Individual Luis(Eddie.makeGamete(),Eddie.makeGamete());

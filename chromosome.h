@@ -40,24 +40,24 @@ class Chromosome
 		Chromosome(){};
 		Chromosome(char starting_char){chromosome[1] = starting_char;}; /*inic*/
 		Chromosome(map <int, char> input_chrom){chromosome = input_chrom;}; /*inic*/
-// 		~Chromosome(){chromosome.clear();}; /*destr*/
+		~Chromosome(){chromosome.clear();}; /*destr*/
 
 /* PLOTTING METHODS */
 		void showChromosome(); /*writes all junctions*/
 		void viewChromosome(); /*ASCII visualisation*/
 		
 /* COMPUTING METHODS */
-		bool Acheck(); /*returns 0 if there are only A, 1 in other case*/
-		bool Bcheck();
+		bool Acheck(); /*returns 1 if there are only A, 0 in other case*/
+		bool Bcheck(); /*returns 1 if there are only B, 0 in other case*/
 		int countB(); /*returns number of B loci in chromosome*/
 		int getNumberOfJunctions(); /*returns number of Junctions in chromosome*/
-		vector<int> getSizesOfBBlocks(); /*returns vector of sizes of B blocks in chromosome*/
-		
+		void getSizesOfBBlocks(vector<int> sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
+
 /* COMUNICATION METHODS */
 		int getResolution(){return RESOLUTION;}; /* return resolution of the chromosome */
-		void clear(){chromosome.clear();};
-		char read(int i){return chromosome[i];};
-		void write(int i, char l){chromosome[i] = l;};
+		void clear(){chromosome.clear();}; /* method for deleting chromosome */
+		char read(int i){return chromosome[i];}; /* returns value of junction */
+		void write(int i, char l){chromosome[i] = l;}; /* makes new junction*/
 		map<int, char>::iterator begin(){return chromosome.begin();};
 		map<int, char>::iterator end(){return chromosome.end();};
 		map<int, char>::iterator find(int i){return chromosome.find(i);};
@@ -100,7 +100,7 @@ void Chromosome::viewChromosome(){
 
 bool Chromosome::Acheck(){
 	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
-		if(pos->second == 'B'){
+		if(pos->second != 'A'){
 			return 0;
 		}
 	}
@@ -109,7 +109,7 @@ bool Chromosome::Acheck(){
 
 bool Chromosome::Bcheck(){
 	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
-		if(pos->second == 'A'){
+		if(pos->second != 'B'){
 			return 0;
 		}
 	}
@@ -137,8 +137,8 @@ int Chromosome::getNumberOfJunctions(){
 	return chromosome.size() - 1;
 }
 
-vector<int> Chromosome::getSizesOfBBlocks(){
-	vector<int> sizes;
+void Chromosome::getSizesOfBBlocks(vector<int> sizes){
+	sizes.clear();
 	char last_seq = 'A';
 	int last_val = 0;
 	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
@@ -151,6 +151,5 @@ vector<int> Chromosome::getSizesOfBBlocks(){
 	if(last_seq == 'B'){
 			sizes.push_back((RESOLUTION - last_val) + 1);
 	}
-	return sizes;
 }
 
