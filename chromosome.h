@@ -1,7 +1,6 @@
 #include <map>
 #include <random>
-const int RESOLUTION = 1001; /*RESOLUTION is Ls in Baird 94; it has to work with one loci case*/
-// v0.141107
+static int RESOLUTION = 101; /*RESOLUTION is Ls in Baird 94; it has to work with one loci case*/
 
 using namespace std;
 
@@ -33,6 +32,7 @@ int getResolution(){
  * The class functions are sorted to blocks by purpose.
  * @author Kamil S Jaron
  */
+
 class Chromosome
 {
 	public:
@@ -52,9 +52,10 @@ class Chromosome
 		int countB(); /*returns number of B loci in chromosome*/
 		int getNumberOfJunctions(); /*returns number of Junctions in chromosome*/
 		void getSizesOfBBlocks(vector<int>& sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
-
+		
 /* COMUNICATION METHODS */
-		int getResolution(){return RESOLUTION;}; /* return resolution of the chromosome */
+		static void setResolution(int res){RESOLUTION = res;};
+		static int getResolution(){return RESOLUTION;}; /* return resolution of the chromosome */
 		void clear(){chromosome.clear();}; /* method for deleting chromosome */
 		char read(int i){return chromosome[i];}; /* returns value of junction */
 		void write(int i, char l){chromosome[i] = l;}; /* makes new junction*/

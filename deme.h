@@ -1,10 +1,9 @@
 #include "individual.h"
 #include "g2_gd.h"
 
-const int DEMEsize = 512;
+static int DEMEsize = 512;
 // comment demesize in manual, it should be divideable by 2*number_of_edges
 // comment demesize in manual, it should be power of 3 for easy square plotting (64, 216, 512, 1000, 1728, 4096)
-// v0.141107
 
 using namespace std;
 
@@ -34,6 +33,7 @@ class Deme
 		Individual getIndividual(int index){return deme[index];}
 		int getDemeIndex(){return index;};
 		Deme(const vector<int>&);
+		static void setDEMEsize(int demesize){DEMEsize = demesize;};
 		
 // computing functions
 		void quickBreed();
@@ -113,7 +113,7 @@ Deme::Deme(int ind, char init){
 // // // // // // // // // // // // // //
 
 void Deme::quickBreed(){
-	Individual metademe[DEMEsize];
+	Individual *metademe = new Individual[DEMEsize];
 	vector<Chromosome> gamete1, gamete2;
 	for(int i=0;i<DEMEsize;i++){
 		deme[pickAnIndividual()].makeGamete(gamete1);
@@ -123,6 +123,7 @@ void Deme::quickBreed(){
 	for(int i=0;i<DEMEsize;i++){
 		deme[i] = metademe[i];
 	}
+	delete[] metademe;
 }
 
 void Deme::Breed(){
@@ -160,7 +161,7 @@ void Deme::Breed(){
 		}
 	}
 	
-	Individual metademe[DEMEsize];
+	Individual *metademe = new Individual[DEMEsize];
 	for(int i=0;i<DEMEsize;i++){
 // 		cout << "HAPPY " << couples[0][i] << " and HAPPY " << couples[1][i] << " got " << i << endl;
 		deme[couples[0][i]].makeGamete(gamete1);
@@ -171,6 +172,7 @@ void Deme::Breed(){
 	for(int i=0;i<DEMEsize;i++){
 		deme[i] = metademe[i];
 	}
+	delete[] metademe;
 }
 
 

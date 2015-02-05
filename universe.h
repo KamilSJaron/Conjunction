@@ -213,7 +213,7 @@ int Universe::migration(){
 	map<int, vector<Individual>> bufferVectorMap;
 	
 	vector<int> neigbours;
-	int MigInd = (DEMEsize) / (2 * edges_per_deme );
+	int MigInd = (512) / (2 * edges_per_deme );
 	int deme_index;
 	
 	for (auto i=space.begin(); i!=space.end(); ++i){
@@ -384,11 +384,15 @@ void Universe::plotDemesOneByOne(char fileNamepattern[]){
   static char* newName = fileNamepattern;
 	char decimal = '0', unit = '0';
 /*potebuju nejak z paterny udelat specificky nazev ktery budu moct poslat jako argument do plotovaci fce*/
+/* Mám pocit, že to bude fungovat jen pro 20 nik */ 
 	for (auto i=space.begin(); i!=space.end(); ++i){
 		if(i->first > 10){
 			decimal = '1';
 			if(i->first > 20){
 				decimal = '2';
+				if(i->first == 30){
+					cout << "WARNING: The image files 20-29 may are overwritten by higher demes.";
+				}
 			}
 		}
 		cout << "Unit: " << i->first % 10 << ' '; 

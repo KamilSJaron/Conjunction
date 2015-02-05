@@ -1,9 +1,10 @@
 #include "chromosome.h"
 #include <g2.h>
-const int NUMBERofCHROMOSOMES = 20; /* mouse have 19+1, but now I am reproducing 84 results */
-const double RECOMBINATIONrate = 1;
-const double SELECTIONpressure = 0.5;
-const double BETA = 1;
+static int NUMBERofCHROMOSOMES = 20; /* mouse have 19+1, but now I am reproducing 84 results */
+static double RECOMBINATIONrate = 1;
+static double SELECTIONpressure = 0.5;
+static double BETA = 1;
+
 
 using namespace std;
 
@@ -43,7 +44,11 @@ class Individual
 		void plotGenotype();
 		void plotGenotype(int dev,int line,int height, int width, int demesize);
 		
-// 		static int totalVectCount; /* ??? I have no idea what this should mean, but I wont delete it for the case It really had some idea... */
+/* COMUNICATION */
+		static void setNumberOfChromosomes(int ch){NUMBERofCHROMOSOMES = ch;};
+		static void setRECOMBINATIONrate(double Rr){RECOMBINATIONrate = Rr;};
+		static void setSELECTIONpressure(double Sp){SELECTIONpressure = Sp;};
+		static void setBETA(double beta){BETA = beta;};
 	
 	private:
 		vector<Chromosome> genome[2];

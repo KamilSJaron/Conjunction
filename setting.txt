@@ -1,0 +1,16 @@
+#######################################
+## SIMULATOR PARAMETER FILE TEMPLATE ##
+#######################################
+# this file serves as setting for the program forsim, if the file is missing in directory, the program returns error 
+# # is the comment symbol, everything after # will be ignored, do not hesitate to write down notes
+# The syntax is "NAMEofPARAMETER = VALUE;". Change only VALUE, correct reading of this file by simulation program is depended on it.
+# all the parameters are set to the default values, range of the reasonable values is in comment of every parameter in the format [min,max]
+# values out of recommended range are allowed, but without guarantee of successful simulation
+
+
+RESOLUTION = 101 # number of loci per chromosome, integer in [1;10000]
+NUMBERofCHROMOSOMES = 20 # integer in [1;21]
+RECOMBINATIONrate = 1 # real number in [0;5]
+SELECTIONpressure = 0.5 # real number in [0;1]
+BETA = 1 # real number in [0;16]
+DEMEsize = 512 # integer in [4;2048], use only power of 4, otherwise the plots wont be nice.
