@@ -40,6 +40,7 @@ class Universe
 // 		parameter changing functions
 		void setHeight(int heig);
 		void setLREdgesType(string ed_type);
+		void setUDEdgesType(string ed_type);
 		
 		int getNumOfDemesInColumn(){return number_of_demes_u_d;};
 		int getSpaceSize(){return space.size();};
@@ -157,6 +158,13 @@ int Universe::upper_border(int index, int max_index){
 			return index - 1;
 		}
 	}
+	if(type_of_u_d_edges == "wrap"){
+		if(index == max_index){
+			return index + (number_of_demes_u_d-1);
+		} else {
+			return index - 1;
+		}
+	}
 	cout << "The type of upper-down edges is not valid." << endl;
 	return -1;
 }
@@ -180,6 +188,13 @@ int Universe::lower_border(int index, int max_index){
 // 		lets say, that population_border is marked by 666 label
 		if(index == max_index + number_of_demes_u_d  - 1){
 			return 666;
+		} else {
+			return index + 1;
+		}
+	}
+	if(type_of_u_d_edges == "wrap"){
+		if(index == max_index + number_of_demes_u_d  - 1){
+			return index - (number_of_demes_u_d-1);
 		} else {
 			return index + 1;
 		}
@@ -313,6 +328,10 @@ void Universe::setHeight(int heig){
 
 void Universe::setLREdgesType(string ed_type){
 	type_of_l_r_edges = ed_type;
+}
+
+void Universe::setUDEdgesType(string ed_type){
+	type_of_u_d_edges = ed_type;
 }
 
 int Universe::getIndex(int i){
