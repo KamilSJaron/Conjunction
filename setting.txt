@@ -23,7 +23,7 @@ NUMBERofGENERATIONS = 500  # not implemented yet [1,10000]
 #parameter WORLDdefinition set up the space for the simulation. There are several options of definition, use only one definition per simulation.
 #the easiest is to chose one of the quick pre-defined worlds described in manual using label -quick
 
-WORLDdefinition -quick = 'HybridZone' 3 # ['HybridZone','InfInf','Arena','ArenaDiagonal','WorldLike','WorldLikeDiagonal'], the number is height of the hybrid zone, or size of squared arena or world, integer in [1 to 25].
+WORLDdefinition -quick = 'Arena' 3 # ['HybridZone','InfInf','Arena','ArenaDiagonal','WorldLike','WorldLikeDiagonal'], the number is height of the hybrid zone, or size of squared arena or world, integer in [1 to 25].
 
 #standard description is in following format (note, it is definig same world as default quick option)
 #WORLDdefinition -standard = 'extending' 2 'wrapping' 10 #type of left/right border ['extending','absorbing','wrapping',infinity], number of demes from left to right boarder at begining, the same with up/down

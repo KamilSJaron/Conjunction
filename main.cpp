@@ -37,6 +37,7 @@ int main()
 		cout << "Exit: input file problem." << endl;
 		return 1;
 	}
+	World.listOfDemes();
 	
 // 	this part yes
 	
@@ -249,7 +250,24 @@ int worldSlave(string line, Universe* World){
 					World->basicUnitCreator('b', 'A');
 					World->basicUnitCreator('r', 'B');
 					cout << "World is quick defined as " << n << " demes long hybrid zone." << endl;
-					World->listOfDemes();
+					return 0;
+				}
+				if(type == "Arena"){
+					World->setHeight(n);
+					World->setUDEdgesType("reflexive");
+					World->setLREdgesType("reflexive");
+					if(n % 2 == 0){
+						World->basicUnitCreator('b', 'A');
+					} else {
+						World->basicUnitCreator('b', 'C');
+					}
+					for(int i=0;i < (n / 2) - 1;i++){
+						World->basicUnitCreator('l', 'A');
+					}
+					for(int i=0;i < (n / 2);i++){
+						World->basicUnitCreator('r', 'B');
+					}
+					cout << "World is quick-defined as " << n << 'x' << n << " demes arena." << endl;
 					return 0;
 				}
 				cout << "Error: Unknown pre-defined world " << type << endl;
