@@ -17,6 +17,7 @@
 #include "universe.h" // Class of individuals
 
 static int SEEDtoRAND = 150206; //seed only for rand() fction, values of the poisson distribution are always generated with same initial seed
+static int NUMBERofGENERATIONS = 500;
 // #define NUM_OF_IMIGRANTS 100 /* number of complete heterozygotious imigrants per generation (assuming, that Pois(1)*500 would be very close to 500, cause computationally it is not worth the computational time)*/
 
 using namespace std;
@@ -38,30 +39,20 @@ int main()
 		return 1;
 	}
 	World.listOfDemes();
-	
 // 	this part yes
-	
-// 	clock_t t1,t2;
-	
-// 	KamilWorld.basicUnitCreator('b', 'A');
-// 	KamilWorld.basicUnitCreator('r', 'B');
-// 	KamilWorld.basicUnitCreator('l', 'A');
-// 	
-// 	KamilWorld.globalBreeding();
-// 	KamilWorld.listOfDemes();
-// 	KamilWorld.plotOneDeme(0);
-// 	for(int i=0; i < 3;i++){
-// 		t1=clock();
-// 		KamilWorld.migration();
-// 		KamilWorld.globalBreeding();
-// 		t2=clock();
-// 		cout << "Generation: " << i << " in ";
-// 		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-// 	}
+	clock_t t1,t2;
+	for(int i=0; i < NUMBERofGENERATIONS;i++){
+		t1=clock();
+		World.migration();
+		World.globalBreeding();
+		t2=clock();
+		cout << "Generation: " << i << " in ";
+		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+	}
 // 	KamilWorld.listOfDemes();
 // 	char filePattern[] = "../pictures/pictXX.png";
 // 	KamilWorld.plotDemesOneByOne(filePattern);
-// 	Chromosome::setResolution(512);
+
 // 	vector<Chromosome> gamete1;
 // 	vector<Chromosome> gamete2;
 // 	Individual EddieP1('A');
@@ -133,6 +124,11 @@ void parameterSlave(string parameter, double value){
 		cout << "Setting parameter SEED to: " << value << endl;
 		return;
 	}
+	if(parameter == "NUMBERofGENERATIONS"){
+		NUMBERofGENERATIONS = value;
+		cout << "Setting parameter NUMBERofGENERATIONS to: " << value << endl;
+		return;
+	}
 	cout << "Warning: unknown parameter: " << parameter << endl;
 	return;
 }
@@ -188,7 +184,7 @@ int setParameters(Universe* World){
 }
 
 int worldSlave(string line, Universe* World){
-	int switcher = 0, n = 10;
+	int switcher = 0, n = 0;
 	string type, number;
 	for(unsigned int i = 0;i < line.size();i++){
 		if(line[i] == '-'){
@@ -275,7 +271,6 @@ int worldSlave(string line, Universe* World){
 			}
 		}
 	}
-// 	cout << "World is quick defined with default length 10 demes hybrid zone.";
 	return 0;
 }
 
