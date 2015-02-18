@@ -47,7 +47,7 @@ int main()
 		World.globalBreeding();
 		t2=clock();
 		cout << "Generation: " << i << " in ";
-		World.listOfDemes();
+// 		World.listOfDemes();
 		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 	}
 // 	KamilWorld.listOfDemes();

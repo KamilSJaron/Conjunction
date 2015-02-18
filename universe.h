@@ -87,7 +87,34 @@ void Universe::basicUnitCreator(char type, char init){
 	vector<int> new_indexes;
 	int index;
 	if(dimension == 1){
-		cout << "I am creating a 1D world, ou yeah...\n";
+		switch (type) {
+			case 'b':
+				index_next_left = 1;
+				index_next_right = 2;
+				index_last_left = 0;
+				index_last_right = 0;
+				new_indexes.clear();
+				new_indexes.push_back(index_next_left);
+				new_indexes.push_back(index_next_right);
+				space[0] = new Deme(0,new_indexes,init);
+				break;
+			case 'l':
+				new_indexes.clear();
+				new_indexes.push_back(index_last_left);
+				new_indexes.push_back(max_index + 2);
+				space[index_next_left] = new Deme(index_next_left,new_indexes,init);
+				index_last_left = index_next_left;
+				index_next_left = max_index + 2;
+				break;
+			case 'r':
+				new_indexes.clear();
+				new_indexes.push_back(index_last_right);
+				new_indexes.push_back(max_index + 2);
+				space[index_next_right] = new Deme(index_next_right,new_indexes,init);
+				index_last_right = index_next_right;
+				index_next_right = max_index + 2;
+				break;
+		}
 		return;
 	}
 	
@@ -245,10 +272,10 @@ int Universe::migration(){
 		neigbours = deme->second->getNeigbours();
 		
 // 		following code should be deleted afterwards, slowing down the program (testing)
-		if(neigbours.size() != (unsigned)edges_per_deme){
-			cout << "ERROR: More neigbours than edges: " << neigbours.size() << " != " << edges_per_deme << endl;
-			return -1;
-		}
+// 		if(neigbours.size() != (unsigned)edges_per_deme){
+// 			cout << "ERROR: More neigbours than edges: " << neigbours.size() << " != " << edges_per_deme << endl;
+// 			return -1;
+// 		}
 
 		for(unsigned int j=0;j < neigbours.size();j++){
 			deme_index = neigbours[j];
