@@ -36,6 +36,7 @@ class Universe
 		void viewDemesOneByOne();
 		void plotDemesOneByOne();
 		void plotDemesOneByOne(char fileNamepattern[]);
+		int SaveTheUniverse();
 		
 // 		parameter changing functions
 		void setHeight(int heig);
@@ -100,8 +101,8 @@ void Universe::basicUnitCreator(char type, char init){
 				break;
 			case 'l':
 				new_indexes.clear();
-				new_indexes.push_back(index_last_left);
 				new_indexes.push_back(max_index + 2);
+				new_indexes.push_back(index_last_left);
 				space[index_next_left] = new Deme(index_next_left,new_indexes,init);
 				index_last_left = index_next_left;
 				index_next_left = max_index + 2;
@@ -514,6 +515,39 @@ void Universe::plotDemesOneByOne(char fileNamepattern[]){
 	}
 }
 
+int Universe::SaveTheUniverse(){
+	string fileName = "../playground/Bazikyn_simulation.txt";
+	int index = index_last_left;
+	ofstream ofile;
+	vector<double> props;
+	
+	ofile.open(fileName); // Otevre soubor
+	if (ofile.fail()){
+		return 1;
+	}  
+	
+	for(unsigned int i = 0; i < space.size(); i++){
+		props = space[index]->getBproportion();
+		ofile << index << '\t';
+		for(unsigned int ind = 0; ind < props.size(); ind++){
+			ofile << props[ind] << '\t';
+		}
+		ofile << endl;
+		if(index != index_last_right){
+// 			cout << index << ' ';
+// 			cout << space[index]->getNeigbours()[0] << ' ';
+			index = space[index]->getNeigbours()[1];
+		} else {
+			break;
+		}
+	}
+	
+	ofile.close();
+	
+// 	index_last_left = space[index_last_left].getNeigbours()[2];
+	cout << "The output was sucesfully saved to: " << fileName << endl;
+	return 0;
+}
 
 
 

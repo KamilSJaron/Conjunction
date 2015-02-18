@@ -38,6 +38,7 @@ int main()
 		cout << "Exit: input file problem." << endl;
 		return 1;
 	}
+	cout << "Starting world: " << endl;
 	World.listOfDemes();
 // 	this part yes
 	clock_t t1,t2;
@@ -47,9 +48,15 @@ int main()
 		World.globalBreeding();
 		t2=clock();
 		cout << "Generation: " << i << " in ";
-// 		World.listOfDemes();
+		World.listOfDemes();
 		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 	}
+	check = World.SaveTheUniverse();
+	if(check != 0){
+		cout << "Error in saving the output.";
+	}
+	cout << "Ending world: " << endl;
+	World.listOfDemes();
 // 	KamilWorld.listOfDemes();
 // 	char filePattern[] = "../pictures/pictXX.png";
 // 	KamilWorld.plotDemesOneByOne(filePattern);

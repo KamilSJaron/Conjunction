@@ -16,7 +16,7 @@ SELECTIONpressure = 0.5             # real number in [0;1]
 BETA = 1                            # real number in [0.0625;16]
 DEMEsize = 256                      # integer in [4;2048], use only power of 4, otherwise the plots wont be nice.
 SEED = 150206                       # any number (the date can be useful and every time original)
-NUMBERofGENERATIONS = 500           # not implemented yet [1,10000]
+NUMBERofGENERATIONS = 3           # [1,10000]
 NAMEofOUTPUTfile = '150206_out.dat' # any name with plain text sulfix
 
 # World definition

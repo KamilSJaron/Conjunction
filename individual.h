@@ -33,6 +33,7 @@ class Individual
 		void makeGamete(vector<Chromosome>& gamete); //
 		void replace_chromozome(int set, int position,map <int, char> input_chrom);
 		double getFitness();
+		double getBprop();
 		bool Acheck();
 		bool Bcheck();
 		
@@ -223,10 +224,22 @@ double Individual::getFitness(){
 		Bcount += genome[0][i].countB();
 		Bcount += genome[1][i].countB();
 	}
-	Bcount = Bcount / (getResolution()*2); /* relative B count*/
+	Bcount = Bcount / (getResolution()*2*NUMBERofCHROMOSOMES); /* relative B count*/
 	fitness = 1 - (SELECTIONpressure * pow( 4 * Bcount * (1 - Bcount),BETA));
+// 	cout << fitness << ' ';
 	return fitness;
 }
+
+double Individual::getBprop(){
+	double prop = 0;
+	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
+		prop += genome[0][i].countB();
+		prop += genome[1][i].countB();
+	}
+	prop = prop / (getResolution()*2*NUMBERofCHROMOSOMES);
+	return prop;
+}
+
 
 bool Individual::Acheck(){
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){

@@ -42,6 +42,7 @@ class Deme
 		void getFitnessVector(vector<double>& fitnessVector);
 		void permutation(); // permutation function
 		void integrateMigrantVector(vector<Individual>& migBuffer);
+		vector<double> getBproportion(); 
 		
 // plotting functions
 		void showDeme();
@@ -196,6 +197,14 @@ void Deme::integrateMigrantVector(vector<Individual>& migBuffer){
 	}
 // 	cout << endl;
 	return;
+}
+
+vector<double> Deme::getBproportion(){
+	vector<double> props;
+	for(int i = 0;i < DEMEsize;i++){
+		props.push_back(deme[i].getBprop());
+	}
+	return props;
 }
 
 void Deme::getFitnessVector(vector<double>& fitnessVector){
