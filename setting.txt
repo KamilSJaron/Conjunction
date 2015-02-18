@@ -4,7 +4,7 @@
 # this file serves as setting for the program forsim, if the file is missing in directory, the program returns error 
 # # is the comment symbol, everything after # will be ignored, do not hesitate to write down notes
 # The syntax is "NAMEofPARAMETER = VALUE;". Change only VALUE, correct reading of this file by simulation program is depended on it.
-# all the parameters are set to the default values, range of the reasonable values is in comment of every parameter in the format [min,max]
+# all the parameters are set to the default values, range of the reasonable values is in comment after every parameter in the format [min,max]
 # values out of recommended range are allowed, but without guarantee of successful simulation
 
 # Numerical parameters
@@ -14,7 +14,7 @@ NUMBERofCHROMOSOMES = 20            # integer in [1;21]
 RECOMBINATIONrate = 1               # real number in [0;5]
 SELECTIONpressure = 0.5             # real number in [0;1]
 BETA = 1                            # real number in [0.0625;16]
-DEMEsize = 512                      # integer in [4;2048], use only power of 4, otherwise the plots wont be nice.
+DEMEsize = 256                      # integer in [4;2048], use only power of 4, otherwise the plots wont be nice.
 SEED = 150206                       # any number (the date can be useful and every time original)
 NUMBERofGENERATIONS = 500           # not implemented yet [1,10000]
 NAMEofOUTPUTfile = '150206_out.dat' # any name with plain text sulfix
@@ -24,8 +24,8 @@ NAMEofOUTPUTfile = '150206_out.dat' # any name with plain text sulfix
 #parameter WORLDdefinition set up the space for the simulation. There are several options of definition, use only one definition per simulation.
 #the easiest is to chose one of the quick pre-defined worlds described in manual using label -quick
 
-WORLDdefinition -quick = 'Arena' 4 # ['HybridZone','InfInf','Arena','ArenaDiagonal','WorldLike','WorldLikeDiagonal'], the number is height of the hybrid zone, or size of squared arena or world, integer in [1 to 25].
-# if the n is odd, the middle line of demes will be filled equally by individuals of 'a' and 'b' population
+WORLDdefinition -quick = 'HybridZone' 3 # ['HybridZone','InfInf','Arena','ArenaDiagonal','WorldLike','WorldLikeDiagonal'], the number is height of the hybrid zone, or size of squared arena or world, integer in [1 to 25].
+# if the size of arena / world-like is odd, the middle line of demes will be filled equally by individuals of 'a' and 'b' population
 
 #standard description is in following format (note, it is definig same world as default quick option)
-#WORLDdefinition -standard = 'extending' 2 'wrapping' 10 #type of left/right border ['extending','absorbing','wrapping',infinity], number of demes from left to right boarder at begining, the same with up/down
+#WORLDdefinition -standard = 'extending' 2 'wrapping' 3 #type of left/right border ['extending','absorbing','wrapping',infinity], number of demes from left to right boarder at begining, the same with up/down

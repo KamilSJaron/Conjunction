@@ -47,6 +47,7 @@ int main()
 		World.globalBreeding();
 		t2=clock();
 		cout << "Generation: " << i << " in ";
+		World.listOfDemes();
 		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 	}
 // 	KamilWorld.listOfDemes();
@@ -242,7 +243,14 @@ int worldSlave(string line, Universe* World){
 				istringstream(number) >> n;
 				if(type == "HybridZone"){
 					World->setHeight(n);
-					World->setUDEdgesType("wrap");
+					if(n == 1){
+						World->setDimension(1);
+						World->setNumberOfEdges(2);
+					} else {
+						World->setDimension(2);
+						World->setNumberOfEdges(4);
+						World->setUDEdgesType("wrap");
+					}
 					World->basicUnitCreator('b', 'A');
 					World->basicUnitCreator('r', 'B');
 					cout << "World is quick defined as " << n << " demes long hybrid zone." << endl;

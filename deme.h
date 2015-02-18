@@ -34,6 +34,7 @@ class Deme
 		int getDemeIndex(){return index;};
 		Deme(const vector<int>&);
 		static void setDEMEsize(int demesize){DEMEsize = demesize;};
+		static int getDEMEsize(){return DEMEsize;};
 		
 // computing functions
 		void quickBreed();
@@ -186,12 +187,14 @@ void Deme::permutation(){
 }
 
 void Deme::integrateMigrantVector(vector<Individual>& migBuffer){
-	int i = 0;
-	while((unsigned)i < migBuffer.size()){
+	unsigned int i = 0;
+	while(i < migBuffer.size()){
+// 		cout << i << ' ';
 		deme[i] = migBuffer[i];
 		i++;
 // 		migBuffer[i].plotGenotype();
 	}
+// 	cout << endl;
 	return;
 }
 

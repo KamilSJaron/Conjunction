@@ -41,6 +41,8 @@ class Universe
 		void setHeight(int heig);
 		void setLREdgesType(string ed_type);
 		void setUDEdgesType(string ed_type);
+		void setDimension(int dim);
+		void setNumberOfEdges(int nue);
 		
 		int getNumOfDemesInColumn(){return number_of_demes_u_d;};
 		int getSpaceSize(){return space.size();};
@@ -52,9 +54,7 @@ class Universe
 		int lower_border(int index, int max_index);
 		int side_border(int reflexive, int extending);
 // 		variables
-// 		vector<Deme*> world;
 		map<int, Deme*> space;
-				
 		int dimension, edges_per_deme;
 		int number_of_demes_l_r, number_of_demes_u_d;
 		string type_of_l_r_edges, type_of_u_d_edges;
@@ -86,6 +86,11 @@ void Universe::basicUnitCreator(char type, char init){
 // 	cout << "Space size: " << max_index << endl;
 	vector<int> new_indexes;
 	int index;
+	if(dimension == 1){
+		cout << "I am creating a 1D world, ou yeah...\n";
+		return;
+	}
+	
 	switch (type) {
 		case 'b':
 // 			case of creating all new indexes
@@ -129,7 +134,7 @@ void Universe::basicUnitCreator(char type, char init){
 			index_last_right = index;
 			break;
 		default:
-			cout << "I have no idea, what do you mean by... " << type << " I understand only 'b' basic, 'l' left and 'r' right, type of basic unit.. tr it again please." << endl;
+			cout << "I have no idea, what do you mean by... " << type << " I understand only 'b' basic, 'l' left and 'r' right, type of basic unit.. try it again please." << endl;
 			break;
 	}
 	return;
@@ -222,52 +227,71 @@ int Universe::side_border(int reflexive, int extending){
 
 int Universe::migration(){
 	if(space.empty()){
-		cout << "Missing demes" << endl;
+		cout << "ERROR: Missing demes" << endl;
 		return -1;
 	}
+
+	int index_last_left_fix = index_last_left;
+	int index_last_right_fix = index_last_right;
 	map<int, vector<Individual>> bufferVectorMap;
 	
 	vector<int> neigbours;
-	int MigInd = (512) / (2 * edges_per_deme );
+	int MigInd = Deme::getDEMEsize() / (2 * edges_per_deme );
 	int deme_index;
 	
-	for (auto i=space.begin(); i!=space.end(); ++i){
+	for (auto deme=space.begin(); deme!=space.end(); ++deme){
 // 		cout << i << endl;
 // 		cout << "lets transfer individuals of DEME " << i << endl;
-		neigbours = i->second->getNeigbours();
-// 		i->second->plotDeme();
-//     i->second->permutation();
-// 		i->second->plotDeme();
-// 		
-		for(int j=0;(unsigned)j < neigbours.size();j++){
+		neigbours = deme->second->getNeigbours();
+		
+// 		following code should be deleted afterwards, slowing down the program (testing)
+		if(neigbours.size() != (unsigned)edges_per_deme){
+			cout << "ERROR: More neigbours than edges: " << neigbours.size() << " != " << edges_per_deme << endl;
+			return -1;
+		}
+
+		for(unsigned int j=0;j < neigbours.size();j++){
 			deme_index = neigbours[j];
 			for(int k=0;k < MigInd; k++){
-				bufferVectorMap[deme_index].push_back(i->second->getIndividual(k));
+				bufferVectorMap[deme_index].push_back(deme->second->getIndividual(k));
 // 				cout << "from " << world[i]->getDemeIndex() << " to " << deme_index << endl;
 // 				world[i]->getIndividual(k).plotGenotype();
 			}
 		}
 	}
 
-	for(auto i=bufferVectorMap.begin(); i!=bufferVectorMap.end(); ++i){
-// 		cout << i->first << endl;
+	for(auto buff=bufferVectorMap.begin(); buff!=bufferVectorMap.end(); ++buff){
+		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
+			for(int k=0;k < MigInd; k++){
+				bufferVectorMap[buff->first].push_back(Individual('A'));
+			}
+		}
+		if(buff->first >= index_last_right_fix and buff->first < index_last_right_fix + number_of_demes_u_d){
+			for(int k=0;k < MigInd; k++){
+				bufferVectorMap[buff->first].push_back(Individual('B'));
+			}
+		}
+		
+// 		cout << "Buffer " << buff->first << " has size " << buff->second.size() << endl;
 // 			if(there are only native individuals){
 // 				continue;
 // 			} else {
-		if(index_next_left == i->first){
-			if(Acheck(i->second)){
+		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
+			if(Acheck(buff->second)){
 				continue;
 			}
+// 			cout << "To the left: " << buff->first << endl;
 			basicUnitCreator('l', 'A');
 		} 
-		if(index_next_right == i->first){
-			if(Bcheck(i->second)){
+		if(index_next_right <= buff->first and buff->first < index_next_right + number_of_demes_u_d){
+			if(Bcheck(buff->second)){
 				continue;
 			}
+// 			cout << "To the right: " << buff->first << endl;
 			basicUnitCreator('r', 'B');
 		}
 // 		}
-		space[i->first]->integrateMigrantVector(i->second);
+		space[buff->first]->integrateMigrantVector(buff->second);
 	}
 	return 0;
 }
@@ -334,6 +358,15 @@ void Universe::setUDEdgesType(string ed_type){
 	type_of_u_d_edges = ed_type;
 }
 
+void Universe::setDimension(int dim){
+	dimension = dim;
+}
+
+void Universe::setNumberOfEdges(int nue){
+	edges_per_deme = nue;
+}
+
+
 int Universe::getIndex(int i){
 	if((unsigned)i >= space.size()){
 		return -1;
@@ -349,6 +382,7 @@ int Universe::getIndex(int i){
 void Universe::listOfDemes(){
 	int worlsize = space.size();
 	cout << "World of size " << worlsize << endl;
+	cout << "of dimension: " << dimension << endl;
 	cout << "Number of demes up to down: " << number_of_demes_u_d << endl;
 	cout << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
 	if(type_of_l_r_edges != "extending"){
