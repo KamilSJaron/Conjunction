@@ -33,7 +33,7 @@ class Individual
 		void makeGamete(vector<Chromosome>& gamete); //
 		void replace_chromozome(int set, int position,map <int, char> input_chrom);
 		double getFitness();
-		double getBprop();
+		double getBprop() const;
 		bool Acheck();
 		bool Bcheck();
 		
@@ -230,7 +230,7 @@ double Individual::getFitness(){
 	return fitness;
 }
 
-double Individual::getBprop(){
+double Individual::getBprop() const{
 	double prop = 0;
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
 		prop += genome[0][i].countB();

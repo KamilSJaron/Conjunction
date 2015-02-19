@@ -33,7 +33,7 @@ int main()
 // 	this part sould not be edited anymore
 	srand (SEEDtoRAND); // setting a seed
 	Universe World;
-	int check = setParameters(&World);
+	int check = setParameters(&World), j = 1;
 	if(check == 1){
 		cout << "Exit: input file problem." << endl;
 		return 1;
@@ -42,46 +42,33 @@ int main()
 	World.listOfDemes();
 // 	this part yes
 	clock_t t1,t2;
+	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 9)),5);
+	
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
 		t1=clock();
+		cout << "Generation: " << i << endl;
 		World.migration();
+// 		cout << "Migration: done\nBreeding:procesing\n" << endl;
 		World.globalBreeding();
+// 		cout << "Breeding: done" << endl;
 		t2=clock();
-		cout << "Generation: " << i << " in ";
-		World.listOfDemes();
+		cout  << " done in ";
 		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-	}
-	check = World.SaveTheUniverse();
-	if(check != 0){
-		cout << "Error in saving the output.";
+		if((i % (modulo)) == 0){
+			check = World.SaveTheUniverse(j);
+			if(check != 0){
+				cout << "Error in saving the output." << endl;
+				return 1;
+			}
+			j++;
+		}
 	}
 	cout << "Ending world: " << endl;
 	World.listOfDemes();
-// 	KamilWorld.listOfDemes();
-// 	char filePattern[] = "../pictures/pictXX.png";
-// 	KamilWorld.plotDemesOneByOne(filePattern);
 
-// 	vector<Chromosome> gamete1;
-// 	vector<Chromosome> gamete2;
-// 	Individual EddieP1('A');
-// 	Individual EddieP2('B');
-// 	EddieP1.makeGamete(gamete1);
-// 	EddieP2.makeGamete(gamete2);
-// 	Individual Eddie(gamete1,gamete2);
-// 	Eddie.makeGamete(gamete1);
-// 	Eddie.makeGamete(gamete2);
-// 	Individual Luis(gamete1,gamete2);
-// 	Luis.makeGamete(gamete1);
-// 	Luis.makeGamete(gamete2);
-// 	Individual Luis_jr(gamete1,gamete2);
-// // 
-// 	EddieP1.plotGenotype();
-// 	EddieP2.plotGenotype();
-// 	Eddie.plotGenotype();
-// 	Luis.plotGenotype();
-// 	Luis_jr.plotGenotype();
-// 	cin.get();
-// 	
+//  	char filePattern[] = "../playground/pictXX.png";
+//  	World.plotDemesOneByOne(filePattern);
+
 	return 0;
 }
 

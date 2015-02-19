@@ -49,7 +49,7 @@ class Chromosome
 /* COMPUTING METHODS */
 		bool Acheck(); /*returns 1 if there are only A, 0 in other case*/
 		bool Bcheck(); /*returns 1 if there are only B, 0 in other case*/
-		int countB(); /*returns number of B loci in chromosome*/
+		int countB() const; /*returns number of B loci in chromosome*/
 		int getNumberOfJunctions(); /*returns number of Junctions in chromosome*/
 		void getSizesOfBBlocks(vector<int>& sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
 		
@@ -117,7 +117,7 @@ bool Chromosome::Bcheck(){
 	return 1;
 }
 
-int Chromosome::countB(){
+int Chromosome::countB() const{
 	int sum = 0;
 	char last_seq = 'A';
 	int last_val = 0;

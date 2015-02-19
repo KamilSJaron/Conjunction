@@ -42,7 +42,7 @@ class Deme
 		void getFitnessVector(vector<double>& fitnessVector);
 		void permutation(); // permutation function
 		void integrateMigrantVector(vector<Individual>& migBuffer);
-		vector<double> getBproportion(); 
+		vector<double> getBproportion() const; 
 		
 // plotting functions
 		void showDeme();
@@ -133,13 +133,26 @@ void Deme::Breed(){
 	vector<Chromosome> gamete1, gamete2;
 	getFitnessVector(fitnessVector);
 	double RandMax = fitnessVector[DEMEsize-1];
+// 	if(RandMax > DEMEsize){
+// 		cout << "WARNING: RandMax is " << RandMax << endl;
+// 	}
 	
+	double roll;
 	map<double, int> parentPick;
+	map<double, int>::iterator it;
 	vector<int> couples[2];
 	
 	for(int i=0;i < DEMEsize*2;i++){
-// 		cout << (selectionRand() * RandMax) << " \n";
-		parentPick[selectionRand() * RandMax] = i;
+		roll = (selectionRand() * RandMax);
+// 		if(roll >= RandMax or roll <= 0){
+// 			cout << "WARNING: " << roll << " !!! - bad roll\n" << endl;
+// 		}
+		it = parentPick.find(roll);
+		while(it != parentPick.end()){
+			roll -= 0.001;
+			it = parentPick.find(roll);
+		}
+		parentPick[roll] = i;
 	}
 	
 	int i = 0;
@@ -160,12 +173,22 @@ void Deme::Breed(){
 			++pos;
 		} else {
 			i++;
+			if(i >= DEMEsize){
+				cout << "WARNING: individual " << i << " with fitness limit " << fitnessVector[i] << endl;
+			}
 		}
+	}
+	
+	if(couples[0].size() != couples[1].size()){
+		cout << "WARNING: Mothers: " << couples[0].size() << endl;
+		cout << "WARNING: Fathers: " << couples[1].size() << endl;
 	}
 	
 	Individual *metademe = new Individual[DEMEsize];
 	for(int i=0;i<DEMEsize;i++){
-// 		cout << "HAPPY " << couples[0][i] << " and HAPPY " << couples[1][i] << " got " << i << endl;
+		if(couples[0][i] >= DEMEsize or couples[1][i] >= DEMEsize){
+			cout << "WARNING: HAPPY " << couples[0][i] << " and HAPPY " << couples[1][i] << " got " << i << endl;
+		}
 		deme[couples[0][i]].makeGamete(gamete1);
 		deme[couples[1][i]].makeGamete(gamete2);
 		metademe[i] = Individual(gamete1,gamete2);
@@ -176,7 +199,6 @@ void Deme::Breed(){
 	}
 	delete[] metademe;
 }
-
 
 void Deme::permutation(){
 	int j = 0;
@@ -199,7 +221,7 @@ void Deme::integrateMigrantVector(vector<Individual>& migBuffer){
 	return;
 }
 
-vector<double> Deme::getBproportion(){
+vector<double> Deme::getBproportion() const{
 	vector<double> props;
 	for(int i = 0;i < DEMEsize;i++){
 		props.push_back(deme[i].getBprop());
@@ -207,7 +229,7 @@ vector<double> Deme::getBproportion(){
 	return props;
 }
 
-void Deme::getFitnessVector(vector<double>& fitnessVector){
+void Deme::getFitnessVector(vector<double> &fitnessVector){
 	double sum = 0;
 	for(int i = 0;i < DEMEsize;i++){
 		sum += deme[i].getFitness();

@@ -1,4 +1,5 @@
 #include "deme.h"
+#include <iterator>
 // v0.141107
 
 using namespace std;
@@ -23,10 +24,12 @@ class Universe
 		int migration(); // int will be the errorcode
 		void globalNaiveBreeding();
 		void globalBreeding();
+// 		void globalBreeding(char type);
 		bool Acheck(vector<Individual> buffer);
 		bool Bcheck(vector<Individual> buffer);
 		
 // 		plotting functions
+		void listOfParameters();
 		void listOfDemes();
 		void showOneDeme(int index);
 		void viewOneDeme(int index);
@@ -36,7 +39,7 @@ class Universe
 		void viewDemesOneByOne();
 		void plotDemesOneByOne();
 		void plotDemesOneByOne(char fileNamepattern[]);
-		int SaveTheUniverse();
+		int SaveTheUniverse(int order);
 		
 // 		parameter changing functions
 		void setHeight(int heig);
@@ -346,6 +349,23 @@ void Universe::globalBreeding(){
 	}
 }
 
+// void Universe::globalBreeding(char type){
+// 	vector<int> indexes;
+// 	for (auto i=space.begin(); i!=space.end(); ++i){
+// 		indexes.push_back(i->first);
+// 	}
+// 	cout << "checkpoint 1" << endl;
+// 	int index = 0;
+// 	int i_size = indexes.size();
+// 	
+// // 	#pragma omp parallel for
+// 	for(int i = 0; i < i_size; i++){
+// 		index = indexes[i];
+// 		space[index]->Breed();
+// 		cout << "Deme: " << i << " Done \n";
+// 	}
+// }
+
 bool Universe::Acheck(vector< Individual > buffer){
 	for(int i = 0; (unsigned)i < buffer.size(); i++){
 		if(buffer[i].Acheck()){
@@ -407,6 +427,15 @@ int Universe::getIndex(int i){
  //  PLOT //
 // // // //
 
+void Universe::listOfParameters(){
+	cout << "***************" << endl << "Size of World: " << space.size() << " Dim: " << dimension << " edges_per_deme: " << edges_per_deme << endl
+	<< "Number of demes l/r: " << number_of_demes_l_r << " Number of demes u/d: " << number_of_demes_u_d << endl
+	<< "Type of l/r edges: " << type_of_l_r_edges << " Type of u/d edges: " << type_of_u_d_edges << endl
+	<< "Last left index: " << index_last_left << " Last right index: " << index_last_right << endl
+	<< "Next left index: " << index_next_left << " Next right index: " << index_next_right << endl  << "***************" << endl;
+	return;
+}
+
 void Universe::listOfDemes(){
 	int worlsize = space.size();
 	cout << "World of size " << worlsize << endl;
@@ -436,7 +465,7 @@ void Universe::plotOneDeme(int index){
 	space[index]->plotDeme();
 }
 
-void Universe::plotOneDeme(int index, const char*  fileName){
+void Universe::plotOneDeme(int index, const char* fileName){
 	space[index]->plotDeme(fileName);
 }
 
@@ -472,7 +501,8 @@ void Universe::plotDemesOneByOne(char fileNamepattern[]){
 			if(i->first > 20){
 				decimal = '2';
 				if(i->first == 30){
-					cout << "WARNING: The image files 20-29 may are overwritten by higher demes.";
+					cout << "WARNING: Too much pictures. Only first 30 are plotted.";
+					break;
 				}
 			}
 		}
@@ -515,13 +545,14 @@ void Universe::plotDemesOneByOne(char fileNamepattern[]){
 	}
 }
 
-int Universe::SaveTheUniverse(){
-	string fileName = "../playground/Bazikyn_simulation.txt";
+int Universe::SaveTheUniverse(int order){
+	char fileName[] = "../playground/Bazikyn_simulationX.txt";
+	fileName[32] = char(order+'0');
 	int index = index_last_left;
 	ofstream ofile;
 	vector<double> props;
 	
-	ofile.open(fileName); // Otevre soubor
+	ofile.open(fileName); // Opens file
 	if (ofile.fail()){
 		return 1;
 	}  
