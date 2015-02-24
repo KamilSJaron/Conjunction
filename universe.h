@@ -23,6 +23,8 @@ class Universe
 // 		computing functions
 		int migration(); // int will be the errorcode
 		void globalNaiveBreeding();
+		void Breed(int index);
+		void set(int index, string type);
 		void globalBreeding();
 // 		void globalBreeding(char type);
 		bool Acheck(vector<Individual> buffer);
@@ -333,6 +335,47 @@ void Universe::globalNaiveBreeding(){
 	}
 }
 
+void Universe::Breed(int index){
+	space[index]->Breed();
+}
+
+void Universe::set(int index,string type){
+	vector<Individual> migBuffer;
+	if(type == "pureA"){
+		for(int i=0;i<DEMEsize;i++){
+			migBuffer.push_back('A');
+		}
+		space[index]->integrateMigrantVector(migBuffer);
+		return;
+	}
+	
+	if(type == "pureB"){
+		for(int i=0;i<DEMEsize;i++){
+			migBuffer.push_back('B');
+		}
+		space[index]->integrateMigrantVector(migBuffer);
+		return;
+	}
+	
+	if(type == "hetero"){
+		for(int i=0;i<DEMEsize/4;i++){
+			migBuffer.push_back('A');
+		}
+		for(int i=0;i<DEMEsize/2;i++){
+			migBuffer.push_back('C');
+		}
+		for(int i=0;i<DEMEsize/4;i++){
+			migBuffer.push_back('B');
+		}
+		space[index]->integrateMigrantVector(migBuffer);
+		return;
+	}
+	
+	cout << "ERROR: unknown parameter " << type << " of Universe.set()";
+	return;
+}
+
+
 void Universe::globalBreeding(){
 	vector<int> indexes;
 	for (auto i=space.begin(); i!=space.end(); ++i){
@@ -546,7 +589,7 @@ void Universe::plotDemesOneByOne(char fileNamepattern[]){
 }
 
 int Universe::SaveTheUniverse(int order){
-	char fileName[] = "../playground/Bazikyn_simulationX.txt";
+	char fileName[] = "../playground/Bazykin_simulationX.txt";
 	fileName[32] = char(order+'0');
 	int index = index_last_left;
 	ofstream ofile;

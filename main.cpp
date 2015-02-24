@@ -41,12 +41,13 @@ int main()
 	cout << "Starting world: " << endl;
 	World.listOfDemes();
 // 	this part yes
-	clock_t t1,t2;
+	clock_t t1,t2,t_sim1,t_sim2;
 	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 9)),5);
 	
+	t_sim1 = clock();
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
 		t1=clock();
-		cout << "Generation: " << i << endl;
+		cout << "Generation: " << i;
 		World.migration();
 // 		cout << "Migration: done\nBreeding:procesing\n" << endl;
 		World.globalBreeding();
@@ -54,7 +55,7 @@ int main()
 		t2=clock();
 		cout  << " done in ";
 		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-		if((i % (modulo)) == 0){
+		if(((i % modulo)-9) == 0){
 			check = World.SaveTheUniverse(j);
 			if(check != 0){
 				cout << "Error in saving the output." << endl;
@@ -63,6 +64,9 @@ int main()
 			j++;
 		}
 	}
+	World.SaveTheUniverse(0);
+	t_sim2 = clock();
+	cout << "FINISHING SIMULATION IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
 	cout << "Ending world: " << endl;
 	World.listOfDemes();
 

@@ -227,6 +227,9 @@ double Individual::getFitness(){
 	Bcount = Bcount / (getResolution()*2*NUMBERofCHROMOSOMES); /* relative B count*/
 	fitness = 1 - (SELECTIONpressure * pow( 4 * Bcount * (1 - Bcount),BETA));
 // 	cout << fitness << ' ';
+// 	if(fitness < 0.5 or fitness > 1){
+// 		cout << "WARNING: The finess is " << fitness << endl;
+// 	}
 	return fitness;
 }
 
