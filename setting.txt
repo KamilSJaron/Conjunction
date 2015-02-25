@@ -12,11 +12,11 @@
 RESOLUTION = 1                    # number of loci per chromosome, integer in [1;10000]
 NUMBERofCHROMOSOMES = 1            # integer in [1;21]
 RECOMBINATIONrate = 0               # real number in [0;5]
-SELECTIONpressure = 156             # real number in [0;1]
+SELECTIONpressure = 0.5             # real number in [0;1]
 BETA = 1                            # real number in [0.0625;16]
 DEMEsize = 2048                   # integer in [4;2048], use only power of 4, otherwise the plots wont be nice.
-SEED = 15651                       # any number (the date can be useful and every day original)
-NUMBERofGENERATIONS = 2           # [1,10000]
+SEED = 150225                       # any number (the date can be useful and every day original)
+NUMBERofGENERATIONS = 5000           # [1,10000]
 #NAMEofOUTPUTfile = '../playground/150206_out.dat' # any name with plain text sulfix
 
 # World definition
@@ -24,7 +24,7 @@ NUMBERofGENERATIONS = 2           # [1,10000]
 #parameter WORLDdefinition set up the space for the simulation. There are several options of definition, use only one definition per simulation.
 #the easiest is to chose one of the quick pre-defined worlds described in manual using label -quick
 
-WORLDdefinition -quick = 'Arena' 1 # ['HybridZone','InfInf','Arena','ArenaDiagonal','WorldLike','WorldLikeDiagonal'], the number is height of the hybrid zone, or size of squared arena or world, integer in [1 to 25].
+WORLDdefinition -quick = 'HybridZone' 1 # ['HybridZone','InfInf','Arena','ArenaDiagonal','WorldLike','WorldLikeDiagonal'], the number is height of the hybrid zone, or size of squared arena or world, integer in [1 to 25].
 # note, that 1D HybridZone can me made by setting height to 1.
 # if the size of arena / world-like is odd, the middle line of demes will be filled equally by individuals of 'a' and 'b' population
 

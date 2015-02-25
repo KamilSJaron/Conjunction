@@ -135,27 +135,14 @@ void Deme::Breed(){
 	vector<Chromosome> gamete1, gamete2;
 	getFitnessVector(fitnessVector);
 	double RandMax = fitnessVector[DEMEsize-1];
-// 	cout << endl << " pre-last " << fitnessVector[DEMEsize-1] << " last " << fitnessVector[DEMEsize] << " max " << RandMax << endl;
-// 	if(RandMax > DEMEsize){
-// 		cout << "WARNING: RandMax is " << RandMax << endl;
-// 	}
-// 	if(fitnessVector.size() != (unsigned)DEMEsize){
-// 		cout << "WARNING: fitnessVector has length " << fitnessVector.size() << endl;
-// 	}
-// 	if(fitnessVector[DEMEsize-1] < fitnessVector[DEMEsize-2]){
-// 		cout << "WARNING: fitnessVector has weird values " << fitnessVector[DEMEsize-2] << " and " << fitnessVector[DEMEsize-1] << endl;
-// 	}
-	
 	double roll;
 	map<double, int> parentPick;
 	map<double, int>::iterator it;
-	vector<int> couples[2];
+	vector<int> mothers(DEMEsize);
+	vector<int> fathers(DEMEsize);
 	
 	for(int i=0;i < DEMEsize*2;i++){
 		roll = (selectionRand() * RandMax);
-// 		if(roll > RandMax or roll < 0){
-// 			cout << "WARNING: " << roll << " is limit roll\n" << endl;
-// 		}
 		it = parentPick.find(roll);
 		while(it != parentPick.end()){ //rolling twice same number will overwrite the first one, but this event is so rare, that solution is to just roll again without any bias
 			roll = (selectionRand() * RandMax);
@@ -165,52 +152,26 @@ void Deme::Breed(){
 	}
 	
 	int i = 0;
-	int par_index = 0, parent = 0;
 	auto pos=parentPick.begin();
-	
-// 	if(fitnessVector.size() * 2 != parentPick.size()){
-// 		cout << "WARNING: Map has " << parentPick.size() << ", but fitnessVector has " << fitnessVector.size() << endl;
-// 	}
 	
 	while(pos!=parentPick.end()){
 		
 		if(fitnessVector[i] >= pos->first){
 			if(pos->second >= DEMEsize){
-				par_index = pos->second - DEMEsize;
-				parent = 1;
+				mothers[pos->second - DEMEsize] = i;
 			} else {
-				par_index = pos->second;
-				parent = 0;
+				fathers[pos->second] = i;
 			}
-			couples[parent].push_back(par_index);
 			++pos;
 		} else {
 			i++;
-// 			if(i >= DEMEsize){
-// 				cout << "WARNING: Processing individual " << i << " with fitness limit " << fitnessVector[i] << endl;
-// 				cout << "WARNING: Size of fitnessVector is " << fitnessVector.size() << endl;
-// 				cout << "WARNING: Size of parentPick is " << parentPick.size() << endl;
-// 				cout << "WARNING: Map first " << pos->first << " second " << pos->second << endl;
-// 				cout << "WARNING: End first " << parentPick.end()->first << " second " << parentPick.end()->second << endl;
-// 				break;
-// 			}
 		}
 	}
 	
-// 	jak může nastat situace, že my jeden chybí?? Neošefovat to rozpáráním na dvě funkce a při selhání (tj když se dostane dovnitř, prostě to zkusit ještě jednou?? Nebo je zase jen problém s hraničnímy hodnotami??)
-// 	if(couples[0].size() != couples[1].size()){
-// 		cout << "WARNING: Mothers: " << couples[0].size() << endl;
-// 		cout << "WARNING: Fathers: " << couples[1].size() << endl;
-// 	}
-	
-// 	podle mě neprocházím posledního jedince.. Vyzkoušet, vyzkoušet...
 	Individual *metademe = new Individual[DEMEsize];
 	for(int i=0;i<DEMEsize;i++){
-// 		if(couples[0][i] >= DEMEsize or couples[1][i] >= DEMEsize){
-// 			cout << "WARNING: HAPPY " << couples[0][i] << " and HAPPY " << couples[1][i] << " got " << i << endl;
-// 		}
-		deme[couples[0][i]].makeGamete(gamete1);
-		deme[couples[1][i]].makeGamete(gamete2);
+		deme[mothers[i]].makeGamete(gamete1);
+		deme[fathers[i]].makeGamete(gamete2);
 		metademe[i] = Individual(gamete1,gamete2);
 	}
 	
@@ -232,12 +193,9 @@ void Deme::permutation(){
 void Deme::integrateMigrantVector(vector<Individual>& migBuffer){
 	unsigned int i = 0;
 	while(i < migBuffer.size()){
-// 		cout << i << ' ';
 		deme[i] = migBuffer[i];
 		i++;
-// 		migBuffer[i].plotGenotype();
 	}
-// 	cout << endl;
 	return;
 }
 
@@ -281,15 +239,11 @@ double Deme::getProportionOfHeterozygotes() const{
 
 void Deme::getFitnessVector(vector<double> &fitnessVector){
 	double sum = 0;
-// 	double last_sum = 0;
 	for(int i = 0;i < DEMEsize;i++){
-// 		last_sum = sum;
 		sum += deme[i].getFitness();
-// 		if(last_sum > sum){
-// 			cout << "WARNING: finess of " << i << " messes the others\n";
-// 		}
 		fitnessVector.push_back(sum);
 	}
+	return;
 }
 		
 

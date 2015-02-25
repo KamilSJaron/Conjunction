@@ -31,7 +31,6 @@ class Universe
 // 		testing functions vector<Chromosome>& gamete
 		bool Acheck(vector<Individual>& buffer);
 		bool Bcheck(vector<Individual>& buffer);
-// 		void selelectionTest(vector<Individual> buffer);
 		
 // 		plotting functions
 		void listOfParameters();
