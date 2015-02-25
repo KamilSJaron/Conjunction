@@ -27,12 +27,17 @@ class Universe
 		void set(int index, string type);
 		void globalBreeding();
 // 		void globalBreeding(char type);
-		bool Acheck(vector<Individual> buffer);
-		bool Bcheck(vector<Individual> buffer);
+		
+// 		testing functions vector<Chromosome>& gamete
+		bool Acheck(vector<Individual>& buffer);
+		bool Bcheck(vector<Individual>& buffer);
+// 		void selelectionTest(vector<Individual> buffer);
 		
 // 		plotting functions
 		void listOfParameters();
 		void listOfDemes();
+		double getProportionOfHeterozygotes(int index);
+		double getProportionOfHomozygotes(int index, char type);
 		void showOneDeme(int index);
 		void viewOneDeme(int index);
 		void plotOneDeme(int index);
@@ -45,6 +50,7 @@ class Universe
 		
 // 		parameter changing functions
 		void setHeight(int heig);
+		void setWidth(int width);
 		void setLREdgesType(string ed_type);
 		void setUDEdgesType(string ed_type);
 		void setDimension(int dim);
@@ -100,8 +106,12 @@ void Universe::basicUnitCreator(char type, char init){
 				index_last_left = 0;
 				index_last_right = 0;
 				new_indexes.clear();
-				new_indexes.push_back(index_next_left);
-				new_indexes.push_back(index_next_right);
+				new_indexes.push_back(side_border(0,index_next_left));
+				if(number_of_demes_l_r == 1){
+					new_indexes.push_back(side_border(0,index_next_right));
+				} else {
+					new_indexes.push_back(index_next_right);
+				}
 				space[0] = new Deme(0,new_indexes,init);
 				break;
 			case 'l':
@@ -306,24 +316,18 @@ int Universe::migration(){
 		}
 		
 // 		cout << "Buffer " << buff->first << " has size " << buff->second.size() << endl;
-// 			if(there are only native individuals){
-// 				continue;
-// 			} else {
 		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
 			if(Acheck(buff->second)){
 				continue;
 			}
-// 			cout << "To the left: " << buff->first << endl;
 			basicUnitCreator('l', 'A');
 		} 
 		if(index_next_right <= buff->first and buff->first < index_next_right + number_of_demes_u_d){
 			if(Bcheck(buff->second)){
 				continue;
 			}
-// 			cout << "To the right: " << buff->first << endl;
 			basicUnitCreator('r', 'B');
 		}
-// 		}
 		space[buff->first]->integrateMigrantVector(buff->second);
 	}
 	return 0;
@@ -371,6 +375,17 @@ void Universe::set(int index,string type){
 		return;
 	}
 	
+	if(type == "halfAhalfhetero"){
+		for(int i=0;i<DEMEsize/2;i++){
+			migBuffer.push_back('A');
+		}
+		for(int i=0;i<DEMEsize/2;i++){
+			migBuffer.push_back('C');
+		}
+		space[index]->integrateMigrantVector(migBuffer);
+		return;
+	}
+	
 	cout << "ERROR: unknown parameter " << type << " of Universe.set()";
 	return;
 }
@@ -409,7 +424,7 @@ void Universe::globalBreeding(){
 // 	}
 // }
 
-bool Universe::Acheck(vector< Individual > buffer){
+bool Universe::Acheck(vector<Individual>& buffer){
 	for(int i = 0; (unsigned)i < buffer.size(); i++){
 		if(buffer[i].Acheck()){
 			continue;
@@ -419,7 +434,7 @@ bool Universe::Acheck(vector< Individual > buffer){
 	return 1;
 }
 
-bool Universe::Bcheck(vector< Individual > buffer){
+bool Universe::Bcheck(vector<Individual>& buffer){
 	for(int i = 0; (unsigned)i < buffer.size(); i++){
 		if(buffer[i].Bcheck()){
 			continue;
@@ -440,6 +455,15 @@ void Universe::setHeight(int heig){
 		cout << "It is not possible to change parameter height once, you create world";
 	}
 }
+
+void Universe::setWidth(int width){
+	if(space.size() == 0){
+		number_of_demes_l_r = width;
+	} else {
+		cout << "It is not possible to change parameter height once, you create world";
+	}
+}
+
 
 void Universe::setLREdgesType(string ed_type){
 	type_of_l_r_edges = ed_type;
@@ -494,6 +518,14 @@ void Universe::listOfDemes(){
 	for (auto i=space.begin(); i!=space.end(); ++i){
 		i->second->showDeme();
 	}
+}
+
+double Universe::getProportionOfHeterozygotes(int index){
+	return space[index]->getProportionOfHeterozygotes();
+}
+
+double Universe::getProportionOfHomozygotes(int index, char type){
+	return space[index]->getProportionOfHomozygotes(type);
 }
 
 void Universe::showOneDeme(int index){

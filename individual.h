@@ -34,8 +34,8 @@ class Individual
 		void replace_chromozome(int set, int position,map <int, char> input_chrom);
 		double getFitness();
 		double getBprop() const;
-		bool Acheck();
-		bool Bcheck();
+		bool Acheck() const;
+		bool Bcheck() const;
 		
 /* ASCII PLOTTING METHODS */
 		void readGenotype();
@@ -244,7 +244,7 @@ double Individual::getBprop() const{
 }
 
 
-bool Individual::Acheck(){
+bool Individual::Acheck() const{
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
 		if(genome[0][i].Acheck() and genome[1][i].Acheck()){
 			continue;
@@ -254,7 +254,7 @@ bool Individual::Acheck(){
 	return 1;
 }
 
-bool Individual::Bcheck(){
+bool Individual::Bcheck() const{
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
 		if(genome[0][i].Bcheck() and genome[1][i].Bcheck()){
 			continue;

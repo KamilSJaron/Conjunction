@@ -42,7 +42,9 @@ class Deme
 		void getFitnessVector(vector<double>& fitnessVector);
 		void permutation(); // permutation function
 		void integrateMigrantVector(vector<Individual>& migBuffer);
-		vector<double> getBproportion() const; 
+		vector<double> getBproportion() const;
+		double getProportionOfHomozygotes(char population) const;
+		double getProportionOfHeterozygotes() const;
 		
 // plotting functions
 		void showDeme();
@@ -246,6 +248,36 @@ vector<double> Deme::getBproportion() const{
 	}
 	return props;
 }
+
+double Deme::getProportionOfHomozygotes(char population) const{
+	double proportion = 0;
+	if(population == 'A'){
+		for(int i = 0;i < DEMEsize;i++){
+			proportion += (deme[i].Acheck());
+		}
+		proportion = proportion / DEMEsize;
+		return proportion;
+	}
+	if(population == 'B'){
+		for(int i = 0;i < DEMEsize;i++){
+			proportion += (deme[i].Bcheck());
+		}
+		proportion = proportion / DEMEsize;
+		return proportion;
+	}
+	return 0;
+}
+
+double Deme::getProportionOfHeterozygotes() const{
+	double proportion = 0;
+	for(int i = 0;i < DEMEsize;i++){
+		proportion += (deme[i].Acheck());
+		proportion += (deme[i].Bcheck());
+	}
+	proportion = 1 - (proportion / DEMEsize);
+	return proportion;
+}
+
 
 void Deme::getFitnessVector(vector<double> &fitnessVector){
 	double sum = 0;

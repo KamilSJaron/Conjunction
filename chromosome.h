@@ -43,14 +43,14 @@ class Chromosome
 		~Chromosome(){chromosome.clear();}; /*destr*/
 
 /* PLOTTING METHODS */
-		void showChromosome(); /*writes all junctions*/
-		void viewChromosome(); /*ASCII visualisation*/
+		void showChromosome() const; /*writes all junctions*/
+		void viewChromosome() const; /*ASCII visualisation*/
 		
 /* COMPUTING METHODS */
-		bool Acheck(); /*returns 1 if there are only A, 0 in other case*/
-		bool Bcheck(); /*returns 1 if there are only B, 0 in other case*/
+		bool Acheck() const; /*returns 1 if there are only A, 0 in other case*/
+		bool Bcheck() const; /*returns 1 if there are only B, 0 in other case*/
 		int countB() const; /*returns number of B loci in chromosome*/
-		int getNumberOfJunctions(); /*returns number of Junctions in chromosome*/
+		int getNumberOfJunctions() const; /*returns number of Junctions in chromosome*/
 		void getSizesOfBBlocks(vector<int>& sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
 		
 /* COMUNICATION METHODS */
@@ -67,13 +67,13 @@ class Chromosome
 		map <int, char> chromosome;
 };
 
-void Chromosome::showChromosome(){
+void Chromosome::showChromosome() const{
 	for(auto i=chromosome.begin(); i!=chromosome.end(); ++i){
 		cout << i->first << ':' << i->second << '\n';
 	}
 }
 
-void Chromosome::viewChromosome(){
+void Chromosome::viewChromosome() const{
 	if(RESOLUTION < 101){
 		cout << "Number of loci is too small for plotting" << endl;
 	} else {
@@ -99,7 +99,7 @@ void Chromosome::viewChromosome(){
 	}
 }
 
-bool Chromosome::Acheck(){
+bool Chromosome::Acheck() const{
 	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(pos->second != 'A'){
 			return 0;
@@ -108,7 +108,7 @@ bool Chromosome::Acheck(){
 	return 1;
 }
 
-bool Chromosome::Bcheck(){
+bool Chromosome::Bcheck() const{
 	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(pos->second != 'B'){
 			return 0;
@@ -134,7 +134,7 @@ int Chromosome::countB() const{
 	return sum;
 }
 
-int Chromosome::getNumberOfJunctions(){
+int Chromosome::getNumberOfJunctions() const{
 	return chromosome.size() - 1;
 }
 

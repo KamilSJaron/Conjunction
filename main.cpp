@@ -16,59 +16,62 @@
 
 #include "universe.h" // Class of individuals
 
-static int SEEDtoRAND = 150206; //seed only for rand() fction, values of the poisson distribution are always generated with same initial seed
-static int NUMBERofGENERATIONS = 500;
-// #define NUM_OF_IMIGRANTS 100 /* number of complete heterozygotious imigrants per generation (assuming, that Pois(1)*500 would be very close to 500, cause computationally it is not worth the computational time)*/
+static int SEEDtoRAND; //seed only for rand() fction, values of the poisson distribution are always generated with same initial seed
+static int NUMBERofGENERATIONS; // #define NUM_OF_IMIGRANTS 100 /* number of complete heterozygotious imigrants per generation (assuming, that Pois(1)*500 would be very close to 500, cause computationally it is not worth the computational time)*/
 
 using namespace std;
 
 // list of fctions
-int setParameters(Universe* World);
 void parameterSlave(string parameter, double value);
 int worldSlave(string line, Universe* World);
+int setParameters(Universe* World);
+int testParameters(Universe* World);
+
 template <class T> class auto_ptr;
 
 int main()
 {
 // 	this part sould not be edited anymore
-	srand (SEEDtoRAND); // setting a seed
 	Universe World;
-	int check = setParameters(&World), j = 1;
+	int check = setParameters(&World);
 	if(check == 1){
 		cout << "Exit: input file problem." << endl;
 		return 1;
 	}
+	srand (SEEDtoRAND); // setting a seed
 	cout << "Starting world: " << endl;
-	World.listOfDemes();
+// 	World.listOfDemes();
+// 	World.listOfParameters();
+	testParameters(&World);
 // 	this part yes
-	clock_t t1,t2,t_sim1,t_sim2;
-	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 9)),5);
-	
-	t_sim1 = clock();
-	for(int i=0; i < NUMBERofGENERATIONS;i++){
-		t1=clock();
-		cout << "Generation: " << i;
-		World.migration();
-// 		cout << "Migration: done\nBreeding:procesing\n" << endl;
-		World.globalBreeding();
-// 		cout << "Breeding: done" << endl;
-		t2=clock();
-		cout  << " done in ";
-		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-		if(((i % modulo)-9) == 0){
-			check = World.SaveTheUniverse(j);
-			if(check != 0){
-				cout << "Error in saving the output." << endl;
-				return 1;
-			}
-			j++;
-		}
-	}
-	World.SaveTheUniverse(0);
-	t_sim2 = clock();
-	cout << "FINISHING SIMULATION IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
-	cout << "Ending world: " << endl;
-	World.listOfDemes();
+// 	clock_t t1,t2,t_sim1,t_sim2;
+// 	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 9)),5), j = 1;
+// 	
+// 	t_sim1 = clock();
+// 	for(int i=0; i < NUMBERofGENERATIONS;i++){
+// 		t1=clock();
+// 		cout << "Generation: " << i;
+// 		World.migration();
+// // 		cout << "Migration: done\nBreeding:procesing\n" << endl;
+// 		World.globalBreeding();
+// // 		cout << "Breeding: done" << endl;
+// 		t2=clock();
+// 		cout  << " done in ";
+// 		cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+// 		if(((i % modulo)-9) == 0){
+// 			check = World.SaveTheUniverse(j);
+// 			if(check != 0){
+// 				cout << "Error in saving the output." << endl;
+// 				return 1;
+// 			}
+// 			j++;
+// 		}
+// 	}
+// 	World.SaveTheUniverse(0);
+// 	t_sim2 = clock();
+// 	cout << "FINISHING SIMULATION IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
+// 	cout << "Ending world: " << endl;
+// 	World.listOfDemes();
 
 //  	char filePattern[] = "../playground/pictXX.png";
 //  	World.plotDemesOneByOne(filePattern);
@@ -258,6 +261,10 @@ int worldSlave(string line, Universe* World){
 					World->setHeight(n);
 					World->setUDEdgesType("reflexive");
 					World->setLREdgesType("reflexive");
+					if(n == 1){
+						World->setDimension(1);
+						World->setWidth(1); 
+					}
 					if(n % 2 == 0){
 						World->basicUnitCreator('b', 'A');
 					} else {
@@ -280,8 +287,18 @@ int worldSlave(string line, Universe* World){
 	return 0;
 }
 
-
-
+int testParameters(Universe* World){
+	World->set(0,"halfAhalfhetero");
+	for(int i=0;i < NUMBERofGENERATIONS;i++){
+		cout << "Genertion " << i << endl; 
+		cout << "Homozygotes A: " << World->getProportionOfHomozygotes(0,'A') << endl;
+		cout << "Heterozygotes: "<< World->getProportionOfHeterozygotes(0) << endl;
+		cout << "Homozygotes B: "<< World->getProportionOfHomozygotes(0,'B') << endl;
+		World->Breed(0);
+	}
+	
+	return 0;
+}
 
 
 
