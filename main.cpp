@@ -18,6 +18,7 @@
 
 static int SEEDtoRAND; //seed only for rand() fction, values of the poisson distribution are always generated with same initial seed
 static int NUMBERofGENERATIONS; // #define NUM_OF_IMIGRANTS 100 /* number of complete heterozygotious imigrants per generation (assuming, that Pois(1)*500 would be very close to 500, cause computationally it is not worth the computational time)*/
+static int TEST = 0;
 
 using namespace std;
 
@@ -27,7 +28,7 @@ int worldSlave(string line, Universe* World);
 int setParameters(Universe* World);
 int testParameters(Universe* World);
 
-template <class T> class auto_ptr;
+// template <class T> class auto_ptr;
 
 int main()
 {
@@ -42,7 +43,9 @@ int main()
 	cout << "Starting world: " << endl;
 	World.listOfDemes();
 
-	
+	if(TEST != 0){
+		testParameters(&World);
+	} else {
 // 	this part yes
 	clock_t t1,t2,t_sim1,t_sim2;
 	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 9)),5), j = 1;
@@ -71,20 +74,20 @@ int main()
 
 //  	char filePattern[] = "../playground/pictXX.png";
 //  	World.plotDemesOneByOne(filePattern);
-
+	}
 	return 0;
 }
 
 
-template <class T> class auto_ptr{
-	T* ptr;
-	public:
-		explicit auto_ptr(T* p = 0) : ptr(p) {}
-		~auto_ptr(){delete ptr;}
-		T& operator*(){return *ptr;}
-		T* operator->(){return ptr;}
-
-};
+// template <class T> class auto_ptr{
+// 	T* ptr;
+// 	public:
+// 		explicit auto_ptr(T* p = 0) : ptr(p) {}
+// 		~auto_ptr(){delete ptr;}
+// 		T& operator*(){return *ptr;}
+// 		T* operator->(){return ptr;}
+// 
+// };
 
 void parameterSlave(string parameter, double value){
 	if(parameter == "RESOLUTION"){
@@ -126,6 +129,11 @@ void parameterSlave(string parameter, double value){
 		NUMBERofGENERATIONS = value;
 		cout << "Setting parameter NUMBERofGENERATIONS to: " << value << endl;
 		return;
+	}
+	if(parameter == "TEST"){
+		TEST = value;
+		cout << "Setting parameter TEST to: " << value << endl;
+	return;
 	}
 	cout << "Warning: unknown parameter: " << parameter << endl;
 	return;
