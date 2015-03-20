@@ -28,8 +28,6 @@ int worldSlave(string line, Universe* World);
 int setParameters(Universe* World);
 int testParameters(Universe* World);
 
-// template <class T> class auto_ptr;
-
 int main()
 {
 // 	this part sould not be edited anymore
@@ -43,12 +41,13 @@ int main()
 	cout << "Starting world: " << endl;
 	World.listOfDemes();
 
+// 	ready for deletion, when more testing wont be needed
 	if(TEST != 0){
 		testParameters(&World);
 	} else {
 // 	this part yes
 	clock_t t1,t2,t_sim1,t_sim2;
-	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 9)),5), j = 1;
+// 	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 8)),5), j = 1;
 	
 	t_sim1 = clock();
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
@@ -57,37 +56,28 @@ int main()
 		World.globalBreeding();
 		t2=clock();
 		cout << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-		if(((i % modulo)-9) == 0){
-			check = World.SaveTheUniverse(j);
-			if(check != 0){
-				cout << "Error in saving the output." << endl;
-				return 1;
-			}
-			j++;
-		}
+// 		if(((i % modulo)-9) == 0){
+// 			check = World.SaveTheUniverse(j);
+// 			if(check != 0){
+// 				cout << "Error in saving the output." << endl;
+// 				return 1;
+// 			}
+// 			j++;
+// 		}
 	}
-	World.SaveTheUniverse(0);
+// 	World.SaveTheUniverse(9);
 	t_sim2 = clock();
 	cout << "FINISHING SIMULATION IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
 	cout << "Ending world: " << endl;
 	World.listOfDemes();
 
 //  	char filePattern[] = "../playground/pictXX.png";
-//  	World.plotDemesOneByOne(filePattern);
 	}
+	
 	return 0;
 }
 
 
-// template <class T> class auto_ptr{
-// 	T* ptr;
-// 	public:
-// 		explicit auto_ptr(T* p = 0) : ptr(p) {}
-// 		~auto_ptr(){delete ptr;}
-// 		T& operator*(){return *ptr;}
-// 		T* operator->(){return ptr;}
-// 
-// };
 
 void parameterSlave(string parameter, double value){
 	if(parameter == "RESOLUTION"){

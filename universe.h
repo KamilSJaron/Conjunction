@@ -1,6 +1,5 @@
 #include "deme.h"
 #include <iterator>
-// v0.141107
 
 using namespace std;
 
@@ -620,8 +619,8 @@ void Universe::plotDemesOneByOne(char fileNamepattern[]){
 }
 
 int Universe::SaveTheUniverse(int order){
-	char fileName[] = "../playground/Bazykin_simulationX.txt";
-	fileName[32] = char(order+'0');
+	char fileName[] = "../playground/simulationX.txt";
+	fileName[24] = char(order+'0');
 	int index = index_last_left;
 	ofstream ofile;
 	vector<double> props;

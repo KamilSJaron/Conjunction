@@ -9,14 +9,14 @@
 
 # Numerical parameters
 
-RESOLUTION = 1                    # number of loci per chromosome, integer in [1;10000]
+RESOLUTION = 2                    # number of loci per chromosome, integer in [1;10000]
 NUMBERofCHROMOSOMES = 1            # integer in [1;21]
-RECOMBINATIONrate = 0               # real number in [0;5]
-SELECTIONpressure = 0.8             # real number in [0;1]
-BETA = 1                            # real number in [0.0625;16]
-DEMEsize = 8192                   # integer in [4;8192], use only power of 4, otherwise the plots wont be nice.
+RECOMBINATIONrate = 1               # real number in [0;5]
+SELECTIONpressure = 0.3             # real number in [0;1]
+BETA = 16                            # real number in [0.0625;16]
+DEMEsize = 512                   # integer in [4;8192], use only power of 4, otherwise the plots wont be nice.
 SEED = 150226                       # any number (the date can be useful and every day original)
-NUMBERofGENERATIONS = 1000           # [1,10000]
+NUMBERofGENERATIONS = 100           # [1,10000]
 #NAMEofOUTPUTfile = '../playground/150206_out.dat' # any name with plain text sulfix
 
 # World definition
@@ -30,4 +30,4 @@ WORLDdefinition -quick = 'HybridZone' 1 # ['HybridZone','InfInf','Arena','ArenaD
 
 #standard description IS NOT WORKING YET
 #standard description is in following format (note, it is definig same world as default quick option)
-#WORLDdefinition -standard = 'extending' 2 'wrapping' 3 #type of left/right border ['extending','absorbing','wrapping',infinity], number of demes from left to right boarder at begining, the same with up/down
+#WORLDdefinition -standard = 'extending' 2 'wrapping' 3 #type of left/right border ['extending','absorbing','wrapping','infinity'], number of demes from left to right boarder at begining, the same with up/down

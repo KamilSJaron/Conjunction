@@ -49,6 +49,7 @@ class Deme
 // plotting functions
 		void showDeme();
 		void viewDeme();
+		void readAllGenotypes();
 		void plotHeadOfDeme();
 		void plotDeme();
 		void plotDeme(const char* filename);
@@ -135,6 +136,7 @@ void Deme::Breed(){
 	vector<Chromosome> gamete1, gamete2;
 	getFitnessVector(fitnessVector);
 	double RandMax = fitnessVector[DEMEsize-1];
+// 	cout << RandMax << "\n";
 	double roll;
 	map<double, int> parentPick;
 	map<double, int>::iterator it;
@@ -240,6 +242,9 @@ double Deme::getProportionOfHeterozygotes() const{
 void Deme::getFitnessVector(vector<double> &fitnessVector){
 	double sum = 0;
 	for(int i = 0;i < DEMEsize;i++){
+		if(deme[i].getFitness() != 1 and deme[i].getFitness() != (1 - SELECTIONpressure)){
+			cout << "Fitness of individual " << i << " is " << deme[i].getFitness() << " HORRAY!\n";
+		}
 		sum += deme[i].getFitness();
 		fitnessVector.push_back(sum);
 	}
@@ -267,6 +272,13 @@ void Deme::viewDeme(){
 		deme[i].viewGenotype();
 	}
 }
+
+void Deme::readAllGenotypes(){
+	for(int i=0;i<DEMEsize;i++){
+		deme[i].readGenotype();
+	}
+}
+
 
 void Deme::plotHeadOfDeme(){
 	cout << "Individual: 0" << endl;

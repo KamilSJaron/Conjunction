@@ -1,6 +1,7 @@
 #include <map>
 #include <random>
 static int RESOLUTION = 101; /*RESOLUTION is Ls in Baird 94; it has to work with one loci case*/
+// static double DISTANCE = 0.5;
 
 using namespace std;
 
@@ -18,7 +19,7 @@ int tossAcoin (){
 // }
 
 int recombPosition (){
-  return (rand() % RESOLUTION);
+  return (rand() % (RESOLUTION-1)) + 1;
 }
 
 // fctions
@@ -38,7 +39,7 @@ class Chromosome
 	public:
 /* INITIATION */
 		Chromosome(){};
-		Chromosome(char starting_char){chromosome[1] = starting_char;}; /*inic*/
+		Chromosome(char starting_char){chromosome[0] = starting_char;}; /*inic*/
 		Chromosome(map <int, char> input_chrom){chromosome = input_chrom;}; /*inic*/
 		~Chromosome(){chromosome.clear();}; /*destr*/
 
@@ -58,7 +59,7 @@ class Chromosome
 		static int getResolution(){return RESOLUTION;}; /* return resolution of the chromosome */
 		void clear(){chromosome.clear();}; /* method for deleting chromosome */
 		char read(int i){return chromosome[i];}; /* returns value of junction */
-		void write(int i, char l){chromosome[i] = l;}; /* makes new junction*/
+		void write(int i, char l); /* makes new junction*/
 		map<int, char>::iterator begin(){return chromosome.begin();};
 		map<int, char>::iterator end(){return chromosome.end();};
 		map<int, char>::iterator find(int i){return chromosome.find(i);};
@@ -86,7 +87,7 @@ void Chromosome::viewChromosome() const{
 		seq.push_back(pos->second);
 	}
 	if(vals.empty()){
-		cout << "ERROR: non initiated chromosome is impossible to plot" << endl;
+		cerr << "ERROR: non initiated chromosome is impossible to plot" << endl;
 		return;
 	}
 	for(letter = 0; letter < 100; letter++){
@@ -129,7 +130,7 @@ int Chromosome::countB() const{
 		last_val = pos->first;
 	}
 	if(last_seq == 'B'){
-			sum += (RESOLUTION - last_val) + 1;
+			sum += (RESOLUTION - last_val);
 	}
 	return sum;
 }
@@ -154,3 +155,16 @@ void Chromosome::getSizesOfBBlocks(vector<int>& sizes){
 	}
 }
 
+void Chromosome::write(int i, char l){
+// 	if(i >= RESOLUTION){
+// 		cerr << "WARNING: trying to make junction out of RESOLUTION of chromosome." << endl;
+// 		return;
+// 	}
+// 	if(l != 'A' and l != 'B'){
+// 		cerr << "WARNING: trying to write junction followed by genetic information of unknown origin." << endl;
+// 		return;
+// 	}
+// + podminka, ze spoj jeste neexistuje	
+// + podminka, ze minuly spoj je jiny
+	chromosome[i] = l;
+}

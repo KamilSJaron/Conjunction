@@ -57,8 +57,8 @@ class Individual
 
 Individual::Individual(){
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
-		genome[0].push_back(Chromosome());
-		genome[1].push_back(Chromosome());
+		genome[0].push_back(Chromosome('A'));
+		genome[1].push_back(Chromosome('B'));
 	}
 }
 
@@ -90,9 +90,9 @@ void Individual::replace_chromozome(int set, int position, map <int, char>  inpu
 
 void Individual::makeGamete(vector<Chromosome>& gamete){
 // iniciatiaztion of variables
-	gamete.clear();
-	vector<int> recombination;
-	Chromosome recombinant_ch;
+	gamete.clear(); // variable for new gamete
+	vector<int> chiasmas; // vector of randomes chismas
+	Chromosome recombinant_ch; // temp chromosome
 	char last_material_s1, last_material_s2;
 	int rec_pos, numberOfChaisma, starts_by;
 
@@ -101,11 +101,11 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
 /* it is very important to understand syntax genome[set][chromosome] */
 		numberOfChaisma = getChiasma(RECOMBINATIONrate);
-// 		cout << numberOfChaisma << ' ';
 		starts_by = tossAcoin();
 		
 /* no chiasma mean inheritance of whole one parent chromosome */
 		if(numberOfChaisma == 0){
+// 			cout << endl;
 			gamete.push_back(genome[starts_by][i]);
 			continue;
 		}
@@ -113,35 +113,41 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 /* inicialization / restart of variables */
 		auto pos1=genome[0][i].begin();
 		auto pos2=genome[1][i].begin();
-		last_material_s1 = genome[0][i].read(1);
-		last_material_s2 = genome[1][i].read(1);
-		recombination.clear();
+		last_material_s1 = genome[0][i].read(0);
+		last_material_s2 = genome[1][i].read(0);
+// 		cout << "last material s1: " << last_material_s1 << endl;
+// 		cout << "last material s2: " << last_material_s2 << endl;
+		chiasmas.clear();
 		recombinant_ch.clear();
-// roll the recombination positions
+// roll the chiasmas positions
+// 		cout << "Junctions: " << numberOfChaisma << " at: ";
 		for(int index=0;index<numberOfChaisma;index++){
-			recombination.push_back(recombPosition());
+			rec_pos = recombPosition();
+			chiasmas.push_back(rec_pos);
+// 			cout << " postion " << rec_pos;
 		}
-		sort(recombination.begin(), recombination.end(), arrangeObject);
+// 		cout << endl;
+		sort(chiasmas.begin(), chiasmas.end(), arrangeObject);
 		
 // 		cout << "Rolled: ";
 // 		for(int index=0;index<numberOfChaisma;index++){
-// 			cout << recombination[index] << ' ';
+// 			cout << chiasmas[index] << ' ';
 // 		}
 // 		cout << endl;
 		
 
-		if(recombination[0] != 0){
-// 			cout << "Writing " << 1 << ' ' << genome[starts_by][i].read(1) << endl;
-			recombinant_ch.write(1,genome[starts_by][i].read(1));
+		if(chiasmas[0] != 0){
+// 			cout << "Writing " << 0 << ' ' << genome[starts_by][i].read(0) << endl;
+			recombinant_ch.write(0,genome[starts_by][i].read(0));
 		} else {
-// 			cout << "Writing " << 1 << ' ' << genome[(starts_by + 1) % 2][i].read(1) << endl;
-			recombinant_ch.write(1,genome[(starts_by + 1) % 2][i].read(1));
+// 			cout << "Writing " << 0 << ' ' << genome[(starts_by + 1) % 2][i].read(0) << endl;
+			recombinant_ch.write(0,genome[(starts_by + 1) % 2][i].read(0));
 		}
 		pos1++;
 		pos2++;
 		
 		for(int index=0;index<numberOfChaisma;index++){
-			rec_pos = recombination[index];
+			rec_pos = chiasmas[index];
 			if(rec_pos == 0){
 				starts_by = (starts_by + 1) % 2;
 				continue;
@@ -159,12 +165,12 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 					pos2++;
 				}
 				if(last_material_s1 == 'A' and last_material_s2 == 'B'){
-// 					cout << "wrIting " << recombination[index] << ' ' << last_material_s2 << endl;
-					recombinant_ch.write(recombination[index],last_material_s2);
+// 					cout << "wrIting " << chiasmas[index] << ' ' << last_material_s2 << endl;
+					recombinant_ch.write(chiasmas[index],last_material_s2);
 				}
 				if(last_material_s1 == 'B' and last_material_s2 == 'A'){
-// 					cout << "wriTing " << recombination[index] << ' ' << last_material_s2 << endl;
-					recombinant_ch.write(recombination[index],last_material_s2);
+// 					cout << "wriTing " << chiasmas[index] << ' ' << last_material_s2 << endl;
+					recombinant_ch.write(chiasmas[index],last_material_s2);
 				}
 			} else {
 				while(pos2->first < rec_pos and pos2->first != genome[1][i].end()->first){
@@ -178,12 +184,12 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 					pos1++;
 				}
 				if(last_material_s1 == 'A' and last_material_s2 == 'B'){
-// 					cout << "writiNg " << recombination[index] << ' ' << last_material_s1 << endl;
-					recombinant_ch.write(recombination[index],last_material_s1);
+// 					cout << "writiNg " << chiasmas[index] << ' ' << last_material_s1 << endl;
+					recombinant_ch.write(chiasmas[index],last_material_s1);
 				}
 				if(last_material_s1 == 'B' and last_material_s2 == 'A'){
-// 					cout << "writinG " << recombination[index] << ' ' << last_material_s1 << endl;
-					recombinant_ch.write(recombination[index],last_material_s1);
+// 					cout << "writinG " << chiasmas[index] << ' ' << last_material_s1 << endl;
+					recombinant_ch.write(chiasmas[index],last_material_s1);
 				}
 			}
 			starts_by = (starts_by + 1) % 2;
@@ -226,6 +232,7 @@ double Individual::getFitness(){
 	}
 	Bcount = Bcount / (getResolution()*2*NUMBERofCHROMOSOMES); /* relative B count*/
 	fitness = 1 - (SELECTIONpressure * pow( 4 * Bcount * (1 - Bcount),BETA));
+// 	cout << "B count " << Bcount << " fitness" << fitness << endl;
 // 	cout << fitness << ' ';
 // 	if(fitness < 0.5 or fitness > 1){
 // 		cout << "WARNING: The finess is " << fitness << endl;
