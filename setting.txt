@@ -9,7 +9,8 @@
 
 # Numerical parameters
 
-RESOLUTION = 2                    # number of loci per chromosome, integer in [1;10000]
+RESOLUTION = 3                    # number of loci per chromosome, integer in [1;10000]
+PROBABILITYmap = [0.3, 0.2, 0.2, 0.3] # gives probabilities of chiasma rolled between loci, default is [0, 1/(RESOLUTION-1), ..., 1/(RESOLUTION-1), 0], where length of vector alwas has to be RESOLUTION + 1, otherwise the defult is used
 NUMBERofCHROMOSOMES = 1            # integer in [1;21]
 RECOMBINATIONrate = 1               # real number in [0;5]
 SELECTIONpressure = 0.3             # real number in [0;1]

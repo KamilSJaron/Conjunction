@@ -18,7 +18,7 @@
 
 static int SEEDtoRAND; //seed only for rand() fction, values of the poisson distribution are always generated with same initial seed
 static int NUMBERofGENERATIONS; // #define NUM_OF_IMIGRANTS 100 /* number of complete heterozygotious imigrants per generation (assuming, that Pois(1)*500 would be very close to 500, cause computationally it is not worth the computational time)*/
-static int TEST = 0;
+static int TEST = 0; // temp
 
 using namespace std;
 
@@ -34,7 +34,7 @@ int main()
 	Universe World;
 	int check = setParameters(&World);
 	if(check == 1){
-		cout << "Exit: input file problem." << endl;
+		cerr << "Exit: input file problem." << endl;
 		return 1;
 	}
 	srand (SEEDtoRAND); // setting a seed
@@ -59,7 +59,7 @@ int main()
 // 		if(((i % modulo)-9) == 0){
 // 			check = World.SaveTheUniverse(j);
 // 			if(check != 0){
-// 				cout << "Error in saving the output." << endl;
+// 				cerr << "Error in saving the output." << endl;
 // 				return 1;
 // 			}
 // 			j++;
@@ -83,6 +83,51 @@ void parameterSlave(string parameter, double value){
 	if(parameter == "RESOLUTION"){
 		Chromosome::setResolution(int(value));
 		cout << "Setting parameter RESOLUTION to: " << value << endl;
+		return;
+	}
+	if(parameter == "PROBABILITYmap"){
+		double sum_of_elems=0;
+		
+		if(!PROBABILITYmap.empty()){
+			if(PROBABILITYmap.size() != unsigned(RESOLUTION + 1)){
+				cerr << "Warning: Length of probability map do not match the number of Loci (parameter RESOLUTION)" << endl;
+				cerr << "        The default PROBABILITYmap will be used..." << endl;
+				PROBABILITYmap.clear();
+			} else {
+				for(vector<double>::iterator j=PROBABILITYmap.begin();j!=PROBABILITYmap.end();++j){
+					sum_of_elems += *j;
+				}
+				if(sum_of_elems != 1){
+					cerr << "Warning: sum of members of the PROBABILITYmap is not equal to 1" << endl;
+					cerr << "        The default PROBABILITYmap will be used..." << endl;
+					PROBABILITYmap.clear();
+				}
+			}
+		} else {
+			cerr << "Warning: PROBABILITYmap was not defined" << endl;
+			cerr << "        The default PROBABILITYmap will be used..." << endl;
+		}
+		
+		
+		cout << "Setting parameter PROBABILITYmap to: [";
+		
+		if(PROBABILITYmap.empty() == true){
+			cout << "0, ";
+			for(int i = 0; i < (RESOLUTION - 1); i++){
+				cout << (1. / double(RESOLUTION - 1)) << ", " ;
+			}
+			cout << "0]" << endl;
+		} else {
+			double sum = 0;
+			for(unsigned int i = 0;i < PROBABILITYmap.size()-1;i++){
+				cout << PROBABILITYmap[i] << ", ";
+				sum += PROBABILITYmap[i];
+				PROBABILITYmap[i] = sum;
+			}
+			cout << PROBABILITYmap[PROBABILITYmap.size()-1] << "]" << endl;
+			sum += PROBABILITYmap[PROBABILITYmap.size()-1];
+			PROBABILITYmap[PROBABILITYmap.size()-1] = sum;
+		}
 		return;
 	}
 	if(parameter == "NUMBERofCHROMOSOMES"){
@@ -125,7 +170,7 @@ void parameterSlave(string parameter, double value){
 		cout << "Setting parameter TEST to: " << value << endl;
 	return;
 	}
-	cout << "Warning: unknown parameter: " << parameter << endl;
+	cerr << "Warning: unknown parameter: " << parameter << endl;
 	return;
 }
 
@@ -139,13 +184,13 @@ int setParameters(Universe* World){
 			if(line.empty()){
 				continue;
 			}
-			switcher = 1;
+			switcher = 1; //dafualt state of switcher - reading parameters name
 			for(unsigned int i = 0;i < line.size();i++){
 				if(line[i] == '#'){
 					break;
 				}
 				if(line[i] == '='){
-					switcher = 2;
+					switcher = 2; // symbol == switches to reading values
 					continue;
 				}
 				if(switcher == 1){
@@ -156,11 +201,24 @@ int setParameters(Universe* World){
 					if(isdigit(line[i]) or line[i] == '.'){
 						number += line[i];
 					}
+					if((line[i] == ']' or line[i] == ',' or line[i] == ';') and parameter == "PROBABILITYmap"){
+						PROBABILITYmap.push_back(stod(number));
+						number.clear();
+					}
 				}
 			}
 			if(!parameter.empty()){
+				if(parameter == "PROBABILITYmap"){
+					parameterSlave(parameter,0);
+					number.clear();
+					parameter.clear();
+					continue;
+				}
 				if(parameter.substr(0,5) == "WORLD"){
 					myfile.close();
+					if(PROBABILITYmap.empty()){
+						parameterSlave("PROBABILITYmap",0);
+					}
 					return worldSlave(line, World);
 				} else {
 					value = stod(number);
@@ -172,7 +230,7 @@ int setParameters(Universe* World){
 		}
 		myfile.close();
 	} else {
-		cout << "Error: Cannot open file 'setting.txt'!\n"; return 1;
+		cerr << "Error: Cannot open file 'setting.txt'!\n"; return 1;
 		return 1;
 	}
 	
@@ -205,7 +263,7 @@ int worldSlave(string line, Universe* World){
 // 						switcher = 22;
 // 						continue;
 // 					}
-					cout << "ERROR: the " << type << " world description is not defined (yet)." << endl;
+					cerr << "ERROR: the " << type << " world description is not defined (yet)." << endl;
 					return 1;
 				}
 			}
@@ -273,7 +331,7 @@ int worldSlave(string line, Universe* World){
 					cout << "World is quick-defined as " << n << 'x' << n << " demes arena." << endl;
 					return 0;
 				}
-				cout << "Error: Unknown pre-defined world " << type << endl;
+				cerr << "Error: Unknown pre-defined world " << type << endl;
 				return 1;
 			}
 		}

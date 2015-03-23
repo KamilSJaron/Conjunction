@@ -1,9 +1,7 @@
-#include <map>
-#include <random>
-static int RESOLUTION = 101; /*RESOLUTION is Ls in Baird 94; it has to work with one loci case*/
-// static double DISTANCE = 0.5;
-
 using namespace std;
+
+static int RESOLUTION = 101; /*RESOLUTION is Ls in Baird 94; it has to work with one loci case*/
+static vector<double> PROBABILITYmap;
 
 //struct and functions
 struct arrangeClass {
@@ -14,17 +12,11 @@ int tossAcoin (){
   return rand() % 2;
 }
 
-// int recombPosition (){
-//   return (rand() % (RESOLUTION-1))+1;
-// }
-
 int recombPosition (){
-  return (rand() % (RESOLUTION-1)) + 1;
-}
-
-// fctions
-int getResolution(){
-	return RESOLUTION;
+	if(PROBABILITYmap.empty()){
+		return (rand() % (RESOLUTION-1)) + 1;
+	}
+  return (double)rand() / RAND_MAX;
 }
 
 /**

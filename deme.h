@@ -1,5 +1,4 @@
 #include "individual.h"
-#include "g2_gd.h"
 
 static int DEMEsize = 512;
 // comment demesize in manual, it should be divideable by 2*number_of_edges
@@ -242,9 +241,9 @@ double Deme::getProportionOfHeterozygotes() const{
 void Deme::getFitnessVector(vector<double> &fitnessVector){
 	double sum = 0;
 	for(int i = 0;i < DEMEsize;i++){
-		if(deme[i].getFitness() != 1 and deme[i].getFitness() != (1 - SELECTIONpressure)){
-			cout << "Fitness of individual " << i << " is " << deme[i].getFitness() << " HORRAY!\n";
-		}
+// 		if(deme[i].getFitness() != 1 and deme[i].getFitness() != (1 - SELECTIONpressure)){
+// 			cout << "Fitness of individual " << i << " is " << deme[i].getFitness() << " HORRAY!\n";
+// 		}
 		sum += deme[i].getFitness();
 		fitnessVector.push_back(sum);
 	}

@@ -1,5 +1,4 @@
 #include "chromosome.h"
-#include <g2.h>
 static int NUMBERofCHROMOSOMES = 20; /* mouse have 19+1, but now I am reproducing 84 results */
 static double RECOMBINATIONrate = 1;
 static double SELECTIONpressure = 0.5;
@@ -230,7 +229,7 @@ double Individual::getFitness(){
 		Bcount += genome[0][i].countB();
 		Bcount += genome[1][i].countB();
 	}
-	Bcount = Bcount / (getResolution()*2*NUMBERofCHROMOSOMES); /* relative B count*/
+	Bcount = Bcount / (RESOLUTION*2*NUMBERofCHROMOSOMES); /* relative B count*/
 	fitness = 1 - (SELECTIONpressure * pow( 4 * Bcount * (1 - Bcount),BETA));
 // 	cout << "B count " << Bcount << " fitness" << fitness << endl;
 // 	cout << fitness << ' ';
@@ -246,7 +245,7 @@ double Individual::getBprop() const{
 		prop += genome[0][i].countB();
 		prop += genome[1][i].countB();
 	}
-	prop = prop / (getResolution()*2*NUMBERofCHROMOSOMES);
+	prop = prop / (RESOLUTION*2*NUMBERofCHROMOSOMES);
 	return prop;
 }
 
