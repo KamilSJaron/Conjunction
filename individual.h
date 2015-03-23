@@ -32,6 +32,7 @@ class Individual
 		void makeGamete(vector<Chromosome>& gamete); //
 		void replace_chromozome(int set, int position,map <int, char> input_chrom);
 		double getFitness();
+		int getBcount() const;
 		double getBprop() const;
 		bool Acheck() const;
 		bool Bcheck() const;
@@ -151,6 +152,9 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 				starts_by = (starts_by + 1) % 2;
 				continue;
 			}
+			if(rec_pos == RESOLUTION){
+				continue;
+			}
 			
 			if(starts_by==0){
 				while(pos1->first < rec_pos and pos1->first != genome[0][i].end()->first){
@@ -247,6 +251,15 @@ double Individual::getBprop() const{
 	}
 	prop = prop / (RESOLUTION*2*NUMBERofCHROMOSOMES);
 	return prop;
+}
+
+int Individual::getBcount() const{
+	int count = 0;
+	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
+		count += genome[0][i].countB();
+		count += genome[1][i].countB();
+	}
+	return count;
 }
 
 

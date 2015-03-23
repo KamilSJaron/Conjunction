@@ -13,10 +13,16 @@ int tossAcoin (){
 }
 
 int recombPosition (){
+	int roll = rand();
 	if(PROBABILITYmap.empty()){
-		return (rand() % (RESOLUTION-1)) + 1;
+		return (roll % (RESOLUTION-1)) + 1;
 	}
-  return (double)rand() / RAND_MAX;
+	for(unsigned int i=0;i < PROBABILITYmap.size();i++){
+		if(PROBABILITYmap[i] < roll){
+			return i;
+		}
+	}
+	return PROBABILITYmap.size();
 }
 
 /**

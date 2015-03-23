@@ -38,7 +38,7 @@ int main()
 		return 1;
 	}
 	srand (SEEDtoRAND); // setting a seed
-	cout << "Starting world: " << endl;
+	cerr << "Starting world: " << endl;
 	World.listOfDemes();
 
 // 	ready for deletion, when more testing wont be needed
@@ -55,7 +55,7 @@ int main()
 		World.migration();
 		World.globalBreeding();
 		t2=clock();
-		cout << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 // 		if(((i % modulo)-9) == 0){
 // 			check = World.SaveTheUniverse(j);
 // 			if(check != 0){
@@ -65,10 +65,10 @@ int main()
 // 			j++;
 // 		}
 	}
-// 	World.SaveTheUniverse(9);
+	World.SaveTheUniverse(9);
 	t_sim2 = clock();
-	cout << "FINISHING SIMULATION IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
-	cout << "Ending world: " << endl;
+	cerr << "FINISHING SIMULATION IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
+	cerr << "Ending world: " << endl;
 	World.listOfDemes();
 
 //  	char filePattern[] = "../playground/pictXX.png";
@@ -82,7 +82,7 @@ int main()
 void parameterSlave(string parameter, double value){
 	if(parameter == "RESOLUTION"){
 		Chromosome::setResolution(int(value));
-		cout << "Setting parameter RESOLUTION to: " << value << endl;
+		cerr << "Setting parameter RESOLUTION to: " << value << endl;
 		return;
 	}
 	if(parameter == "PROBABILITYmap"){
@@ -109,22 +109,22 @@ void parameterSlave(string parameter, double value){
 		}
 		
 		
-		cout << "Setting parameter PROBABILITYmap to: [";
+		cerr << "Setting parameter PROBABILITYmap to: [";
 		
 		if(PROBABILITYmap.empty() == true){
-			cout << "0, ";
+			cerr << "0, ";
 			for(int i = 0; i < (RESOLUTION - 1); i++){
-				cout << (1. / double(RESOLUTION - 1)) << ", " ;
+				cerr << (1. / double(RESOLUTION - 1)) << ", " ;
 			}
-			cout << "0]" << endl;
+			cerr << "0]" << endl;
 		} else {
 			double sum = 0;
 			for(unsigned int i = 0;i < PROBABILITYmap.size()-1;i++){
-				cout << PROBABILITYmap[i] << ", ";
+				cerr << PROBABILITYmap[i] << ", ";
 				sum += PROBABILITYmap[i];
 				PROBABILITYmap[i] = sum;
 			}
-			cout << PROBABILITYmap[PROBABILITYmap.size()-1] << "]" << endl;
+			cerr << PROBABILITYmap[PROBABILITYmap.size()-1] << "]" << endl;
 			sum += PROBABILITYmap[PROBABILITYmap.size()-1];
 			PROBABILITYmap[PROBABILITYmap.size()-1] = sum;
 		}
@@ -132,42 +132,42 @@ void parameterSlave(string parameter, double value){
 	}
 	if(parameter == "NUMBERofCHROMOSOMES"){
 		Individual::setNumberOfChromosomes(int(value));
-		cout << "Setting parameter NUMBERofCHROMOSOMES to: " << value << endl;
+		cerr << "Setting parameter NUMBERofCHROMOSOMES to: " << value << endl;
 		return;
 	}
 	if(parameter == "RECOMBINATIONrate"){
 		Individual::setRECOMBINATIONrate(value);
-		cout << "Setting parameter RECOMBINATIONrate to: " << value << endl;
+		cerr << "Setting parameter RECOMBINATIONrate to: " << value << endl;
 		return;
 	}
 	if(parameter == "SELECTIONpressure"){
 		Individual::setSELECTIONpressure(value);
-		cout << "Setting parameter SELECTIONpressure to: " << value << endl;
+		cerr << "Setting parameter SELECTIONpressure to: " << value << endl;
 		return;
 	}
 	if(parameter == "BETA"){
 		Individual::setBETA(value);
-		cout << "Setting parameter BETA to: " << value << endl;
+		cerr << "Setting parameter BETA to: " << value << endl;
 		return;
 	}
 	if(parameter == "DEMEsize"){
 		Deme::setDEMEsize(int(value));
-		cout << "Setting parameter DEMEsize to: " << value << endl;
+		cerr << "Setting parameter DEMEsize to: " << value << endl;
 		return;
 	}
 	if(parameter == "SEED"){
 		SEEDtoRAND = value;
-		cout << "Setting parameter SEED to: " << value << endl;
+		cerr << "Setting parameter SEED to: " << value << endl;
 		return;
 	}
 	if(parameter == "NUMBERofGENERATIONS"){
 		NUMBERofGENERATIONS = value;
-		cout << "Setting parameter NUMBERofGENERATIONS to: " << value << endl;
+		cerr << "Setting parameter NUMBERofGENERATIONS to: " << value << endl;
 		return;
 	}
 	if(parameter == "TEST"){
 		TEST = value;
-		cout << "Setting parameter TEST to: " << value << endl;
+		cerr << "Setting parameter TEST to: " << value << endl;
 	return;
 	}
 	cerr << "Warning: unknown parameter: " << parameter << endl;
@@ -193,6 +193,10 @@ int setParameters(Universe* World){
 					switcher = 2; // symbol == switches to reading values
 					continue;
 				}
+				if(parameter.substr(0,16) == "NAMEofOUTPUTfile"){
+					number += line[i];
+					continue;
+				}
 				if(switcher == 1){
 					if(isalpha(line[i])){
 						parameter.push_back(line[i]);
@@ -210,6 +214,12 @@ int setParameters(Universe* World){
 			if(!parameter.empty()){
 				if(parameter == "PROBABILITYmap"){
 					parameterSlave(parameter,0);
+					number.clear();
+					parameter.clear();
+					continue;
+				}
+				if(parameter.substr(0,16) == "NAMEofOUTPUTfile"){
+					NAMEofOUTPUTfile = number;
 					number.clear();
 					parameter.clear();
 					continue;
@@ -306,7 +316,7 @@ int worldSlave(string line, Universe* World){
 					}
 					World->basicUnitCreator('b', 'A');
 					World->basicUnitCreator('r', 'B');
-					cout << "World is quick defined as " << n << " demes long hybrid zone." << endl;
+					cerr << "World is quick defined as " << n << " demes long hybrid zone." << endl;
 					return 0;
 				}
 				if(type == "Arena"){
@@ -328,7 +338,7 @@ int worldSlave(string line, Universe* World){
 					for(int i=0;i < (n / 2);i++){
 						World->basicUnitCreator('r', 'B');
 					}
-					cout << "World is quick-defined as " << n << 'x' << n << " demes arena." << endl;
+					cerr << "World is quick-defined as " << n << 'x' << n << " demes arena." << endl;
 					return 0;
 				}
 				cerr << "Error: Unknown pre-defined world " << type << endl;
@@ -342,10 +352,10 @@ int worldSlave(string line, Universe* World){
 int testParameters(Universe* World){
 	World->set(0,"halfAhalfhetero");
 	for(int i=0;i < NUMBERofGENERATIONS;i++){
-		cout << "Genertion " << i << endl; 
-		cout << "Homozygotes A: " << World->getProportionOfHomozygotes(0,'A') << endl;
-		cout << "Heterozygotes: "<< World->getProportionOfHeterozygotes(0) << endl;
-		cout << "Homozygotes B: "<< World->getProportionOfHomozygotes(0,'B') << endl;
+		cerr << "Genertion " << i << endl; 
+		cerr << "Homozygotes A: " << World->getProportionOfHomozygotes(0,'A') << endl;
+		cerr << "Heterozygotes: "<< World->getProportionOfHeterozygotes(0) << endl;
+		cerr << "Homozygotes B: "<< World->getProportionOfHomozygotes(0,'B') << endl;
 		World->Breed(0);
 	}
 	

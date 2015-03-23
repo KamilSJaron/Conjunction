@@ -42,13 +42,16 @@ class Deme
 		void permutation(); // permutation function
 		void integrateMigrantVector(vector<Individual>& migBuffer);
 		vector<double> getBproportion() const;
+		double getMeanBproportion() const;
 		double getProportionOfHomozygotes(char population) const;
 		double getProportionOfHeterozygotes() const;
 		
 // plotting functions
 		void showDeme();
+		void summary();
 		void viewDeme();
 		void readAllGenotypes();
+		void readGenotypeFrequencies();
 		void plotHeadOfDeme();
 		void plotDeme();
 		void plotDeme(const char* filename);
@@ -208,6 +211,14 @@ vector<double> Deme::getBproportion() const{
 	return props;
 }
 
+double Deme::getMeanBproportion() const{
+	double props;
+	for(int i = 0;i < DEMEsize;i++){
+		props += deme[i].getBprop();
+	}
+	return (props / DEMEsize);
+}
+
 double Deme::getProportionOfHomozygotes(char population) const{
 	double proportion = 0;
 	if(population == 'A'){
@@ -265,6 +276,21 @@ void Deme::showDeme(){
 	cout << endl;
 }
 
+void Deme::summary(){
+	int neigbsize = neigbours.size();
+	cout << setw(5) << right << index << ":  ";
+	for(int i = 0; i < neigbsize; i++){
+		cout << setw(5) << left << neigbours[i] << " ";
+	}
+	if(neigbsize == 2){
+		cout << setw(10) << "           ";
+	}
+	cout << setw(12) << left << getMeanBproportion() << " " << setw(25) << right ;
+	readGenotypeFrequencies();
+	cout << endl;
+}
+
+
 void Deme::viewDeme(){
 	for(int i=0;i<DEMEsize;i++){
 		cout << "Individual: " << i+1 << endl;
@@ -276,6 +302,21 @@ void Deme::readAllGenotypes(){
 	for(int i=0;i<DEMEsize;i++){
 		deme[i].readGenotype();
 	}
+}
+
+void Deme::readGenotypeFrequencies(){
+	vector<double> freqs;
+	for(int i=0;i < RESOLUTION*2 + 1;i++){
+		freqs.push_back(0);
+	}	
+	for(int i=0;i<DEMEsize;i++){
+		freqs[deme[i].getBcount()]++;
+	}
+// 	cout << "freqs: ";
+	for(int i=0;i < RESOLUTION*2 + 1;i++){
+		cout << (freqs[i] / DEMEsize) << ' ';
+	}
+// 	cout << endl;
 }
 
 

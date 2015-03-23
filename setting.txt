@@ -9,16 +9,16 @@
 
 # Numerical parameters
 
-RESOLUTION = 3                    # number of loci per chromosome, integer in [1;10000]
-PROBABILITYmap = [0.3, 0.2, 0.2, 0.3] # gives probabilities of chiasma rolled between loci, default is [0, 1/(RESOLUTION-1), ..., 1/(RESOLUTION-1), 0], where length of vector alwas has to be RESOLUTION + 1, otherwise the defult is used
+RESOLUTION = 2                    # number of loci per chromosome, integer in [1;10000]
+#PROBABILITYmap = [0, 1, 0] # gives probabilities of chiasma rolled between loci, default is [0, 1/(RESOLUTION-1), ..., 1/(RESOLUTION-1), 0], where length of vector alwas has to be RESOLUTION + 1, otherwise the defult is used
 NUMBERofCHROMOSOMES = 1            # integer in [1;21]
 RECOMBINATIONrate = 1               # real number in [0;5]
-SELECTIONpressure = 0.3             # real number in [0;1]
-BETA = 16                            # real number in [0.0625;16]
+SELECTIONpressure = 0.2             # real number in [0;1]
+BETA = 0.0625                          # real number in [0.0625;16]
 DEMEsize = 512                   # integer in [4;8192], use only power of 4, otherwise the plots wont be nice.
-SEED = 150226                       # any number (the date can be useful and every day original)
-NUMBERofGENERATIONS = 100           # [1,10000]
-#NAMEofOUTPUTfile = '../playground/150206_out.dat' # any name with plain text sulfix
+SEED = 150323                       # any number (the date can be useful and every day original)
+NUMBERofGENERATIONS = 300           # [1,10000]
+NAMEofOUTPUTfile = 150323_out_B0_0625.dat # any name with plain text sulfix
 
 # World definition
 

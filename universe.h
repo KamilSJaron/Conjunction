@@ -2,6 +2,8 @@
 
 using namespace std;
 
+static string NAMEofOUTPUTfile;
+
 // deme creator will have these arguments:
 // int dimension = 0 - 2 (popr 3, N, but 2 is working so far)
 // int edge_per_deme = 2 - F
@@ -33,6 +35,7 @@ class Universe
 // 		plotting functions
 		void listOfParameters();
 		void listOfDemes();
+		void summary();
 		double getProportionOfHeterozygotes(int index);
 		double getProportionOfHomozygotes(int index, char type);
 		void showOneDeme(int index);
@@ -517,6 +520,25 @@ void Universe::listOfDemes(){
 	}
 }
 
+void Universe::summary(){
+	int worlsize = space.size();
+	cout << "World of size " << worlsize << endl;
+	cout << "of dimension: " << dimension << endl;
+	cout << "Number of demes up to down: " << number_of_demes_u_d << endl;
+	cout << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
+	if(type_of_l_r_edges != "extending"){
+		cout << "Number of demes left to right: " << number_of_demes_l_r << endl;
+	}
+	cout << "Type of borders left to right: " << type_of_l_r_edges << endl;
+	cout << "                 EDGE" << endl;
+	cout << setw(7) << right << "DEME " << setw(7) << left << " LEFT" << setw(6) << left << "RIGHT" << setw(5) << left << "UP" << setw(6) << left << "DOWN" << setw(12) << left << "% of B" << setw(40) << right << "genotypes: AAAA AAAB AABB ABBB BBBB" << endl;
+	for (auto i=space.begin(); i!=space.end(); ++i){
+		i->second->summary();
+	}
+
+}
+
+
 double Universe::getProportionOfHeterozygotes(int index){
 	return space[index]->getProportionOfHeterozygotes();
 }
@@ -618,13 +640,18 @@ void Universe::plotDemesOneByOne(char fileNamepattern[]){
 }
 
 int Universe::SaveTheUniverse(int order){
-	char fileName[] = "../playground/simulationX.txt";
-	fileName[24] = char(order+'0');
+	string fn = NAMEofOUTPUTfile;
+	if(fn.find('X') > 50){
+		cerr << "Warrning, the 'X' in the filename is missing." << endl; // udelat to tak, aby v pripade, ze tam neni X, aby to ulozilo jen nakonci.
+		cerr << "            current name is "<< NAMEofOUTPUTfile << endl;
+	}
+	fn[fn.find('X')] = char(order+'0');
+	
 	int index = index_last_left;
 	ofstream ofile;
 	vector<double> props;
 	
-	ofile.open(fileName); // Opens file
+	ofile.open(fn); // Opens file
 	if (ofile.fail()){
 		return 1;
 	}  
@@ -647,8 +674,8 @@ int Universe::SaveTheUniverse(int order){
 	
 	ofile.close();
 	
-// 	index_last_left = space[index_last_left].getNeigbours()[2];
-	cout << "The output was sucesfully saved to: " << fileName << endl;
+// 	index_last_left = space[index_last_left]->zsgetNeigbours()[2];
+	cerr << "The output was sucesfully saved to: " << fn << endl;
 	return 0;
 }
 
