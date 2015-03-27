@@ -47,7 +47,7 @@ int main()
 	} else {
 // 	this part yes
 	clock_t t1,t2,t_sim1,t_sim2;
-// 	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 8)),5), j = 1;
+	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 8)),5), j = 1;
 	
 	t_sim1 = clock();
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
@@ -56,14 +56,14 @@ int main()
 		World.globalBreeding();
 		t2=clock();
 		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-// 		if(((i % modulo)-9) == 0){
-// 			check = World.SaveTheUniverse(j);
-// 			if(check != 0){
-// 				cerr << "Error in saving the output." << endl;
-// 				return 1;
-// 			}
-// 			j++;
-// 		}
+		if(((i % modulo)-9) == 0){
+			check = World.SaveTheUniverse(j);
+			if(check != 0){
+				cerr << "Error in saving the output." << endl;
+				return 1;
+			}
+			j++;
+		}
 	}
 	World.SaveTheUniverse(9);
 	t_sim2 = clock();
@@ -98,9 +98,11 @@ void parameterSlave(string parameter, double value){
 					sum_of_elems += *j;
 				}
 				if(sum_of_elems != 1){
-					cerr << "Warning: sum of members of the PROBABILITYmap is not equal to 1" << endl;
-					cerr << "        The default PROBABILITYmap will be used..." << endl;
-					PROBABILITYmap.clear();
+					for(unsigned int i=0;i<PROBABILITYmap.size();i++){
+						PROBABILITYmap[i] = PROBABILITYmap[i] / sum_of_elems;
+					}
+					cerr << "Warning: the PROBABILITYmap is not equal to 1" << endl;
+					cerr << "        The PROBABILITYmap was normalized..." << endl;
 				}
 			}
 		} else {
