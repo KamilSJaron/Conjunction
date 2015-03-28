@@ -4,14 +4,6 @@ using namespace std;
 
 static string NAMEofOUTPUTfile;
 
-// deme creator will have these arguments:
-// int dimension = 0 - 2 (popr 3, N, but 2 is working so far)
-// int edge_per_deme = 2 - F
-// string edges_l_r = ('reflexive','absorbing','extending','warping','population_border')
-// string edges_u_d = ('reflexive','absorbing','extending','warping','population_border')
-// number_of_demes_l_r = 0 - Q
-// number_of_demes_u_d = 0 - W
-
 class Universe  
 {
 	public:
@@ -26,7 +18,6 @@ class Universe
 		void Breed(int index);
 		void set(int index, string type);
 		void globalBreeding();
-// 		void globalBreeding(char type);
 		
 // 		testing functions vector<Chromosome>& gamete
 		bool Acheck(vector<Individual>& buffer);
@@ -409,23 +400,6 @@ void Universe::globalBreeding(){
 		space[index]->Breed();
 	}
 }
-
-// void Universe::globalBreeding(char type){
-// 	vector<int> indexes;
-// 	for (auto i=space.begin(); i!=space.end(); ++i){
-// 		indexes.push_back(i->first);
-// 	}
-// 	cout << "checkpoint 1" << endl;
-// 	int index = 0;
-// 	int i_size = indexes.size();
-// 	
-// // 	#pragma omp parallel for
-// 	for(int i = 0; i < i_size; i++){
-// 		index = indexes[i];
-// 		space[index]->Breed();
-// 		cout << "Deme: " << i << " Done \n";
-// 	}
-// }
 
 bool Universe::Acheck(vector<Individual>& buffer){
 	for(int i = 0; (unsigned)i < buffer.size(); i++){
