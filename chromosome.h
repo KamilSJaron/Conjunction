@@ -1,6 +1,6 @@
 using namespace std;
 
-static int RESOLUTION = 101; /*RESOLUTION is Ls in Baird 94; it has to work with one loci case*/
+static int RESOLUTION = 1; /*RESOLUTION is Ls in Baird 94; it has to work with one loci case*/
 static vector<double> PROBABILITYmap;
 
 //struct and functions
@@ -15,7 +15,11 @@ int tossAcoin (){
 int recombPosition (){
 	int roll = rand();
 	if(PROBABILITYmap.empty()){
-		return (roll % (RESOLUTION-1)) + 1;
+		if(RESOLUTION == 1){
+			return 0;
+		} else {
+			return (roll % (RESOLUTION-1)) + 1;
+		}
 	}
 	for(unsigned int i=0;i < PROBABILITYmap.size();i++){
 		if(PROBABILITYmap[i] < roll){

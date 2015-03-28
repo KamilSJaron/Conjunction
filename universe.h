@@ -47,6 +47,8 @@ class Universe
 		void plotDemesOneByOne();
 		void plotDemesOneByOne(char fileNamepattern[]);
 		int SaveTheUniverse(int order);
+		int SaveTheUniverse(int order, string type);
+		int SaveTheUniverse(string type);
 		
 // 		parameter changing functions
 		void setHeight(int heig);
@@ -55,6 +57,7 @@ class Universe
 		void setUDEdgesType(string ed_type);
 		void setDimension(int dim);
 		void setNumberOfEdges(int nue);
+		void restart();
 		
 		int getNumOfDemesInColumn(){return number_of_demes_u_d;};
 		int getSpaceSize(){return space.size();};
@@ -400,7 +403,7 @@ void Universe::globalBreeding(){
 	int index = 0;
 	int i_size = indexes.size();
 	
-// 	#pragma omp parallel for
+// 	#pragma omp parallel for //even worse than before...
 	for(int i = 0; i < i_size; i++){
 		index = indexes[i];
 		space[index]->Breed();
@@ -479,6 +482,14 @@ void Universe::setDimension(int dim){
 
 void Universe::setNumberOfEdges(int nue){
 	edges_per_deme = nue;
+}
+
+void Universe::restart(){
+	space.clear();
+	basicUnitCreator('b', 'A');
+	basicUnitCreator('r', 'B');
+	cerr << "World is reset." << endl;
+	return;
 }
 
 
@@ -601,36 +612,8 @@ void Universe::plotDemesOneByOne(char fileNamepattern[]){
 			}
 		}
 		cout << "Unit: " << i->first % 10 << ' '; 
-		if(i->first % 10 == 0){
-			unit = '0';
-		}
-		if (i->first % 10 == 1){
-			unit = '1';
-		}
-		if (i->first % 10 == 2){
-			unit = '2';
-		}
-		if (i->first % 10 == 3){
-			unit = '3';
-		}
-		if (i->first % 10 == 4){
-			unit = '4';
-		}
-		if (i->first % 10 == 5){
-			unit = '5';
-		}
-		if (i->first % 10 == 6){
-			unit = '6';
-		}
-		if (i->first % 10 == 7){
-			unit = '7';
-		}
-		if (i->first % 10 == 8){
-			unit = '8';
-		}
-		if (i->first % 10 == 9){
-			unit = '9';
-		}
+		unit = char('0' + i->first % 10);
+
 		fileNamepattern[len - 6] = decimal;
 		fileNamepattern[len - 5] = unit;
 		cout << "***** DEME " << i->first << " *****" << endl;
@@ -679,8 +662,120 @@ int Universe::SaveTheUniverse(int order){
 	return 0;
 }
 
+int Universe::SaveTheUniverse(int order, string type){
+	string fn = NAMEofOUTPUTfile;
+	if(fn.find('X') > 50){
+		cerr << "Warrning, the 'X' in the filename is missing." << endl; // udelat to tak, aby v pripade, ze tam neni X, aby to ulozilo jen nakonci.
+		cerr << "            current name is "<< NAMEofOUTPUTfile << endl;
+	}
+	fn[fn.find('X')] = char(order+'0');
+	
+	int index = index_last_left;
+	ofstream ofile;
+	vector<double> props;
+	
+	ofile.open(fn); // Opens file
+	if (ofile.fail()){
+		return 1;
+	}  
+	
+	if(type == "complete"){
+		for(unsigned int i = 0; i < space.size(); i++){
+			props = space[index]->getBproportion();
+			ofile << index << '\t';
+			for(unsigned int ind = 0; ind < props.size(); ind++){
+				ofile << props[ind] << '\t';
+			}
+			ofile << endl;
+			if(index != index_last_right){
+				index = space[index]->getNeigbours()[1];
+			} else {
+				break;
+			}
+		}
+		cerr << "The output was sucesfully saved to: " << fn << endl;
+		ofile.close();
+		return 0;
+	}
+	if(type == "average"){
+		double avrg;
+		for(unsigned int i = 0; i < space.size(); i++){
+			props = space[index]->getBproportion();
+			ofile << index << '\t';
+			for(unsigned int ind = 0; ind < props.size(); ind++){
+				avrg += props[ind];
+			}
+			avrg = avrg / DEMEsize;
+			ofile << avrg << endl;
+			if(index != index_last_right){
+				index = space[index]->getNeigbours()[1];
+			} else {
+				break;
+			}
+		}
+		cerr << "The output was sucesfully saved to: " << fn << endl;
+		ofile.close();
+		return 0;
+	}
 
+	cerr << "WARNING: The output was not saved" << endl;
+	cerr << "         unknow saving format" << endl;
+	return 1;
+}
 
+int Universe::SaveTheUniverse(string type){
+	int index = index_last_left;
+	ofstream ofile;
+	vector<double> props;
+	
+	ofile.open(NAMEofOUTPUTfile); // Opens file
+	if (ofile.fail()){
+		return 1;
+	}  
+	
+	if(type == "complete"){
+		for(unsigned int i = 0; i < space.size(); i++){
+			props = space[index]->getBproportion();
+			ofile << index << '\t';
+			for(unsigned int ind = 0; ind < props.size(); ind++){
+				ofile << props[ind] << '\t';
+			}
+			ofile << endl;
+			if(index != index_last_right){
+				index = space[index]->getNeigbours()[1];
+			} else {
+				break;
+			}
+		}
+		cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
+		ofile.close();
+		return 0;
+	}
+	if(type == "average"){
+		double avrg;
+		for(unsigned int i = 0; i < space.size(); i++){
+			props = space[index]->getBproportion();
+			ofile << index << '\t';
+			for(unsigned int ind = 0; ind < props.size(); ind++){
+				avrg += props[ind];
+			}
+			avrg = avrg / DEMEsize;
+			ofile << avrg << endl;
+			if(index != index_last_right){
+				index = space[index]->getNeigbours()[1];
+			} else {
+				break;
+			}
+		}
+		cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
+		ofile.close();
+		return 0;
+	}
+
+	cerr << "WARNING: The output was not saved" << endl;
+	cerr << "         unknow saving format" << endl;
+	return 1;
+}
 
 
 
