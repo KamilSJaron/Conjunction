@@ -124,23 +124,23 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		for(int index=0;index<numberOfChaisma;index++){
 			rec_pos = recombPosition();
 			chiasmas.push_back(rec_pos);
-// 			cout << " postion " << rec_pos;
+// 			cerr << " postion " << rec_pos;
 		}
-// 		cout << endl;
+// 		cerr << endl;
 		sort(chiasmas.begin(), chiasmas.end(), arrangeObject);
 		
-// 		cout << "Rolled: ";
+// 		cerr << "Rolled: ";
 // 		for(int index=0;index<numberOfChaisma;index++){
-// 			cout << chiasmas[index] << ' ';
+// 			cerr << chiasmas[index] << ' ';
 // 		}
-// 		cout << endl;
+// 		cerr << endl;
 		
 
 		if(chiasmas[0] != 0){
-// 			cout << "Writing " << 0 << ' ' << genome[starts_by][i].read(0) << endl;
+// 			cerr << "Writing " << 0 << ' ' << genome[starts_by][i].read(0) << endl;
 			recombinant_ch.write(0,genome[starts_by][i].read(0));
 		} else {
-// 			cout << "Writing " << 0 << ' ' << genome[(starts_by + 1) % 2][i].read(0) << endl;
+// 			cerr << "Writing " << 0 << ' ' << genome[(starts_by + 1) % 2][i].read(0) << endl;
 			recombinant_ch.write(0,genome[(starts_by + 1) % 2][i].read(0));
 		}
 		pos1++;
@@ -158,7 +158,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 			
 			if(starts_by==0){
 				while(pos1->first < rec_pos and pos1->first != genome[0][i].end()->first){
-// 					cout << "wRiting " << pos1->first << ' ' << pos1->second << endl;
+// 					cerr << "wRiting " << pos1->first << ' ' << pos1->second << endl;
 					recombinant_ch.write(pos1->first,pos1->second);
 					last_material_s1 = pos1->second;
 					pos1++;
@@ -168,16 +168,16 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 					pos2++;
 				}
 				if(last_material_s1 == 'A' and last_material_s2 == 'B'){
-// 					cout << "wrIting " << chiasmas[index] << ' ' << last_material_s2 << endl;
+// 					cerr << "wrIting " << chiasmas[index] << ' ' << last_material_s2 << endl;
 					recombinant_ch.write(chiasmas[index],last_material_s2);
 				}
 				if(last_material_s1 == 'B' and last_material_s2 == 'A'){
-// 					cout << "wriTing " << chiasmas[index] << ' ' << last_material_s2 << endl;
+// 					cerr << "wriTing " << chiasmas[index] << ' ' << last_material_s2 << endl;
 					recombinant_ch.write(chiasmas[index],last_material_s2);
 				}
 			} else {
 				while(pos2->first < rec_pos and pos2->first != genome[1][i].end()->first){
-// 					cout << "writIng " << pos2->first << ' ' << pos2->second << endl;
+// 					cerr << "writIng " << pos2->first << ' ' << pos2->second << endl;
 					recombinant_ch.write(pos2->first,pos2->second);
 					last_material_s2 = pos2->second;
 					pos2++;
@@ -187,11 +187,11 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 					pos1++;
 				}
 				if(last_material_s1 == 'A' and last_material_s2 == 'B'){
-// 					cout << "writiNg " << chiasmas[index] << ' ' << last_material_s1 << endl;
+// 					cerr << "writiNg " << chiasmas[index] << ' ' << last_material_s1 << endl;
 					recombinant_ch.write(chiasmas[index],last_material_s1);
 				}
 				if(last_material_s1 == 'B' and last_material_s2 == 'A'){
-// 					cout << "writinG " << chiasmas[index] << ' ' << last_material_s1 << endl;
+// 					cerr << "writinG " << chiasmas[index] << ' ' << last_material_s1 << endl;
 					recombinant_ch.write(chiasmas[index],last_material_s1);
 				}
 			}
@@ -199,7 +199,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		}
 	if(starts_by==0){
 		while(pos1->first != genome[0][i].end()->first){
-// 			cout << "writing " << pos1->first << ' ' << pos1->second << endl;
+// 			cerr << "writing " << pos1->first << ' ' << pos1->second << endl;
 			recombinant_ch.write(pos1->first,pos1->second);
 			last_material_s1 = pos1->second;
 			pos1++;
@@ -210,7 +210,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		}
 	} else {
 		while(pos2->first != genome[1][i].end()->first){
-// 			cout << "writing " << pos2->first << ' ' << pos2->second << endl;
+// 			cerr << "writing " << pos2->first << ' ' << pos2->second << endl;
 			recombinant_ch.write(pos2->first,pos2->second);
 			last_material_s2 = pos2->second;
 			pos2++;
@@ -235,10 +235,10 @@ double Individual::getFitness(){
 	}
 	Bcount = Bcount / (RESOLUTION*2*NUMBERofCHROMOSOMES); /* relative B count*/
 	fitness = 1 - (SELECTIONpressure * pow( 4 * Bcount * (1 - Bcount),BETA));
-// 	cout << "B count " << Bcount << " fitness" << fitness << endl;
-// 	cout << fitness << ' ';
+// 	cerr << "B count " << Bcount << " fitness" << fitness << endl;
+// 	cerr << fitness << ' ';
 // 	if(fitness < 0.5 or fitness > 1){
-// 		cout << "WARNING: The finess is " << fitness << endl;
+// 		cerr << "WARNING: The finess is " << fitness << endl;
 // 	}
 	return fitness;
 }
@@ -322,7 +322,7 @@ void Individual::plotGenotype(){
 		x1 = 1;
 		x2 = 1;
 		while(pos1->first != genome[0][i].end()->first){
-// 			cout << "COMPARING:" << pos1->first << " " << pos2->first << "\n";
+// 			cerr << "COMPARING:" << pos1->first << " " << pos2->first << "\n";
 			if(pos1->first <= pos2->first){
 				if(x1 < x2){
 					x1 = pos1->first;
@@ -338,7 +338,7 @@ void Individual::plotGenotype(){
 				} else {
 					g2_pen(dev,colH);
 				}
-// 				cout << x1 << ' ' << x2 << endl;
+// 				cerr << x1 << ' ' << x2 << endl;
 				g2_line(dev,((double)x1 / RESOLUTION)*width,
 								(height-(i*10))-5,
 								((double)x2 / RESOLUTION)*width,
@@ -367,7 +367,7 @@ void Individual::plotGenotype(){
 				} else {
 					g2_pen(dev,colH);
 				}
-// 				cout << x1 << ' ' << x2 << endl;
+// 				cerr << x1 << ' ' << x2 << endl;
 				g2_line(dev,((double)x1 / RESOLUTION)*width,
 								(height-(i*10))-5,
 								((double)x2 / RESOLUTION)*width,
@@ -392,7 +392,7 @@ void Individual::plotGenotype(){
 			} else {
 				g2_pen(dev,colH);
 			}
-// 			cout << x1 << ' ' << x2 << endl;
+// 			cerr << x1 << ' ' << x2 << endl;
 			g2_line(dev,((double)x1 / RESOLUTION)*width,
 							(height-(i*10))-5,
 							((double)x2 / RESOLUTION)*width,
@@ -416,7 +416,7 @@ void Individual::plotGenotype(){
 			} else {
 				g2_pen(dev,colH);
 			}
-// 			cout << x1 << ' ' << x2 << endl;
+// 			cerr << x1 << ' ' << x2 << endl;
 			g2_line(dev,((double)x1 / RESOLUTION)*width,
 							(height-(i*10))-5,
 							((double)x2 / RESOLUTION)*width,
@@ -424,8 +424,8 @@ void Individual::plotGenotype(){
 			last_material_s1 = pos1->second;
 			pos1++;
 		}
-// 		cout << pos1->first << " " << genome[0][i].end()->first << endl;
-// 		cout << pos2->first << " " << genome[1][i].end()->first << endl;
+// 		cerr << pos1->first << " " << genome[0][i].end()->first << endl;
+// 		cerr << pos2->first << " " << genome[1][i].end()->first << endl;
 		
 		if(x1 < x2){
 				x1 = RESOLUTION;

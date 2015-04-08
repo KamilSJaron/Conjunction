@@ -45,6 +45,7 @@ class Deme
 		double getMeanBproportion() const;
 		double getProportionOfHomozygotes(char population) const;
 		double getProportionOfHeterozygotes() const;
+		double getMeanFitness() const;
 		
 // plotting functions
 		void showDeme();
@@ -138,7 +139,7 @@ void Deme::Breed(){
 	vector<Chromosome> gamete1, gamete2;
 	getFitnessVector(fitnessVector);
 	double RandMax = fitnessVector[DEMEsize-1];
-// 	cout << RandMax << "\n";
+// 	cerr << RandMax << "\n";
 	double roll;
 	map<double, int> parentPick;
 	map<double, int>::iterator it;
@@ -253,7 +254,7 @@ void Deme::getFitnessVector(vector<double> &fitnessVector){
 	double sum = 0;
 	for(int i = 0;i < DEMEsize;i++){
 // 		if(deme[i].getFitness() != 1 and deme[i].getFitness() != (1 - SELECTIONpressure)){
-// 			cout << "Fitness of individual " << i << " is " << deme[i].getFitness() << " HORRAY!\n";
+// 			cerr << "Fitness of individual " << i << " is " << deme[i].getFitness() << " HORRAY!\n";
 // 		}
 		sum += deme[i].getFitness();
 		fitnessVector.push_back(sum);
@@ -261,6 +262,14 @@ void Deme::getFitnessVector(vector<double> &fitnessVector){
 	return;
 }
 		
+		/* Computes average fitness in the deme*/
+double Deme::getMeanFitness() const{
+	double sum = 0;
+	for(int i = 0;i < DEMEsize;i++){
+		sum += deme[i].getFitness();
+	}
+	return sum / DEMEsize;
+}
 
 		
   // // // // // // // // // // // // // //
@@ -285,8 +294,13 @@ void Deme::summary(){
 	if(neigbsize == 2){
 		cout << setw(10) << "           ";
 	}
-	cout << setw(12) << left << getMeanBproportion() << " " << setw(25) << right ;
-	readGenotypeFrequencies();
+	cout << setw(12) << left << getMeanBproportion() 
+	<< setw(12) << left << getProportionOfHeterozygotes()
+	<< setw(12) << left << getMeanFitness() << " "
+	<< setw(25) << right ;
+	if((RESOLUTION * NUMBERofCHROMOSOMES) <= 2){
+		readGenotypeFrequencies();
+	}
 	cout << endl;
 }
 
@@ -306,14 +320,14 @@ void Deme::readAllGenotypes(){
 
 void Deme::readGenotypeFrequencies(){
 	vector<double> freqs;
-	for(int i=0;i < RESOLUTION*2 + 1;i++){
+	for(int i=0;i < NUMBERofCHROMOSOMES*RESOLUTION*2 + 1;i++){
 		freqs.push_back(0);
 	}	
 	for(int i=0;i<DEMEsize;i++){
 		freqs[deme[i].getBcount()]++;
 	}
 // 	cout << "freqs: ";
-	for(int i=0;i < RESOLUTION*2 + 1;i++){
+	for(int i=0;i < NUMBERofCHROMOSOMES*RESOLUTION*2 + 1;i++){
 		cout << (freqs[i] / DEMEsize) << ' ';
 	}
 // 	cout << endl;

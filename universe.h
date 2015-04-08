@@ -89,7 +89,7 @@ Universe::Universe(){
 // I have to add char init to initiate demes as pure A, pure B, mixed or pure A/B with some incoming individuals
 void Universe::basicUnitCreator(char type, char init){
 	int max_index = space.size();
-// 	cout << "Space size: " << max_index << endl;
+// 	cerr << "Space size: " << max_index << endl;
 	vector<int> new_indexes;
 	int index;
 	if(dimension == 1){
@@ -171,7 +171,7 @@ void Universe::basicUnitCreator(char type, char init){
 			index_last_right = index;
 			break;
 		default:
-			cout << "I have no idea, what do you mean by... " << type << " I understand only 'b' basic, 'l' left and 'r' right, type of basic unit.. try it again please." << endl;
+			cerr << "I have no idea, what do you mean by... " << type << " I understand only 'b' basic, 'l' left and 'r' right, type of basic unit.. try it again please." << endl;
 			break;
 	}
 	return;
@@ -207,7 +207,7 @@ int Universe::upper_border(int index, int max_index){
 			return index - 1;
 		}
 	}
-	cout << "The type of upper-down edges is not valid." << endl;
+	cerr << "The type of upper-down edges is not valid." << endl;
 	return -1;
 }
 
@@ -241,7 +241,7 @@ int Universe::lower_border(int index, int max_index){
 			return index + 1;
 		}
 	}
-	cout << "The type of upper-down edges is not valid." << endl;
+	cerr << "The type of upper-down edges is not valid." << endl;
 	return -1;
 }
 
@@ -257,14 +257,14 @@ int Universe::side_border(int reflexive, int extending){
 // 		lets say, that population_border is marked by 666 label
 		return 666;
 	}
-	cout << "The type of left-right edges is not valid." << endl;
+	cerr << "The type of left-right edges is not valid." << endl;
 	return -1;
 }
 
 
 int Universe::migration(){
 	if(space.empty()){
-		cout << "ERROR: Missing demes" << endl;
+		cerr << "ERROR: Missing demes" << endl;
 		return -1;
 	}
 
@@ -275,15 +275,15 @@ int Universe::migration(){
 	vector<int> neigbours;
 	int MigInd = Deme::getDEMEsize() / (2 * edges_per_deme );
 	int deme_index;
-	
+	/*bufferVectorMap is container for all individuals imigrating to all demes*/
 	for (auto deme=space.begin(); deme!=space.end(); ++deme){
-// 		cout << i << endl;
-// 		cout << "lets transfer individuals of DEME " << i << endl;
+// 		cerr << i << endl;
+// 		cerr << "lets transfer individuals of DEME " << i << endl;
 		neigbours = deme->second->getNeigbours();
 		
 // 		following code should be deleted afterwards, slowing down the program (testing)
 // 		if(neigbours.size() != (unsigned)edges_per_deme){
-// 			cout << "ERROR: More neigbours than edges: " << neigbours.size() << " != " << edges_per_deme << endl;
+// 			cerr << "ERROR: More neigbours than edges: " << neigbours.size() << " != " << edges_per_deme << endl;
 // 			return -1;
 // 		}
 
@@ -291,7 +291,7 @@ int Universe::migration(){
 			deme_index = neigbours[j];
 			for(int k=0;k < MigInd; k++){
 				bufferVectorMap[deme_index].push_back(deme->second->getIndividual(k));
-// 				cout << "from " << world[i]->getDemeIndex() << " to " << deme_index << endl;
+// 				cerr << "from " << world[i]->getDemeIndex() << " to " << deme_index << endl;
 // 				world[i]->getIndividual(k).plotGenotype();
 			}
 		}
@@ -309,7 +309,7 @@ int Universe::migration(){
 			}
 		}
 		
-// 		cout << "Buffer " << buff->first << " has size " << buff->second.size() << endl;
+// 		cerr << "Buffer " << buff->first << " has size " << buff->second.size() << endl;
 		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
 			if(Acheck(buff->second)){
 				continue;
@@ -322,6 +322,7 @@ int Universe::migration(){
 			}
 			basicUnitCreator('r', 'B');
 		}
+// 		cout << "Integating to deme " << buff->first << " " << buff->second.size() << " individuals" << endl;
 		space[buff->first]->integrateMigrantVector(buff->second);
 	}
 	return 0;
@@ -380,7 +381,7 @@ void Universe::set(int index,string type){
 		return;
 	}
 	
-	cout << "ERROR: unknown parameter " << type << " of Universe.set()";
+	cerr << "ERROR: unknown parameter " << type << " of Universe.set()";
 	return;
 }
 
@@ -429,7 +430,7 @@ void Universe::setHeight(int heig){
 	if(space.size() == 0){
 		number_of_demes_u_d = heig;
 	} else {
-		cout << "It is not possible to change parameter height once, you create world";
+		cerr << "It is not possible to change parameter height once, you create world";
 	}
 }
 
@@ -437,7 +438,7 @@ void Universe::setWidth(int width){
 	if(space.size() == 0){
 		number_of_demes_l_r = width;
 	} else {
-		cout << "It is not possible to change parameter height once, you create world";
+		cerr << "It is not possible to change parameter height once, you create world";
 	}
 }
 
@@ -480,7 +481,7 @@ int Universe::getIndex(int i){
 // // // //
 
 void Universe::listOfParameters(){
-	cout << "***************" << endl << "Size of World: " << space.size() << " Dim: " << dimension << " edges_per_deme: " << edges_per_deme << endl
+	cerr << "***************" << endl << "Size of World: " << space.size() << " Dim: " << dimension << " edges_per_deme: " << edges_per_deme << endl
 	<< "Number of demes l/r: " << number_of_demes_l_r << " Number of demes u/d: " << number_of_demes_u_d << endl
 	<< "Type of l/r edges: " << type_of_l_r_edges << " Type of u/d edges: " << type_of_u_d_edges << endl
 	<< "Last left index: " << index_last_left << " Last right index: " << index_last_right << endl
@@ -516,7 +517,23 @@ void Universe::summary(){
 	}
 	cout << "Type of borders left to right: " << type_of_l_r_edges << endl;
 	cout << "                 EDGE" << endl;
-	cout << setw(7) << right << "DEME " << setw(7) << left << " LEFT" << setw(6) << left << "RIGHT" << setw(5) << left << "UP" << setw(6) << left << "DOWN" << setw(12) << left << "% of B" << setw(40) << right << "genotypes: AAAA AAAB AABB ABBB BBBB" << endl;
+	cout << setw(7) << right << "DEME " 
+	<< setw(7) << left << " LEFT" 
+	<< setw(6) << left << "RIGHT" 
+	<< setw(5) << left << "UP" 
+	<< setw(6) << left << "DOWN" 
+	<< setw(12) << left << "% of B" 
+	<< setw(12) << left << "% of H"
+	<< setw(12) << left << "mean f";
+	if(RESOLUTION * NUMBERofCHROMOSOMES == 2){
+		cout << setw(40) << right << "genotypes: AAAA AAAB AABB ABBB BBBB" << endl;
+	} else {
+		if(RESOLUTION * NUMBERofCHROMOSOMES == 1){
+			cout << setw(10) << "genotypes: " << right << setw(30) << "             AA       AB       BB" << endl;
+		} else {
+			cout << endl;
+		}
+	}
 	for (auto i=space.begin(); i!=space.end(); ++i){
 		i->second->summary();
 	}
@@ -580,7 +597,7 @@ void Universe::plotDemesOneByOne(char fileNamepattern[]){
 			if(i->first > 20){
 				decimal = '2';
 				if(i->first == 30){
-					cout << "WARNING: Too much pictures. Only first 30 are plotted.";
+					cerr << "WARNING: Too much pictures. Only first 30 are plotted.";
 					break;
 				}
 			}
@@ -621,8 +638,8 @@ int Universe::SaveTheUniverse(int order){
 		}
 		ofile << endl;
 		if(index != index_last_right){
-// 			cout << index << ' ';
-// 			cout << space[index]->getNeigbours()[0] << ' ';
+// 			cerr << index << ' ';
+// 			cerr << space[index]->getNeigbours()[0] << ' ';
 			index = space[index]->getNeigbours()[1];
 		} else {
 			break;

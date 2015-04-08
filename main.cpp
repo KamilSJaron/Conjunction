@@ -83,11 +83,11 @@ int main()
 	// 		}
 			
 		}
-		World.SaveTheUniverse("average");
+// 		World.SaveTheUniverse("average");
 		t_sim2 = clock();
 		cerr << "FINISHING SIMULATION " << j+1 << " IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
 		cerr << "Ending world: " << endl;
-		World.listOfDemes();
+		World.summary();
 
 	//  	char filePattern[] = "../playground/pictXX.png";
 		}
