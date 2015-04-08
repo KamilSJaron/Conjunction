@@ -45,6 +45,7 @@ int main()
 	} else {
 // 	this part yes
 	clock_t t1,t2,t_sim1,t_sim2;
+<<<<<<< HEAD
 // 	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 8)),5), j = 1;
 	vector<double> Svector{0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95};
 	NAMEofOUTPUTfile = "bazi_s_gradient_0X.dat";
@@ -88,6 +89,31 @@ int main()
 		cerr << "FINISHING SIMULATION " << j+1 << " IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
 		cerr << "Ending world: " << endl;
 		World.summary();
+=======
+	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 8)),5), j = 1;
+	
+	t_sim1 = clock();
+	for(int i=0; i < NUMBERofGENERATIONS;i++){
+		t1=clock();
+		World.migration();
+		World.globalBreeding();
+		t2=clock();
+		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+		if(((i % modulo)-9) == 0){
+			check = World.SaveTheUniverse(j);
+			if(check != 0){
+				cerr << "Error in saving the output." << endl;
+				return 1;
+			}
+			j++;
+		}
+	}
+	World.SaveTheUniverse(9);
+	t_sim2 = clock();
+	cerr << "FINISHING SIMULATION IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
+	cerr << "Ending world: " << endl;
+	World.listOfDemes();
+>>>>>>> 050aeddbe0bf09684242a7e78f2b99521e2f56d1
 
 	//  	char filePattern[] = "../playground/pictXX.png";
 		}
@@ -116,9 +142,11 @@ void parameterSlave(string parameter, double value){
 					sum_of_elems += *j;
 				}
 				if(sum_of_elems != 1){
-					cerr << "Warning: sum of members of the PROBABILITYmap is not equal to 1" << endl;
-					cerr << "        The default PROBABILITYmap will be used..." << endl;
-					PROBABILITYmap.clear();
+					for(unsigned int i=0;i<PROBABILITYmap.size();i++){
+						PROBABILITYmap[i] = PROBABILITYmap[i] / sum_of_elems;
+					}
+					cerr << "Warning: the PROBABILITYmap is not equal to 1" << endl;
+					cerr << "        The PROBABILITYmap was normalized..." << endl;
 				}
 			}
 		} else {
