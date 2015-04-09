@@ -19,7 +19,7 @@ DEMEsize = 2048                   # integer in [4;8192], use only power of 4, ot
 SEED = 150327                       # any number (the date can be useful and every day original)
 NUMBERofGENERATIONS = 1000           # [1,10000]
 NUMBERofSAVES = 3           # less than number of generations
-NAMEofOUTPUTfile = 1 5 0 4   0 9 _ o u t  # any name, the sulfix .dat will be added, also parameters if the larger parametric space is used
+NAMEofOUTPUTfile = 150409_out  # any name, the sulfix .dat will be added, also parameters if the larger parametric space is used
 
 # World definition
 

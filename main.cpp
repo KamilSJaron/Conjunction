@@ -31,6 +31,7 @@ int worldSlave(string line, Universe* World);
 int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARAvec2,vector<double>& PARAvec3,vector<char>& PARAnames);
 int testParameters(Universe* World);
 void const showVector(vector<double>& valvec);
+void simulate(Universe* World, int save_pos);
 
 int main()
 {
@@ -46,12 +47,10 @@ int main()
 	}
 	
 	srand (SEEDtoRAND); // setting a seed
-
 	
-// 	this part yes
-	clock_t t1,t2,t_sim1,t_sim2;
-	int modulo = ceil((double)NUMBERofGENERATIONS / NUMBERofSAVES), run = 0, save = 1;
-	int pos1 = 0, pos2 = 0, pos3 = 0;
+	clock_t t_total1, t_total2;
+	int run = 0;
+	int pos1 = 0, pos2 = 0, pos3 = 0, save_pos = 0;
 	int ten_stop1 = 0, ten_stop2 = 0, ten_stop3 = 0;
 	
 	if(PARAnames.size() >= 1){
@@ -68,15 +67,14 @@ int main()
 	}
 	if(NUMBERofSAVES > 1){
 		NAMEofOUTPUTfile = NAMEofOUTPUTfile + string("_*");
+		save_pos = NAMEofOUTPUTfile.find('*');
 	}
 	NAMEofOUTPUTfile = NAMEofOUTPUTfile + string(".dat");
 	
 	if(PARAnames.size() >= 1){
+		t_total1 = clock();
 		for(unsigned int j = 0;j < PARAvector1.size();j++){
 // 			setting for next simulation
-			run++;
-			cerr << "RUN : " << run << endl;
-			cerr << "Parameter " << PARAnames[0] << " is set to " << PARAvector1[j] << endl;
 			parameterSlave(PARAnames[0],PARAvector1[j]);
 			if(j < unsigned(ten_stop1 + 10)){
 				NAMEofOUTPUTfile[pos1] = char(j + '0' - ten_stop1);
@@ -88,73 +86,53 @@ int main()
 			
 			if(PARAnames.size() >= 2){
 				for(unsigned int k = 0;k < PARAvector2.size();k++){
-					for(unsigned int l = 0;l < PARAvector3.size();l++){
+					parameterSlave(PARAnames[1],PARAvector2[k]);
+					if(k < unsigned(ten_stop2 + 10)){
+						NAMEofOUTPUTfile[pos2] = char(k + '0' - ten_stop2);
+					} else {
+						ten_stop2 += 10;
+						NAMEofOUTPUTfile[pos2-1] = char(NAMEofOUTPUTfile[pos2-1] + 1);
+						NAMEofOUTPUTfile[pos2] = char(k + '0' - ten_stop2);
+					}
 					
+					if(PARAnames.size() == 3){
+						for(unsigned int l = 0;l < PARAvector3.size();l++){
+							parameterSlave(PARAnames[2],PARAvector3[l]);
+							if(l < unsigned(ten_stop3 + 10)){
+								NAMEofOUTPUTfile[pos3] = char(l + '0' - ten_stop3);
+							} else {
+								ten_stop3 += 10;
+								NAMEofOUTPUTfile[pos3-1] = char(NAMEofOUTPUTfile[pos3-1] + 1);
+								NAMEofOUTPUTfile[pos3] = char(l + '0' - ten_stop3);
+							}
+							run++;
+							cerr << "RUN : " << run << endl;
+							cerr << "Saved to... " << NAMEofOUTPUTfile;
+							World.restart();
+							// gradient vsech trech
+						}
+					} else {
+						run++;
+						cerr << "RUN : " << run << endl;
+						cerr << "Saved to... " << NAMEofOUTPUTfile;
+						World.restart();
+						// 			gradient jen prvnich dvou
 					}
 				}
 			} else {
+				run++;
+				cerr << "RUN : " << run << endl;
+				cerr << "Saved to... " << NAMEofOUTPUTfile;
+				World.restart();
 	// 			gradient jen prvniho vektorov0ho parametru
 			}
 		}
+		t_total2 = clock();
+		cerr << "TOTAL TIME OF THE SIMULATION IS " << ((float)t_total2 - (float)t_total1) / CLOCKS_PER_SEC << endl;
 	} else {
-		for(int i=0; i < NUMBERofGENERATIONS;i++){
-			t1=clock();
-			World.migration();
-			World.globalBreeding();
-			t2=clock();
-			cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-			if(((i % modulo)+1) == modulo and i != NUMBERofGENERATIONS - 1){
-				check = World.SaveTheUniverse(save);
-				if(check != 0){
-					cerr << "Error in saving the output." << endl;
-					return 1;
-				}
-				save++;
-			}
-		}
+		simulate(&World,save_pos);
 	}
-
-
-	for(unsigned int j = 0;j < PARAvector1.size();j++){
-		
-		cerr << "SELECTIONpressure: " << PARAvector1[j] << endl;
-		parameterSlave("SELECTIONpressure", PARAvector1[j]);
-		if(j < unsigned(ten_stop1 + 10)){
-			NAMEofOUTPUTfile[pos1] = char(j + '0' - ten_stop1);
-		} else {
-			ten_stop1 += 10;
-			NAMEofOUTPUTfile[pos1-1] = char(NAMEofOUTPUTfile[pos1-1] + 1);
-			NAMEofOUTPUTfile[pos1] = char(j + '0' - ten_stop1);
-		}
-		cerr << NAMEofOUTPUTfile << endl;
-		World.restart();
-		cerr << "Starting world: " << endl;
-		World.listOfDemes();
-		t_sim1 = clock();
-		
-		for(int i=0; i < NUMBERofGENERATIONS;i++){
-			t1=clock();
-			World.migration();
-			World.globalBreeding();
-			t2=clock();
-			cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-// 				if(((i % modulo)+1) == modulo){
-// 					check = World.SaveTheUniverse(j);
-// 					if(check != 0){
-// 						cerr << "Error in saving the output." << endl;
-// 						return 1;
-// 					}
-// 					j++;
-// 				}
-			
-		}
-// 			World.SaveTheUniverse("average");
-		t_sim2 = clock();
-		cerr << "FINISHING SIMULATION " << j+1 << " IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
-		cerr << "Ending world: " << endl;
-		World.summary();	
 // 	 	char filePattern[] = "../playground/pictXX.png";
-	}
 	return 0;
 }
 
@@ -560,4 +538,30 @@ const void showVector(vector< double >& valvec){
 	}
 }
 
+void simulate(Universe* World, int save_pos){
+	clock_t t1, t2, t_sim1, t_sim2;
+	int check = 0, modulo = ceil((double)NUMBERofGENERATIONS / NUMBERofSAVES);
+	
+	cerr << "Starting world: " << endl;
+	World->listOfDemes();
+	t_sim1 = clock();
+	for(int i=0; i < NUMBERofGENERATIONS;i++){
+		t1=clock();
+		World->migration();
+		World->globalBreeding();
+		t2=clock();
+		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+		if(((i % modulo)+1) == modulo and i != NUMBERofGENERATIONS - 1){
+			check = World->SaveTheUniverse("complete");
+			if(check != 0){
+				cerr << "Error in saving the output." << endl;
+				return;
+			}
+		}
+	}
+	t_sim2 = clock();
+	cerr << "FINISHING SIMULATION IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
+	cerr << "Ending world: " << endl;
+	World->summary();
+}
 
