@@ -1,5 +1,5 @@
 #include "chromosome.h"
-static int NUMBERofCHROMOSOMES = 20; /* mouse have 19+1, but now I am reproducing 84 results */
+static int NUMBERofCHROMOSOMES = 1; /* mouse have 19+1, but now I am reproducing 84 results */
 static double RECOMBINATIONrate = 1;
 static double SELECTIONpressure = 0.5;
 static double BETA = 1;

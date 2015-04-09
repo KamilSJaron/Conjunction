@@ -2,7 +2,7 @@
 
 using namespace std;
 
-static string NAMEofOUTPUTfile;
+static string NAMEofOUTPUTfile = "out";
 
 class Universe  
 {
@@ -491,16 +491,16 @@ void Universe::listOfParameters(){
 
 void Universe::listOfDemes(){
 	int worlsize = space.size();
-	cout << "World of size " << worlsize << endl;
-	cout << "of dimension: " << dimension << endl;
-	cout << "Number of demes up to down: " << number_of_demes_u_d << endl;
-	cout << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
+	cerr << "World of size " << worlsize << endl;
+	cerr << "of dimension: " << dimension << endl;
+	cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
+	cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
 	if(type_of_l_r_edges != "extending"){
-		cout << "Number of demes left to right: " << number_of_demes_l_r << endl;
+		cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
 	}
-	cout << "Type of borders left to right: " << type_of_l_r_edges << endl;
-	cout << "                 EDGE" << endl;
-	cout << setw(7) << right << "DEME " << setw(7) << left << " LEFT" << setw(6) << left << "RIGHT" << setw(5) << left << "UP" << setw(6) << left << "DOWN" << endl;
+	cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
+	cerr << "                 EDGE" << endl;
+	cerr << setw(7) << right << "DEME " << setw(7) << left << " LEFT" << setw(6) << left << "RIGHT" << setw(5) << left << "UP" << setw(6) << left << "DOWN" << endl;
 	for (auto i=space.begin(); i!=space.end(); ++i){
 		i->second->showDeme();
 	}

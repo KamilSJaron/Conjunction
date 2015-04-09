@@ -16,51 +16,115 @@
 
 #include "universe.h" // Class of individuals
 
-static int SEEDtoRAND; //seed only for rand() fction, values of the poisson distribution are always generated with same initial seed
-static int NUMBERofGENERATIONS; // #define NUM_OF_IMIGRANTS 100 /* number of complete heterozygotious imigrants per generation (assuming, that Pois(1)*500 would be very close to 500, cause computationally it is not worth the computational time)*/
-static int TEST = 0; // temp
+static int SEEDtoRAND = 1; //seed only for rand() fction, values of the poisson distribution are always generated with same initial seed
+static int NUMBERofGENERATIONS = 500; // #define NUM_OF_IMIGRANTS 100 /* number of complete heterozygotious imigrants per generation (assuming, that Pois(1)*500 would be very close to 500, cause computationally it is not worth the computational time)*/
+static int NUMBERofSAVES = 1;
 
 using namespace std;
 
 // list of fctions
 void parameterSlave(string parameter, double value);
+void parameterSlave(char parameter, double value);
+void parameterSlave(string parameter, vector<double>& valvec, vector<double>& paravec, vector<char>& para);
+void probMAPslave(string parameter, vector<double>& velvec);
 int worldSlave(string line, Universe* World);
-int setParameters(Universe* World);
+int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARAvec2,vector<double>& PARAvec3,vector<char>& PARAnames);
 int testParameters(Universe* World);
+void const showVector(vector<double>& valvec);
 
 int main()
 {
 // 	this part sould not be edited anymore
 	Universe World;
-	int check = setParameters(&World);
+	vector<double> PARAvector1, PARAvector2, PARAvector3;
+	vector<char> PARAnames;
+	
+	int check = setParameters(&World, PARAvector1, PARAvector2, PARAvector3,PARAnames);
 	if(check == 1){
 		cerr << "Exit: input file problem." << endl;
 		return 1;
 	}
+	
 	srand (SEEDtoRAND); // setting a seed
 
-// 	ready for deletion, when more testing wont be needed
-	if(TEST != 0){
-		testParameters(&World);
-	} else {
+	
 // 	this part yes
 	clock_t t1,t2,t_sim1,t_sim2;
-<<<<<<< HEAD
-// 	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 8)),5), j = 1;
-	vector<double> Svector{0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95};
-	NAMEofOUTPUTfile = "bazi_s_gradient_0X.dat";
-	int Xpos = NAMEofOUTPUTfile.find('X'), ten_stop = 0;
+	int modulo = ceil((double)NUMBERofGENERATIONS / NUMBERofSAVES), run = 0, save = 1;
+	int pos1 = 0, pos2 = 0, pos3 = 0;
+	int ten_stop1 = 0, ten_stop2 = 0, ten_stop3 = 0;
 	
-	for(unsigned int j = 0;j < Svector.size();j++){
-		cerr << "RUN: " << j+1 << endl;
-		cerr << "SELECTIONpressure: " << Svector[j] << endl;
-		parameterSlave("SELECTIONpressure", Svector[j]);
-		if(j < unsigned(ten_stop + 10)){
-			NAMEofOUTPUTfile[Xpos] = char(j + '0' - ten_stop);
+	if(PARAnames.size() >= 1){
+		NAMEofOUTPUTfile = NAMEofOUTPUTfile + string("_") + PARAnames[0] + string("_0~");
+		pos1 = NAMEofOUTPUTfile.find('~');
+	}
+	if(PARAnames.size() >= 2){
+		NAMEofOUTPUTfile = NAMEofOUTPUTfile + string("_") + PARAnames[1] + string("_0/");
+		pos2 = NAMEofOUTPUTfile.find('/');
+	}
+	if(PARAnames.size() >= 3){
+		NAMEofOUTPUTfile = NAMEofOUTPUTfile + string("_") + PARAnames[2] + string("_0\\");
+		pos3 = NAMEofOUTPUTfile.find('\\');
+	}
+	if(NUMBERofSAVES > 1){
+		NAMEofOUTPUTfile = NAMEofOUTPUTfile + string("_*");
+	}
+	NAMEofOUTPUTfile = NAMEofOUTPUTfile + string(".dat");
+	
+	if(PARAnames.size() >= 1){
+		for(unsigned int j = 0;j < PARAvector1.size();j++){
+// 			setting for next simulation
+			run++;
+			cerr << "RUN : " << run << endl;
+			cerr << "Parameter " << PARAnames[0] << " is set to " << PARAvector1[j] << endl;
+			parameterSlave(PARAnames[0],PARAvector1[j]);
+			if(j < unsigned(ten_stop1 + 10)){
+				NAMEofOUTPUTfile[pos1] = char(j + '0' - ten_stop1);
+			} else {
+				ten_stop1 += 10;
+				NAMEofOUTPUTfile[pos1-1] = char(NAMEofOUTPUTfile[pos1-1] + 1);
+				NAMEofOUTPUTfile[pos1] = char(j + '0' - ten_stop1);
+			}
+			
+			if(PARAnames.size() >= 2){
+				for(unsigned int k = 0;k < PARAvector2.size();k++){
+					for(unsigned int l = 0;l < PARAvector3.size();l++){
+					
+					}
+				}
+			} else {
+	// 			gradient jen prvniho vektorov0ho parametru
+			}
+		}
+	} else {
+		for(int i=0; i < NUMBERofGENERATIONS;i++){
+			t1=clock();
+			World.migration();
+			World.globalBreeding();
+			t2=clock();
+			cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+			if(((i % modulo)+1) == modulo and i != NUMBERofGENERATIONS - 1){
+				check = World.SaveTheUniverse(save);
+				if(check != 0){
+					cerr << "Error in saving the output." << endl;
+					return 1;
+				}
+				save++;
+			}
+		}
+	}
+
+
+	for(unsigned int j = 0;j < PARAvector1.size();j++){
+		
+		cerr << "SELECTIONpressure: " << PARAvector1[j] << endl;
+		parameterSlave("SELECTIONpressure", PARAvector1[j]);
+		if(j < unsigned(ten_stop1 + 10)){
+			NAMEofOUTPUTfile[pos1] = char(j + '0' - ten_stop1);
 		} else {
-			ten_stop += 10;
-			NAMEofOUTPUTfile[Xpos-1] = char(NAMEofOUTPUTfile[Xpos-1] + 1);
-			NAMEofOUTPUTfile[Xpos] = char(j + '0' - ten_stop);
+			ten_stop1 += 10;
+			NAMEofOUTPUTfile[pos1-1] = char(NAMEofOUTPUTfile[pos1-1] + 1);
+			NAMEofOUTPUTfile[pos1] = char(j + '0' - ten_stop1);
 		}
 		cerr << NAMEofOUTPUTfile << endl;
 		World.restart();
@@ -74,49 +138,22 @@ int main()
 			World.globalBreeding();
 			t2=clock();
 			cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-	// 		if(((i % modulo)-9) == 0){
-	// 			check = World.SaveTheUniverse(j);
-	// 			if(check != 0){
-	// 				cerr << "Error in saving the output." << endl;
-	// 				return 1;
-	// 			}
-	// 			j++;
-	// 		}
+// 				if(((i % modulo)+1) == modulo){
+// 					check = World.SaveTheUniverse(j);
+// 					if(check != 0){
+// 						cerr << "Error in saving the output." << endl;
+// 						return 1;
+// 					}
+// 					j++;
+// 				}
 			
 		}
-// 		World.SaveTheUniverse("average");
+// 			World.SaveTheUniverse("average");
 		t_sim2 = clock();
 		cerr << "FINISHING SIMULATION " << j+1 << " IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
 		cerr << "Ending world: " << endl;
-		World.summary();
-=======
-	int modulo = max(int(round(double(NUMBERofGENERATIONS) / 8)),5), j = 1;
-	
-	t_sim1 = clock();
-	for(int i=0; i < NUMBERofGENERATIONS;i++){
-		t1=clock();
-		World.migration();
-		World.globalBreeding();
-		t2=clock();
-		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-		if(((i % modulo)-9) == 0){
-			check = World.SaveTheUniverse(j);
-			if(check != 0){
-				cerr << "Error in saving the output." << endl;
-				return 1;
-			}
-			j++;
-		}
-	}
-	World.SaveTheUniverse(9);
-	t_sim2 = clock();
-	cerr << "FINISHING SIMULATION IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
-	cerr << "Ending world: " << endl;
-	World.listOfDemes();
->>>>>>> 050aeddbe0bf09684242a7e78f2b99521e2f56d1
-
-	//  	char filePattern[] = "../playground/pictXX.png";
-		}
+		World.summary();	
+// 	 	char filePattern[] = "../playground/pictXX.png";
 	}
 	return 0;
 }
@@ -130,50 +167,9 @@ void parameterSlave(string parameter, double value){
 		return;
 	}
 	if(parameter == "PROBABILITYmap"){
-		double sum_of_elems=0;
-		
-		if(!PROBABILITYmap.empty()){
-			if(PROBABILITYmap.size() != unsigned(RESOLUTION + 1)){
-				cerr << "Warning: Length of probability map do not match the number of Loci (parameter RESOLUTION)" << endl;
-				cerr << "        The default PROBABILITYmap will be used..." << endl;
-				PROBABILITYmap.clear();
-			} else {
-				for(vector<double>::iterator j=PROBABILITYmap.begin();j!=PROBABILITYmap.end();++j){
-					sum_of_elems += *j;
-				}
-				if(sum_of_elems != 1){
-					for(unsigned int i=0;i<PROBABILITYmap.size();i++){
-						PROBABILITYmap[i] = PROBABILITYmap[i] / sum_of_elems;
-					}
-					cerr << "Warning: the PROBABILITYmap is not equal to 1" << endl;
-					cerr << "        The PROBABILITYmap was normalized..." << endl;
-				}
-			}
-		} else {
-			cerr << "Warning: PROBABILITYmap was not defined" << endl;
-			cerr << "        The default PROBABILITYmap will be used..." << endl;
-		}
-		
-		
-		cerr << "Setting parameter PROBABILITYmap to: [";
-		
-		if(PROBABILITYmap.empty() == true){
-			cerr << "0, ";
-			for(int i = 0; i < (RESOLUTION - 1); i++){
-				cerr << (1. / double(RESOLUTION - 1)) << ", " ;
-			}
-			cerr << "0]" << endl;
-		} else {
-			double sum = 0;
-			for(unsigned int i = 0;i < PROBABILITYmap.size()-1;i++){
-				cerr << PROBABILITYmap[i] << ", ";
-				sum += PROBABILITYmap[i];
-				PROBABILITYmap[i] = sum;
-			}
-			cerr << PROBABILITYmap[PROBABILITYmap.size()-1] << "]" << endl;
-			sum += PROBABILITYmap[PROBABILITYmap.size()-1];
-			PROBABILITYmap[PROBABILITYmap.size()-1] = sum;
-		}
+		cerr << "Warning: parameter PROBABILITYmap is expected in form..." << endl 
+		<< "      [ v1, v2, v3, ... vn]" << endl 
+		<< "      where n is RESOLUTION + 1 and sumation of vi is 1 for i = 1 ... n" << endl;
 		return;
 	}
 	if(parameter == "NUMBERofCHROMOSOMES"){
@@ -211,18 +207,138 @@ void parameterSlave(string parameter, double value){
 		cerr << "Setting parameter NUMBERofGENERATIONS to: " << value << endl;
 		return;
 	}
-	if(parameter == "TEST"){
-		TEST = value;
-		cerr << "Setting parameter TEST to: " << value << endl;
-	return;
+	if(parameter == "NUMBERofSAVES"){
+		NUMBERofSAVES = (int(value));
+		cerr << "Setting parameter NUMBERofSAVES to: " << value << endl;
+		return;
 	}
 	cerr << "Warning: unknown parameter: " << parameter << endl;
 	return;
 }
 
-int setParameters(Universe* World){
+void parameterSlave(char parameter, double value){
+	if(parameter == 'L'){
+		Chromosome::setResolution(int(value));
+		cerr << "Setting parameter RESOLUTION to: " << value << endl;
+		return;
+	}
+	if(parameter == 'r'){
+		Individual::setRECOMBINATIONrate(value);
+		cerr << "Setting parameter RECOMBINATIONrate to: " << value << endl;
+		return;
+	}
+	if(parameter == 's'){
+		Individual::setSELECTIONpressure(value);
+		cerr << "Setting parameter SELECTIONpressure to: " << value << endl;
+		return;
+	}
+	if(parameter == 'b'){
+		Individual::setBETA(value);
+		cerr << "Setting parameter BETA to: " << value << endl;
+		return;
+	}
+	if(parameter == 'D'){
+		Deme::setDEMEsize(int(value));
+		cerr << "Setting parameter DEMEsize to: " << value << endl;
+		return;
+	}
+	cerr << "Warning: unknown parameter: " << parameter << endl;
+	return;
+}
+
+
+void probMAPslave(string parameter, vector<double>& velvec){
+		if(!velvec.empty()){
+			PROBABILITYmap = velvec;
+			double sum_of_elems=0;
+			if(PROBABILITYmap.size() != unsigned(RESOLUTION + 1)){
+				cerr << "Warning: Length of probability map do not match the number of Loci (parameter RESOLUTION)" << endl;
+				cerr << "        The default PROBABILITYmap will be used..." << endl;
+				PROBABILITYmap.clear();
+			} else {
+				for(vector<double>::iterator j=PROBABILITYmap.begin();j!=PROBABILITYmap.end();++j){
+					sum_of_elems += *j;
+				}
+				if(sum_of_elems != 1){
+					for(unsigned int i=0;i<PROBABILITYmap.size();i++){
+						PROBABILITYmap[i] = PROBABILITYmap[i] / sum_of_elems;
+					}
+					cerr << "Warning: the PROBABILITYmap is not equal to 1" << endl;
+					cerr << "        The PROBABILITYmap was normalized..." << endl;
+				}
+			}
+		} else {
+			cerr << "Warning: PROBABILITYmap was not defined" << endl;
+			cerr << "        The default PROBABILITYmap will be used..." << endl;
+		}
+		
+		cerr << "Setting parameter PROBABILITYmap to: [";
+		
+		if(PROBABILITYmap.empty() == true){
+			cerr << "0, ";
+			for(int i = 0; i < (RESOLUTION - 1); i++){
+				cerr << (1. / double(RESOLUTION - 1)) << ", " ;
+			}
+			cerr << "0]" << endl;
+		} else {
+			double sum = 0;
+			for(unsigned int i = 0;i < PROBABILITYmap.size()-1;i++){
+				cerr << PROBABILITYmap[i] << ", ";
+				sum += PROBABILITYmap[i];
+				PROBABILITYmap[i] = sum;
+			}
+			cerr << PROBABILITYmap[PROBABILITYmap.size()-1] << "]" << endl;
+			sum += PROBABILITYmap[PROBABILITYmap.size()-1];
+			PROBABILITYmap[PROBABILITYmap.size()-1] = sum;
+		}
+		cerr << "Warning: unknown setting of PROBABILITYmap." << endl;
+		return;
+}
+
+void parameterSlave(string parameter, vector<double>& valvec, vector<double>& paravec, vector<char>& para){
+	paravec = valvec;
+	if(parameter == "PROBABILITYmap"){
+		probMAPslave(parameter, valvec);
+		return;
+	}
+	if(parameter == "RESOLUTION"){
+		para.push_back('L');
+		cerr << para.size() << ". vector variable resolution (L) is set to ";
+		showVector(paravec);
+		return;
+	}
+	if(parameter == "RECOMBINATIONrate"){
+		para.push_back('r');
+		cerr << para.size() << ". vector variable recombination rate (r) is set to ";
+		showVector(paravec);
+		return;
+	}
+	if(parameter == "SELECTIONpressure"){
+		para.push_back('s');
+		cerr << para.size() << ". vector variable is selection (s) is set to ";
+		showVector(paravec);
+		return;
+	}
+	if(parameter == "BETA"){
+		para.push_back('b');
+		cerr << para.size() << ". vector variable is beta (b) is set to ";
+		showVector(paravec);
+		return;
+	}
+	if(parameter == "DEMEsize"){
+		para.push_back('D');
+		cerr << para.size() << ". vector variable is deme size (D) is set to ";
+		showVector(paravec);
+		return;
+	}
+	cerr << "Warning: Unknown parameter variable " << parameter << endl;
+	return;
+}
+
+int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARAvec2,vector<double>& PARAvec3,vector<char>& PARAnames){
 	int switcher;
 	double value;
+	vector<double> paravec;
 	string line, parameter, number;
 	ifstream myfile ("setting.txt");
 	if (myfile.is_open()){
@@ -232,15 +348,21 @@ int setParameters(Universe* World){
 			}
 			switcher = 1; //dafualt state of switcher - reading parameters name
 			for(unsigned int i = 0;i < line.size();i++){
-				if(line[i] == '#'){
+				if(line[i] == '#'){ // # is comment symbol
 					break;
 				}
 				if(line[i] == '='){
-					switcher = 2; // symbol == switches to reading values
+					switcher = 2; // symbol = switches to reading values
 					continue;
 				}
 				if(parameter.substr(0,16) == "NAMEofOUTPUTfile"){
-					number += line[i];
+					if(line[i] == '.' or line[i] == '~' or line[i] == '*' or line[i] == '/' or line[i] == '\\'){
+						cerr << "Error: invalid name of the output file: symbols '.' '*' '~' and '/' are not allowed \n";
+						return 1;
+					}
+					if(!isspace(line[i])){
+						number += line[i];
+					}
 					continue;
 				}
 				if(switcher == 1){
@@ -251,34 +373,52 @@ int setParameters(Universe* World){
 					if(isdigit(line[i]) or line[i] == '.'){
 						number += line[i];
 					}
-					if((line[i] == ']' or line[i] == ',' or line[i] == ';') and parameter == "PROBABILITYmap"){
-						PROBABILITYmap.push_back(stod(number));
+					if((line[i] == ']' or line[i] == ',' or line[i] == ';')){
+						paravec.push_back(stod(number));
 						number.clear();
 					}
 				}
 			}
 			if(!parameter.empty()){
-				if(parameter == "PROBABILITYmap"){
-					parameterSlave(parameter,0);
-					number.clear();
-					parameter.clear();
-					continue;
-				}
-				if(parameter.substr(0,16) == "NAMEofOUTPUTfile"){
-					NAMEofOUTPUTfile = number;
-					number.clear();
-					parameter.clear();
-					continue;
-				}
-				if(parameter.substr(0,5) == "WORLD"){
-					myfile.close();
-					if(PROBABILITYmap.empty()){
-						parameterSlave("PROBABILITYmap",0);
+				if(paravec.empty()){
+//				string or value
+					if(parameter.substr(0,16) == "NAMEofOUTPUTfile"){
+						NAMEofOUTPUTfile = number;
+						number.clear();
+						parameter.clear();
+						continue;
 					}
-					return worldSlave(line, World);
+					if(parameter.substr(0,5) == "WORLD"){
+						myfile.close();
+						if(PROBABILITYmap.empty()){
+							probMAPslave("PROBABILITYmap",paravec);
+						}
+						return worldSlave(line, World);
+					} else {
+// 					value
+						value = stod(number);
+						parameterSlave(parameter,value);
+					}
 				} else {
-					value = stod(number);
-					parameterSlave(parameter,value);
+// 				vector
+					switch (PARAnames.size()) {
+					case 0:
+						parameterSlave(parameter,paravec,PARAvec1,PARAnames);
+						break;
+					case 1:
+						parameterSlave(parameter,paravec,PARAvec2,PARAnames);
+						break;
+					case 2:
+						parameterSlave(parameter,paravec,PARAvec3,PARAnames);
+						break;
+					default:
+						cerr << "Too much vector variables. Only three are allowed." << endl;
+						break;
+					}
+					number.clear();
+					parameter.clear();
+					paravec.clear();
+					continue;
 				}
 			}
 			number.clear();
@@ -408,9 +548,16 @@ int testParameters(Universe* World){
 	return 0;
 }
 
-
-
-
-
+const void showVector(vector< double >& valvec){
+	if(!valvec.empty()){
+		cerr << "[";
+		for(unsigned int j = 0;j < (valvec.size() - 1);j++){
+			cerr << valvec[j] << ", ";
+		}
+		cerr << valvec[valvec.size()-1] << "]\n";
+	} else {
+		cerr << "The vector is empty\n";
+	}
+}
 
 
