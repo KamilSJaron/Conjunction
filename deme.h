@@ -278,11 +278,11 @@ double Deme::getMeanFitness() const{
 
 void Deme::showDeme(){
 	int neigbsize = neigbours.size();
-	cout << setw(5) << right << index << ":  ";
+	cerr << setw(5) << right << index << ":  ";
 	for(int i = 0; i < neigbsize; i++){
-		cout << setw(5) << left << neigbours[i] << " ";
+		cerr << setw(5) << left << neigbours[i] << " ";
 	}
-	cout << endl;
+	cerr << endl;
 }
 
 void Deme::summary(){
@@ -294,9 +294,9 @@ void Deme::summary(){
 	if(neigbsize == 2){
 		cout << setw(10) << "           ";
 	}
-	cout << setw(12) << left << getMeanBproportion() 
-	<< setw(12) << left << getProportionOfHeterozygotes()
-	<< setw(12) << left << getMeanFitness() << " "
+	cout << setw(12) << left << ((round(getMeanBproportion() * 10000)) / 10000)
+	<< setw(12) << left << ((round(getProportionOfHeterozygotes() * 10000)) / 10000)
+	<< setw(12) << left << ((round(getMeanFitness() * 10000)) / 10000) << " "
 	<< setw(25) << right ;
 	if((RESOLUTION * NUMBERofCHROMOSOMES) <= 2){
 		readGenotypeFrequencies();
@@ -328,7 +328,7 @@ void Deme::readGenotypeFrequencies(){
 	}
 // 	cout << "freqs: ";
 	for(int i=0;i < NUMBERofCHROMOSOMES*RESOLUTION*2 + 1;i++){
-		cout << (freqs[i] / DEMEsize) << ' ';
+		cout << ((round((freqs[i] / DEMEsize) * 10000)) / 10000) << ' ';
 	}
 // 	cout << endl;
 }

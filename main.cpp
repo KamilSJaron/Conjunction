@@ -32,6 +32,7 @@ int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARA
 int testParameters(Universe* World);
 void const showVector(vector<double>& valvec);
 void simulate(Universe* World, int save_pos);
+void simulate(Universe* World);
 
 int main()
 {
@@ -107,30 +108,27 @@ int main()
 							}
 							run++;
 							cerr << "RUN : " << run << endl;
-							cerr << "Saved to... " << NAMEofOUTPUTfile;
 							World.restart();
-							// gradient vsech trech
+							simulate(&World,save_pos);
 						}
 					} else {
 						run++;
 						cerr << "RUN : " << run << endl;
-						cerr << "Saved to... " << NAMEofOUTPUTfile;
 						World.restart();
-						// 			gradient jen prvnich dvou
+						simulate(&World,save_pos);
 					}
 				}
 			} else {
 				run++;
 				cerr << "RUN : " << run << endl;
-				cerr << "Saved to... " << NAMEofOUTPUTfile;
 				World.restart();
-	// 			gradient jen prvniho vektorov0ho parametru
+				simulate(&World,save_pos);
 			}
 		}
 		t_total2 = clock();
 		cerr << "TOTAL TIME OF THE SIMULATION IS " << ((float)t_total2 - (float)t_total1) / CLOCKS_PER_SEC << endl;
 	} else {
-		simulate(&World,save_pos);
+		simulate(&World);
 	}
 // 	 	char filePattern[] = "../playground/pictXX.png";
 	return 0;
@@ -198,6 +196,11 @@ void parameterSlave(char parameter, double value){
 	if(parameter == 'L'){
 		Chromosome::setResolution(int(value));
 		cerr << "Setting parameter RESOLUTION to: " << value << endl;
+		return;
+	}
+	if(parameter == 'C'){
+		Individual::setNumberOfChromosomes(int(value));
+		cerr << "Setting parameter NUMBERofCHROMOSOMES to: " << value << endl;
 		return;
 	}
 	if(parameter == 'r'){
@@ -282,6 +285,12 @@ void parameterSlave(string parameter, vector<double>& valvec, vector<double>& pa
 	if(parameter == "RESOLUTION"){
 		para.push_back('L');
 		cerr << para.size() << ". vector variable resolution (L) is set to ";
+		showVector(paravec);
+		return;
+	}
+	if(parameter == "NUMBERofCHROMOSOMES"){
+		para.push_back('C');
+		cerr << para.size() << ". vector variable number of chromosomes (C) is set to ";
 		showVector(paravec);
 		return;
 	}
@@ -539,8 +548,50 @@ const void showVector(vector< double >& valvec){
 }
 
 void simulate(Universe* World, int save_pos){
+// 	clock_t t1, t2;
+	clock_t t_sim1, t_sim2;
+	int order = 0, check = 0, modulo = ceil((double)NUMBERofGENERATIONS / NUMBERofSAVES);
+	
+// 	cerr << "Starting world: " << endl;
+// 	World->listOfDemes();
+	t_sim1 = clock();
+	for(int i=0; i < NUMBERofGENERATIONS;i++){
+// 		t1=clock();
+		World->migration();
+		World->globalBreeding();
+// 		t2=clock();
+// 		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+		if(((i % modulo)+1) == modulo and i != NUMBERofGENERATIONS - 1){
+			order++;
+			NAMEofOUTPUTfile[save_pos] = '0' + char(order);
+			check = World->SaveTheUniverse("complete");
+			if(check != 0){
+				cerr << "Error in saving the output." << endl;
+				return;
+			}
+		}
+	}
+	t_sim2 = clock();
+	if(NUMBERofSAVES > 1){
+		order++;
+		NAMEofOUTPUTfile[save_pos] = '0' + char(order);
+	}
+	if(NUMBERofSAVES > 0){
+		check = World->SaveTheUniverse("complete");
+		if(check != 0){
+			cerr << "Error in saving the output." << endl;
+			return;
+		}
+	}
+	cerr << "FINISHING SIMULATION IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
+	cerr << "Ending world: " << endl;
+	World->listOfDemes();
+	World->summary();
+}
+
+void simulate(Universe* World){
 	clock_t t1, t2, t_sim1, t_sim2;
-	int check = 0, modulo = ceil((double)NUMBERofGENERATIONS / NUMBERofSAVES);
+	int check = 0;
 	
 	cerr << "Starting world: " << endl;
 	World->listOfDemes();
@@ -551,17 +602,17 @@ void simulate(Universe* World, int save_pos){
 		World->globalBreeding();
 		t2=clock();
 		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-		if(((i % modulo)+1) == modulo and i != NUMBERofGENERATIONS - 1){
-			check = World->SaveTheUniverse("complete");
-			if(check != 0){
-				cerr << "Error in saving the output." << endl;
-				return;
-			}
-		}
 	}
 	t_sim2 = clock();
+	if(NUMBERofSAVES == 1){
+		check = World->SaveTheUniverse("complete");
+		if(check != 0){
+			cerr << "Error in saving the output." << endl;
+			return;
+		}
+	}
 	cerr << "FINISHING SIMULATION IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
 	cerr << "Ending world: " << endl;
+	World->listOfDemes();
 	World->summary();
 }
-
