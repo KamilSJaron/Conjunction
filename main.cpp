@@ -514,6 +514,9 @@ int worldSlave(string line, Universe* World){
 					cerr << "World is quick-defined as " << n << 'x' << n << " demes arena." << endl;
 					return 0;
 				}
+				if(type == "InfInf"){
+					World->infCreator();
+				}
 				cerr << "Error: Unknown pre-defined world " << type << endl;
 				return 1;
 			}

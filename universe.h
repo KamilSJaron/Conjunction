@@ -11,6 +11,7 @@ class Universe
 		Universe(int dimension, int edges_per_deme, int number_of_demes_l_r,string edges_l_r, int number_of_demes_u_d, string edges_u_d);
 		Universe();
 		void basicUnitCreator(char type, char init);
+		void infCreator();
 		
 // 		computing functions
 		int migration(); // int will be the errorcode
@@ -176,6 +177,12 @@ void Universe::basicUnitCreator(char type, char init){
 	}
 	return;
 }
+
+void Universe::infCreator(){
+// 	create zero dimensional space
+// 	one specialized deme with redefined migration and breeding???
+}
+
 
 int Universe::upper_border(int index, int max_index){
 	if(type_of_u_d_edges == "reflexive"){
