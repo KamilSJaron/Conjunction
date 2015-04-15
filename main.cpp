@@ -131,6 +131,7 @@ int main()
 		simulate(&World);
 	}
 // 	 	char filePattern[] = "../playground/pictXX.png";
+	
 	return 0;
 }
 
@@ -257,8 +258,12 @@ void probMAPslave(string parameter, vector<double>& velvec){
 		
 		if(PROBABILITYmap.empty() == true){
 			cerr << "0, ";
-			for(int i = 0; i < (RESOLUTION - 1); i++){
-				cerr << (1. / double(RESOLUTION - 1)) << ", " ;
+			if(RESOLUTION < 20){
+				for(int i = 0; i < (RESOLUTION - 1); i++){
+					cerr << (1. / double(RESOLUTION - 1)) << ", " ;
+				}
+			} else {
+				cerr << "1 / (L - 1) , ... , 1 / (L - 1), ";
 			}
 			cerr << "0]" << endl;
 		} else {
@@ -515,7 +520,9 @@ int worldSlave(string line, Universe* World){
 					return 0;
 				}
 				if(type == "InfInf"){
+					cerr << "World is quick-defined as zero dimensional border of infinite popualtions" << endl;
 					World->infCreator();
+					return 0;
 				}
 				cerr << "Error: Unknown pre-defined world " << type << endl;
 				return 1;
@@ -551,19 +558,19 @@ const void showVector(vector< double >& valvec){
 }
 
 void simulate(Universe* World, int save_pos){
-// 	clock_t t1, t2;
+	clock_t t1, t2;
 	clock_t t_sim1, t_sim2;
 	int order = 0, check = 0, modulo = ceil((double)NUMBERofGENERATIONS / NUMBERofSAVES);
 	
-// 	cerr << "Starting world: " << endl;
-// 	World->listOfDemes();
+	cerr << "Starting world: " << endl;
+	World->listOfDemes();
 	t_sim1 = clock();
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
-// 		t1=clock();
+		t1=clock();
 		World->migration();
 		World->globalBreeding();
-// 		t2=clock();
-// 		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+		t2=clock();
+		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 		if(((i % modulo)+1) == modulo and i != NUMBERofGENERATIONS - 1){
 			order++;
 			NAMEofOUTPUTfile[save_pos] = '0' + char(order);

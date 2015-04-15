@@ -66,7 +66,7 @@ class Chromosome
 		map<int, char>::iterator end(){return chromosome.end();};
 		map<int, char>::iterator find(int i){return chromosome.find(i);};
 		
-  private:
+  protected:
 		map <int, char> chromosome;
 };
 
@@ -169,4 +169,78 @@ void Chromosome::write(int i, char l){
 // + podminka, ze spoj jeste neexistuje	
 // + podminka, ze minuly spoj je jiny
 	chromosome[i] = l;
+}
+
+class Imigrant: public Chromosome{
+	public:
+		Imigrant() : Chromosome('B') {};
+		Imigrant(map <int, char> ch): Chromosome(ch){};
+		Imigrant(char starting_char) : Chromosome(starting_char) {};
+		
+		void makeGamete(Imigrant& indivNew,int starts_by, int numberOfChaisma);
+};
+
+void Imigrant::makeGamete(Imigrant& indivNew, int starts_by, int numberOfChaisma){
+// 	starts_by 0 home, 1 alien
+	vector<int> recombination;
+	indivNew.clear();
+	indivNew.write(0,'A');
+	cout << "Toss: " << starts_by << " numberOfChaisma: " << numberOfChaisma;
+
+	
+// 	this condition can be deleted if I will handle the numberOfChaisma=0 on some upper level
+	if(numberOfChaisma == 0){
+		cout << endl;
+		if(starts_by == 0){
+			return;
+		}
+		indivNew = Imigrant(chromosome);
+		return;
+	}
+	
+	
+	int index, lastposition = 0;
+	  //inicialization, in case of starting B it will be overwrited
+	
+	cout << " Rec. positions:";
+	for(index=0;index<numberOfChaisma;index++){ //this loop is not needed to be ordered
+		recombination.push_back(recombPosition());
+		cout << recombination[index] << ", ";
+	}
+	cout << endl;
+	
+	sort(recombination.begin(), recombination.end(), arrangeObject);
+	index = 0;
+	
+	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+		while(recombination[index] <= pos->first && index < numberOfChaisma){
+			if (chromosome[lastposition] != 'A'){
+				if (starts_by == 1){
+					indivNew.write(recombination[index],'A');
+				} else {
+					indivNew.write(recombination[index],'B');
+				}
+			}
+			starts_by = abs(starts_by - 1);
+			index++;
+		}
+		
+		if(starts_by == 1){
+			indivNew.write(pos->first,pos->second);
+		}
+		lastposition = pos->first;
+	}
+	
+	while(index < numberOfChaisma){
+			if (chromosome[lastposition] != 'A'){
+				if (starts_by == 1){
+					indivNew.write(recombination[index],'A');
+				} else {
+					indivNew.write(recombination[index],'B');
+				}
+			}
+			starts_by = abs(starts_by - 1);
+			index++;
+	}
+	return;
 }

@@ -14,8 +14,8 @@ int getNumberOfChromosomes(){
 
 default_random_engine generator;
 
-int getChiasma(double R){
-	poisson_distribution<int> pois(R);
+int getChiasma(){
+	poisson_distribution<int> pois(RECOMBINATIONrate);
 	return pois(generator);
 }
 
@@ -100,7 +100,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 // 	cout << NUMBERofCHROMOSOMES << endl;
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
 /* it is very important to understand syntax genome[set][chromosome] */
-		numberOfChaisma = getChiasma(RECOMBINATIONrate);
+		numberOfChaisma = getChiasma();
 		starts_by = tossAcoin();
 		
 /* no chiasma mean inheritance of whole one parent chromosome */
