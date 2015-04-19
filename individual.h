@@ -36,6 +36,8 @@ class Individual
 		double getBprop() const;
 		bool Acheck() const;
 		bool Bcheck() const;
+		map<int, char>::iterator getChromosomeBegining(int set, int chrom);
+		int getNumberOfJunctions(int set, int chrom);
 		
 /* ASCII PLOTTING METHODS */
 		void readGenotype();
@@ -56,6 +58,8 @@ class Individual
 };
 
 Individual::Individual(){
+	genome[0].reserve(NUMBERofCHROMOSOMES);
+	genome[1].reserve(NUMBERofCHROMOSOMES);
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
 		genome[0].push_back(Chromosome('A'));
 		genome[1].push_back(Chromosome('B'));
@@ -63,6 +67,8 @@ Individual::Individual(){
 }
 
 Individual::Individual(char origin){
+	genome[0].reserve(NUMBERofCHROMOSOMES);
+	genome[1].reserve(NUMBERofCHROMOSOMES);
 	if(origin == 'A' or origin == 'B'){
 		for(int i=0;i<NUMBERofCHROMOSOMES;i++){
 			genome[0].push_back(Chromosome(origin));
@@ -77,6 +83,8 @@ Individual::Individual(char origin){
 }
 
 Individual::Individual(vector<Chromosome>& gamete1, vector<Chromosome>& gamete2){
+	genome[0].reserve(NUMBERofCHROMOSOMES);
+	genome[1].reserve(NUMBERofCHROMOSOMES);
 	int i; 
 	for(i=0;i<NUMBERofCHROMOSOMES;i++){
 		genome[0].push_back(gamete1[i]);
@@ -91,6 +99,7 @@ void Individual::replace_chromozome(int set, int position, map <int, char>  inpu
 void Individual::makeGamete(vector<Chromosome>& gamete){
 // iniciatiaztion of variables
 	gamete.clear(); // variable for new gamete
+	gamete.reserve(NUMBERofCHROMOSOMES);
 	vector<int> chiasmas; // vector of randomes chismas
 	Chromosome recombinant_ch; // temp chromosome
 	char last_material_s1, last_material_s2;
@@ -111,10 +120,13 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		}
 		
 /* inicialization / restart of variables */
+// 		genome[0][i].showChromosome();
+// 		genome[0][i].showChromosome();
 		auto pos1=genome[0][i].begin();
 		auto pos2=genome[1][i].begin();
 		last_material_s1 = genome[0][i].read(0);
 		last_material_s2 = genome[1][i].read(0);
+		int last_roll = -1;
 // 		cout << "last material s1: " << last_material_s1 << endl;
 // 		cout << "last material s2: " << last_material_s2 << endl;
 		chiasmas.clear();
@@ -130,9 +142,16 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		sort(chiasmas.begin(), chiasmas.end(), arrangeObject);
 		
 // 		cerr << "Rolled: ";
-// 		for(int index=0;index<numberOfChaisma;index++){
+		for(int index=0;index<numberOfChaisma;index++){
 // 			cerr << chiasmas[index] << ' ';
-// 		}
+			if(last_roll == chiasmas[index]){
+				chiasmas.erase (chiasmas.begin()+index,chiasmas.begin()+index+1);
+				index -= 2;
+				numberOfChaisma -= 2;
+				last_roll = -1;
+			}
+			last_roll = chiasmas[index];
+		}
 // 		cerr << endl;
 		
 
@@ -223,6 +242,10 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 
 // add recombined gamete to vector
 		gamete.push_back(recombinant_ch);
+// 		recombinant_ch.showChromosome();
+// 		if(recombinant_ch.CorCheck()){
+// 			cin.get();
+// 		}
 	}
 }
 
@@ -281,6 +304,14 @@ bool Individual::Bcheck() const{
 		return 0;
 	}
 	return 1;
+}
+
+map< int, char >::iterator Individual::getChromosomeBegining(int set, int chrom){
+	return genome[set][chrom].begin();
+}
+
+int Individual::getNumberOfJunctions(int set, int chrom){
+	return genome[set][chrom].getNumberOfJunctions();
 }
 
 void Individual::readGenotype(){
@@ -590,10 +621,110 @@ void Individual::plotGenotype(int dev,int line,int height, int width, int demesi
 	return;
 }
 
+class Imigrant  
+{
+	public:
+/* DECLARATION */
+		Imigrant();
+		Imigrant(char origin); /* init Individual as 'A', 'B' or pure "AB" heterozygot*/
+		Imigrant(vector<Chromosome>& gamete); /*init Individual by gametes on imput */
+		~Imigrant(){genome.clear();}; /* destructor */
+		
+// /* COMPUTIONG METHODS */
+		void makeGamete(Imigrant& descendant); //
+// 		void replace_chromozome(int set, int position,map <int, char> input_chrom);
+		double getFitness();
+// 		int getBcount() const;
+		double getBprop() const;
+		void getSizesOfBBlocks(vector<int>& sizes);
+		bool Acheck() const;
+		bool Bcheck() const;
+// 		
+// /* ASCII PLOTTING METHODS */
+// 		void readGenotype();
+// 		void viewGenotype();
+// 		
+// /* GRAPHICS */
+// 		void plotGenotype();
+// 		void plotGenotype(int dev,int line,int height, int width, int demesize);
+	
+	private:
+		vector<Chromosome> genome;
+};
+
+Imigrant::Imigrant(){
+	genome.reserve(NUMBERofCHROMOSOMES);
+	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
+		genome.push_back(Chromosome('B'));
+	}
+}
+
+Imigrant::Imigrant(char origin){
+	genome.reserve(NUMBERofCHROMOSOMES);
+	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
+		genome.push_back(Chromosome(origin));
+	}
+}
+
+Imigrant::Imigrant(vector<Chromosome>& gamete){
+	genome.reserve(NUMBERofCHROMOSOMES);
+	int i; 
+	for(i=0;i<NUMBERofCHROMOSOMES;i++){
+		genome.push_back(gamete[i]);
+	}
+}
 
 
+double Imigrant::getBprop() const{
+	double prop = 0;
+	for(int ch = 0;ch < NUMBERofCHROMOSOMES;ch++){
+		prop += genome[ch].countB();
+	}
+	prop = prop / (NUMBERofCHROMOSOMES * RESOLUTION);
+	return prop;
+}
+
+void Imigrant::getSizesOfBBlocks(vector< int >& sizes){
+	sizes.clear();
+	for(int ch = 0;ch < NUMBERofCHROMOSOMES;ch++){
+		genome[ch].getSizesOfBBlocks(sizes);
+	}
+	return;
+}
 
 
+double Imigrant::getFitness(){
+	return 1 - (SELECTIONpressure * getBprop());
+}
 
+bool Imigrant::Acheck() const{
+	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
+		if(genome[i].Acheck()){
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
 
+bool Imigrant::Bcheck() const{
+	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
+		if(genome[i].Bcheck()){
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
+
+void Imigrant::makeGamete(Imigrant& descendant){
+	vector<Chromosome> gamete;
+	gamete.reserve(NUMBERofCHROMOSOMES);
+	Chromosome CHtemp;
+	for(int ch = 0; ch < NUMBERofCHROMOSOMES;ch++){
+		genome[ch].makeRecombinant(CHtemp, getChiasma());
+		gamete.push_back(CHtemp);
+	}
+	descendant = Imigrant(gamete);
+}
 

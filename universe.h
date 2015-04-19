@@ -4,6 +4,11 @@ using namespace std;
 
 static string NAMEofOUTPUTfile = "out";
 
+int getNumberOfDescendants(double fitness){
+	poisson_distribution<int> pois(fitness);
+	return pois(generator);
+}
+
 class Universe  
 {
 	public:
@@ -11,7 +16,7 @@ class Universe
 		Universe(int dimension, int edges_per_deme, int number_of_demes_l_r,string edges_l_r, int number_of_demes_u_d, string edges_u_d);
 		Universe();
 		void basicUnitCreator(char type, char init);
-		void infCreator();
+// 		void infSimulator(vector<Imigrant>& GogolBordello, int NUMofGEN);
 		
 // 		computing functions
 		int migration(); // int will be the errorcode
@@ -50,6 +55,7 @@ class Universe
 		void setDimension(int dim);
 		void setNumberOfEdges(int nue);
 		void restart();
+		void clear();
 		
 		int getNumOfDemesInColumn(){return number_of_demes_u_d;};
 		int getSpaceSize(){return space.size();};
@@ -67,6 +73,7 @@ class Universe
 		string type_of_l_r_edges, type_of_u_d_edges;
 		int index_last_left, index_next_left;
 		int index_last_right, index_next_right;
+		vector<Imigrant> GogolBordello;
 };
 
 Universe::Universe(int dim, int ed_per_deme, int num_of_demes_l_r,string ed_l_r, int num_of_demes_u_d, string edges_u_d){
@@ -79,12 +86,12 @@ Universe::Universe(int dim, int ed_per_deme, int num_of_demes_l_r,string ed_l_r,
 }
 
 Universe::Universe(){
-	dimension = 2;
-	edges_per_deme = 4;
-	number_of_demes_l_r = 6;
-	type_of_l_r_edges = "extending";
-	number_of_demes_u_d = 1;
-	type_of_u_d_edges = "reflexive";
+// 	dimension = 2;
+// 	edges_per_deme = 4;
+// 	number_of_demes_l_r = 6;
+// 	type_of_l_r_edges = "extending";
+// 	number_of_demes_u_d = 1;
+// 	type_of_u_d_edges = "reflexive";
 }
 
 // I have to add char init to initiate demes as pure A, pure B, mixed or pure A/B with some incoming individuals
@@ -178,10 +185,19 @@ void Universe::basicUnitCreator(char type, char init){
 	return;
 }
 
-void Universe::infCreator(){
-// 	create zero dimensional space
-// 	one specialized deme with redefined migration and breeding???
-}
+// void Universe::infSimulator(vector<Imigrant>& GogolBordello, int NUMofGEN){
+// 	for(int generation = 1; generation < NUMofGEN; generation ++){
+// // 		migration
+// 		for(int i = 0; i < DEMEsize;i++){
+// 			GogolBordello.push_back(Imigrant('B'));
+// 		}
+// // 		selection & reproduction
+// 		
+// 		
+// 	}
+// // 	create zero dimensional space
+// // 	one specialized deme with redefined migration and breeding?
+// }
 
 
 int Universe::upper_border(int index, int max_index){
@@ -270,6 +286,14 @@ int Universe::side_border(int reflexive, int extending){
 
 
 int Universe::migration(){
+	if(dimension == 0){
+		GogolBordello.reserve(DEMEsize);
+		for(int i = 0; i < DEMEsize;i++){
+			GogolBordello.push_back(Imigrant('B'));
+		}
+// 		cerr << "GB size: " <<	GogolBordello.size() << endl;
+		return 0;
+	}
 	if(space.empty()){
 		cerr << "ERROR: Missing demes" << endl;
 		return -1;
@@ -394,6 +418,37 @@ void Universe::set(int index,string type){
 
 
 void Universe::globalBreeding(){
+	if(dimension == 0){
+		vector<Imigrant> new_generation;
+		Imigrant desc;
+		double fitness;
+		int num_of_desc;
+// 
+		for(unsigned int index = 0; index < GogolBordello.size(); index++){
+			fitness = GogolBordello[index].getFitness();
+			num_of_desc = getNumberOfDescendants(fitness);
+			for(int i=0;i<num_of_desc;i++){
+				GogolBordello[index].makeGamete(desc);
+				if(desc.Acheck()){
+					continue;
+				}
+				new_generation.push_back(desc);
+			}
+			num_of_desc = getNumberOfDescendants(fitness);
+			for(int i=0;i<num_of_desc;i++){
+				GogolBordello[index].makeGamete(desc);
+				if(desc.Acheck()){
+					continue;
+				}
+				new_generation.push_back(desc);
+			}
+		}
+		GogolBordello.clear();
+		GogolBordello = new_generation;
+		new_generation.clear();
+		return;
+	}
+	
 	vector<int> indexes;
 	for (auto i=space.begin(); i!=space.end(); ++i){
 		indexes.push_back(i->first);
@@ -467,10 +522,25 @@ void Universe::setNumberOfEdges(int nue){
 }
 
 void Universe::restart(){
+	if(dimension == 0){
+		GogolBordello.clear();
+	} else {
+		for (auto i=space.begin(); i!=space.end(); ++i){
+			delete i->second;
+		}
+		space.clear();
+		basicUnitCreator('b', 'A');
+		basicUnitCreator('r', 'B');
+		cerr << "World is reset." << endl;
+	}
+	return;
+}
+
+void Universe::clear(){
+	for (auto i=space.begin(); i!=space.end(); ++i){
+		delete i->second;
+	}
 	space.clear();
-	basicUnitCreator('b', 'A');
-	basicUnitCreator('r', 'B');
-	cerr << "World is reset." << endl;
 	return;
 }
 
@@ -497,8 +567,11 @@ void Universe::listOfParameters(){
 }
 
 void Universe::listOfDemes(){
-	int worlsize = space.size();
-	cerr << "World of size " << worlsize << endl;
+	if(dimension == 0){
+		cerr << "Population of imigrants has " << GogolBordello.size() << endl;
+	} else {
+		cerr << "World of size " << space.size() << endl;
+	}
 	cerr << "of dimension: " << dimension << endl;
 	cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
 	cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
@@ -529,9 +602,12 @@ void Universe::summary(){
 	<< setw(6) << left << "RIGHT" 
 	<< setw(5) << left << "UP" 
 	<< setw(6) << left << "DOWN" 
-	<< setw(12) << left << "% of B" 
-	<< setw(12) << left << "% of H"
-	<< setw(12) << left << "mean f";
+	<< setw(12) << left << "mean f"
+	<< setw(12) << left << "f(heter)"
+	<< setw(12) << left << "meanHI" 
+	<< setw(12) << left << "var(HI)" 
+	<< setw(12) << left << "var(p)" 
+	<< setw(12) << left << "LD";
 	if(RESOLUTION * NUMBERofCHROMOSOMES == 2){
 		cout << setw(40) << right << "genotypes: AAAA AAAB AABB ABBB BBBB" << endl;
 	} else {
@@ -542,9 +618,11 @@ void Universe::summary(){
 		}
 	}
 	for (auto i=space.begin(); i!=space.end(); ++i){
+// 		if(i->first == 9){
 		i->second->summary();
+// 			i->second->readAllGenotypes();
+// 		}
 	}
-
 }
 
 
@@ -638,7 +716,7 @@ int Universe::SaveTheUniverse(int order){
 	}  
 	
 	for(unsigned int i = 0; i < space.size(); i++){
-		props = space[index]->getBproportion();
+		props = space[index]->getBproportions();
 		ofile << index << '\t';
 		for(unsigned int ind = 0; ind < props.size(); ind++){
 			ofile << props[ind] << '\t';
@@ -679,7 +757,7 @@ int Universe::SaveTheUniverse(int order, string type){
 	
 	if(type == "complete"){
 		for(unsigned int i = 0; i < space.size(); i++){
-			props = space[index]->getBproportion();
+			props = space[index]->getBproportions();
 			ofile << index << '\t';
 			for(unsigned int ind = 0; ind < props.size(); ind++){
 				ofile << props[ind] << '\t';
@@ -698,7 +776,7 @@ int Universe::SaveTheUniverse(int order, string type){
 	if(type == "average"){
 		double avrg;
 		for(unsigned int i = 0; i < space.size(); i++){
-			props = space[index]->getBproportion();
+			props = space[index]->getBproportions();
 			ofile << index << '\t';
 			for(unsigned int ind = 0; ind < props.size(); ind++){
 				avrg += props[ind];
@@ -731,20 +809,36 @@ int Universe::SaveTheUniverse(string type){
 		return 1;
 	}  
 	
-	if(type == "complete"){
-		for(unsigned int i = 0; i < space.size(); i++){
-			props = space[index]->getBproportion();
-			ofile << index << '\t';
-			for(unsigned int ind = 0; ind < props.size(); ind++){
-				ofile << props[ind] << '\t';
+	if(dimension == 0){
+		for(unsigned int ch = 0;ch < GogolBordello.size();ch++){
+// 			GogolBordello[ch].getBprop();
+			vector<int> IndBlocks;
+			GogolBordello[index].getSizesOfBBlocks(IndBlocks);
+			for(vector<int>::iterator it = IndBlocks.begin(); it != IndBlocks.end(); ++it) {
+				ofile << *it / double(RESOLUTION) << endl;
 			}
-			ofile << endl;
-			if(index != index_last_right){
-				index = space[index]->getNeigbours()[1];
-			} else {
-				break;
-			}
+// 			ofile << ch << '\t';
+// 			for(unsigned int ind = 0; ind < props.size(); ind++){
+// 					ofile << props[ind] << '\t';
+// 			}
+// 			ofile << endl;
 		}
+	} else {
+		if(type == "complete"){
+			for(unsigned int i = 0; i < space.size(); i++){
+				props = space[index]->getBproportions();
+				ofile << index << '\t';
+				for(unsigned int ind = 0; ind < props.size(); ind++){
+					ofile << props[ind] << '\t';
+				}
+				ofile << endl;
+				if(index != index_last_right){
+					index = space[index]->getNeigbours()[1];
+				} else {
+					break;
+				}
+			}
+	}
 		cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
 		ofile.close();
 		return 0;
@@ -752,7 +846,7 @@ int Universe::SaveTheUniverse(string type){
 	if(type == "average"){
 		double avrg;
 		for(unsigned int i = 0; i < space.size(); i++){
-			props = space[index]->getBproportion();
+			props = space[index]->getBproportions();
 			ofile << index << '\t';
 			for(unsigned int ind = 0; ind < props.size(); ind++){
 				avrg += props[ind];

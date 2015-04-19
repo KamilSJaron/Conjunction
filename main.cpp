@@ -27,7 +27,7 @@ void parameterSlave(string parameter, double value);
 void parameterSlave(char parameter, double value);
 void parameterSlave(string parameter, vector<double>& valvec, vector<double>& paravec, vector<char>& para);
 void probMAPslave(string parameter, vector<double>& velvec);
-int worldSlave(string line, Universe* World);
+int worldSlave(string& line, Universe* World);
 int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARAvec2,vector<double>& PARAvec3,vector<char>& PARAnames);
 int testParameters(Universe* World);
 void const showVector(vector<double>& valvec);
@@ -109,7 +109,7 @@ int main()
 							run++;
 							cerr << "RUN : " << run << endl;
 							World.restart();
-							simulate(&World,save_pos);
+							simulate(&World,save_pos); // simulate  edit for 0 dim case
 						}
 					} else {
 						run++;
@@ -128,10 +128,11 @@ int main()
 		t_total2 = clock();
 		cerr << "TOTAL TIME OF THE SIMULATION IS " << ((float)t_total2 - (float)t_total1) / CLOCKS_PER_SEC << endl;
 	} else {
-		simulate(&World);
+		simulate(&World);  //both simulate edit for 0 dim case
 	}
 // 	 	char filePattern[] = "../playground/pictXX.png";
 	
+	World.clear();
 	return 0;
 }
 
@@ -425,7 +426,7 @@ int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARA
 	return 0;
 }
 
-int worldSlave(string line, Universe* World){
+int worldSlave(string& line, Universe* World){
 	int switcher = 0, n = 0;
 	string type, number;
 	for(unsigned int i = 0;i < line.size();i++){
@@ -492,6 +493,7 @@ int worldSlave(string line, Universe* World){
 						World->setNumberOfEdges(4);
 						World->setUDEdgesType("wrap");
 					}
+					World->setLREdgesType("extending");
 					World->basicUnitCreator('b', 'A');
 					World->basicUnitCreator('r', 'B');
 					cerr << "World is quick defined as " << n << " demes long hybrid zone." << endl;
@@ -521,8 +523,9 @@ int worldSlave(string line, Universe* World){
 				}
 				if(type == "InfInf"){
 					cerr << "World is quick-defined as zero dimensional border of infinite popualtions" << endl;
-					World->infCreator();
-					return 0;
+// 					World->infSimulator(GogolBordello, NUMBERofGENERATIONS);
+					World->setDimension(0);
+					return 8;
 				}
 				cerr << "Error: Unknown pre-defined world " << type << endl;
 				return 1;
@@ -558,7 +561,7 @@ const void showVector(vector< double >& valvec){
 }
 
 void simulate(Universe* World, int save_pos){
-	clock_t t1, t2;
+// 	clock_t t1, t2;
 	clock_t t_sim1, t_sim2;
 	int order = 0, check = 0, modulo = ceil((double)NUMBERofGENERATIONS / NUMBERofSAVES);
 	
@@ -566,11 +569,11 @@ void simulate(Universe* World, int save_pos){
 	World->listOfDemes();
 	t_sim1 = clock();
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
-		t1=clock();
+// 		t1=clock();
 		World->migration();
 		World->globalBreeding();
-		t2=clock();
-		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+// 		t2=clock();
+// 		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 		if(((i % modulo)+1) == modulo and i != NUMBERofGENERATIONS - 1){
 			order++;
 			NAMEofOUTPUTfile[save_pos] = '0' + char(order);
@@ -600,18 +603,19 @@ void simulate(Universe* World, int save_pos){
 }
 
 void simulate(Universe* World){
-	clock_t t1, t2, t_sim1, t_sim2;
+// 	clock_t t1, t2;
+	clock_t t_sim1, t_sim2;
 	int check = 0;
 	
 	cerr << "Starting world: " << endl;
 	World->listOfDemes();
 	t_sim1 = clock();
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
-		t1=clock();
+// 		t1=clock();
 		World->migration();
 		World->globalBreeding();
-		t2=clock();
-		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+// 		t2=clock();
+// 		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 	}
 	t_sim2 = clock();
 	if(NUMBERofSAVES == 1){

@@ -55,6 +55,8 @@ class Chromosome
 		int countB() const; /*returns number of B loci in chromosome*/
 		int getNumberOfJunctions() const; /*returns number of Junctions in chromosome*/
 		void getSizesOfBBlocks(vector<int>& sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
+		void makeRecombinant(Chromosome& chromNew,int numberOfChaisma);
+		bool CorCheck();
 		
 /* COMUNICATION METHODS */
 		static void setResolution(int res){RESOLUTION = res;};
@@ -78,7 +80,7 @@ void Chromosome::showChromosome() const{
 
 void Chromosome::viewChromosome() const{
 	if(RESOLUTION < 101){
-		cout << "Number of loci is too small for plotting" << endl;
+		cerr << "Number of loci is too small for plotting" << endl;
 	} else {
 	vector<int> vals;
 	vector<char> seq;
@@ -142,7 +144,6 @@ int Chromosome::getNumberOfJunctions() const{
 }
 
 void Chromosome::getSizesOfBBlocks(vector<int>& sizes){
-	sizes.clear();
 	char last_seq = 'A';
 	int last_val = 0;
 	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
@@ -171,30 +172,22 @@ void Chromosome::write(int i, char l){
 	chromosome[i] = l;
 }
 
-class Imigrant: public Chromosome{
-	public:
-		Imigrant() : Chromosome('B') {};
-		Imigrant(map <int, char> ch): Chromosome(ch){};
-		Imigrant(char starting_char) : Chromosome(starting_char) {};
-		
-		void makeGamete(Imigrant& indivNew,int starts_by, int numberOfChaisma);
-};
-
-void Imigrant::makeGamete(Imigrant& indivNew, int starts_by, int numberOfChaisma){
+void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 // 	starts_by 0 home, 1 alien
+	int starts_by = tossAcoin();
 	vector<int> recombination;
-	indivNew.clear();
-	indivNew.write(0,'A');
-	cout << "Toss: " << starts_by << " numberOfChaisma: " << numberOfChaisma;
+	chromNew.clear();
+	chromNew.write(0,'A');
+// 	cout << "Toss: " << starts_by << " numberOfChaisma: " << numberOfChaisma;
 
 	
 // 	this condition can be deleted if I will handle the numberOfChaisma=0 on some upper level
 	if(numberOfChaisma == 0){
-		cout << endl;
+// 		cout << endl;
 		if(starts_by == 0){
 			return;
 		}
-		indivNew = Imigrant(chromosome);
+		chromNew = Chromosome(chromosome);
 		return;
 	}
 	
@@ -202,12 +195,12 @@ void Imigrant::makeGamete(Imigrant& indivNew, int starts_by, int numberOfChaisma
 	int index, lastposition = 0;
 	  //inicialization, in case of starting B it will be overwrited
 	
-	cout << " Rec. positions:";
+// 	cout << " Rec. positions:";
 	for(index=0;index<numberOfChaisma;index++){ //this loop is not needed to be ordered
 		recombination.push_back(recombPosition());
-		cout << recombination[index] << ", ";
+// 		cout << recombination[index] << ", ";
 	}
-	cout << endl;
+// 	cout << endl;
 	
 	sort(recombination.begin(), recombination.end(), arrangeObject);
 	index = 0;
@@ -216,9 +209,9 @@ void Imigrant::makeGamete(Imigrant& indivNew, int starts_by, int numberOfChaisma
 		while(recombination[index] <= pos->first && index < numberOfChaisma){
 			if (chromosome[lastposition] != 'A'){
 				if (starts_by == 1){
-					indivNew.write(recombination[index],'A');
+					chromNew.write(recombination[index],'A');
 				} else {
-					indivNew.write(recombination[index],'B');
+					chromNew.write(recombination[index],'B');
 				}
 			}
 			starts_by = abs(starts_by - 1);
@@ -226,7 +219,7 @@ void Imigrant::makeGamete(Imigrant& indivNew, int starts_by, int numberOfChaisma
 		}
 		
 		if(starts_by == 1){
-			indivNew.write(pos->first,pos->second);
+			chromNew.write(pos->first,pos->second);
 		}
 		lastposition = pos->first;
 	}
@@ -234,13 +227,24 @@ void Imigrant::makeGamete(Imigrant& indivNew, int starts_by, int numberOfChaisma
 	while(index < numberOfChaisma){
 			if (chromosome[lastposition] != 'A'){
 				if (starts_by == 1){
-					indivNew.write(recombination[index],'A');
+					chromNew.write(recombination[index],'A');
 				} else {
-					indivNew.write(recombination[index],'B');
+					chromNew.write(recombination[index],'B');
 				}
 			}
 			starts_by = abs(starts_by - 1);
 			index++;
 	}
 	return;
+}
+
+bool Chromosome::CorCheck(){
+	char last_char = 'x';
+	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+		if(last_char == pos->second){
+			return 1;
+		}
+		last_char = pos->second;
+	}
+	return 0;
 }

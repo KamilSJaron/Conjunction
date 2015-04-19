@@ -41,11 +41,14 @@ class Deme
 		void getFitnessVector(vector<double>& fitnessVector);
 		void permutation(); // permutation function
 		void integrateMigrantVector(vector<Individual>& migBuffer);
-		vector<double> getBproportion() const;
+		vector<double> getBproportions() const; // not used
 		double getMeanBproportion() const;
 		double getProportionOfHomozygotes(char population) const;
 		double getProportionOfHeterozygotes() const;
 		double getMeanFitness() const;
+		double getVARhi() const;
+		double getVARp() const;
+		double getLD() const;
 		
 // plotting functions
 		void showDeme();
@@ -59,6 +62,7 @@ class Deme
 	
 	private:
 		void swap(int ind1, int ind2);
+		static int sum(vector<bool>& ve);
 		
 		Individual *deme = new Individual[DEMEsize];
 		int index;
@@ -204,8 +208,9 @@ void Deme::integrateMigrantVector(vector<Individual>& migBuffer){
 	return;
 }
 
-vector<double> Deme::getBproportion() const{
+vector<double> Deme::getBproportions() const{
 	vector<double> props;
+	props.reserve(DEMEsize);
 	for(int i = 0;i < DEMEsize;i++){
 		props.push_back(deme[i].getBprop());
 	}
@@ -213,7 +218,7 @@ vector<double> Deme::getBproportion() const{
 }
 
 double Deme::getMeanBproportion() const{
-	double props;
+	double props = 0;
 	for(int i = 0;i < DEMEsize;i++){
 		props += deme[i].getBprop();
 	}
@@ -252,6 +257,7 @@ double Deme::getProportionOfHeterozygotes() const{
 
 void Deme::getFitnessVector(vector<double> &fitnessVector){
 	double sum = 0;
+	fitnessVector.reserve(DEMEsize);
 	for(int i = 0;i < DEMEsize;i++){
 // 		if(deme[i].getFitness() != 1 and deme[i].getFitness() != (1 - SELECTIONpressure)){
 // 			cerr << "Fitness of individual " << i << " is " << deme[i].getFitness() << " HORRAY!\n";
@@ -269,6 +275,80 @@ double Deme::getMeanFitness() const{
 		sum += deme[i].getFitness();
 	}
 	return sum / DEMEsize;
+}
+
+double Deme::getVARhi() const{
+	double varz = 0, z = getMeanBproportion();
+	for(int i = 0; i < DEMEsize; i++){
+		varz += pow(z - deme[i].getBprop(),2);
+	}
+	varz = varz / DEMEsize;
+	return varz;
+}
+
+double Deme::getVARp() const{
+	double p = 0, varp = 0, pmean = getMeanBproportion();
+	int TotalCHnum = DEMEsize * NUMBERofCHROMOSOMES * 2; //total number of chromosomes in deme
+	vector<bool> states;	// 0 'A', 1 'B'
+	vector<map<int, char>::iterator> chroms; //vector with chromosome junctions
+	vector<int> ch_sizes; //vector with number of chromosome junctions
+	
+	chroms.reserve(TotalCHnum);
+	ch_sizes.reserve(TotalCHnum);
+	states.reserve(TotalCHnum);
+	
+	for(int i = 0;i < DEMEsize;i++){
+		for(int j = 0;j < NUMBERofCHROMOSOMES;j++){
+			if(deme[i].getChromosomeBegining(0,j)->second == 'A'){
+				states.push_back(0);
+			} else {
+				states.push_back(1);
+			}
+			if(deme[i].getChromosomeBegining(1,j)->second == 'A'){
+				states.push_back(0);
+			} else {
+				states.push_back(1);
+			}
+			chroms.push_back(deme[i].getChromosomeBegining(0,j));
+			chroms.push_back(deme[i].getChromosomeBegining(1,j));
+			ch_sizes.push_back(deme[i].getNumberOfJunctions(0,j));
+			ch_sizes.push_back(deme[i].getNumberOfJunctions(1,j));
+		}
+	}
+	for(int i = 0;i < RESOLUTION;i++){
+// 		I have to update states every iteration
+		for(int j = 0;j < TotalCHnum;j++){
+			if(chroms[j]->first == i){
+				if(chroms[j]->second == 'A'){
+					states[j] = 0;
+				} else {
+					states[j] = 1;
+				}
+				if(ch_sizes[j] != 0){
+					chroms[j]++;
+					ch_sizes[j] -= 1;
+				}
+			}
+		}
+// 		cout << endl << "updated states: ";
+// 		for(int k = 0;k < TotalCHnum;k++){
+// 			cout << states[k] << " ";
+// 		}
+// 		cout << endl;
+		p = sum(states) / (double)(DEMEsize * NUMBERofCHROMOSOMES * 2);
+		varp += pow(pmean - p,2);
+	}
+	varp = varp / RESOLUTION;
+	return varp;
+}
+
+
+double Deme::getLD() const{
+	double LD = 0, varz = getVARhi(), z = getMeanBproportion(), varp = getVARp(), n = RESOLUTION;
+		
+	LD = (varz - ((1 / (2 * n)) * ((z * (1 - z)) - varp))) / (0.5 * (1 - (1 / n))) ;
+	
+	return LD;
 }
 
 		
@@ -294,9 +374,12 @@ void Deme::summary(){
 	if(neigbsize == 2){
 		cout << setw(10) << "           ";
 	}
-	cout << setw(12) << left << ((round(getMeanBproportion() * 10000)) / 10000)
+	cout << setw(12) << left << ((round(getMeanFitness() * 10000)) / 10000)
 	<< setw(12) << left << ((round(getProportionOfHeterozygotes() * 10000)) / 10000)
-	<< setw(12) << left << ((round(getMeanFitness() * 10000)) / 10000) << " "
+	<< setw(12) << left << ((round(getMeanBproportion() * 10000)) / 10000)
+	<< setw(12) << left << ((round(getVARhi() * 10000)) / 10000)
+	<< setw(12) << left << ((round(getVARp() * 10000)) / 10000)
+	<< setw(12) << left << ((round(getLD() * 10000)) / 10000) << " "
 	<< setw(25) << right ;
 	if((RESOLUTION * NUMBERofCHROMOSOMES) <= 2){
 		readGenotypeFrequencies();
@@ -314,12 +397,14 @@ void Deme::viewDeme(){
 
 void Deme::readAllGenotypes(){
 	for(int i=0;i<DEMEsize;i++){
+		cerr << "Individual: " << i << " B proportion: " << deme[i].getBprop() << endl;
 		deme[i].readGenotype();
 	}
 }
 
 void Deme::readGenotypeFrequencies(){
 	vector<double> freqs;
+	freqs.reserve(NUMBERofCHROMOSOMES*RESOLUTION*2 + 1);
 	for(int i=0;i < NUMBERofCHROMOSOMES*RESOLUTION*2 + 1;i++){
 		freqs.push_back(0);
 	}	
@@ -377,4 +462,12 @@ void Deme::swap(int ind1, int ind2){
 	tempInd = deme[ind2];
 	deme[ind2] = deme[ind1];
 	deme[ind1] = tempInd;
+}
+
+int Deme::sum(vector< bool >& ve){
+	int sum = 0; 
+	for(unsigned int i = 0; i < ve.size();i++){
+		sum += ve[i];
+	}
+	return sum;
 }
