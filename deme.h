@@ -286,11 +286,11 @@ double Deme::getVARp(){
 		getps(ps,ch);
 		for(unsigned int locus = 0;locus < ps.size();locus++){
 			p = ps[locus];
-			varp += pow(pmean - p,2);
+			varp += (pmean - p) * (pmean - p);
 		}
 		ps.clear();
 	}
-	varp = varp / LOCI*NUMBERofCHROMOSOMES;
+	varp = varp / (LOCI*NUMBERofCHROMOSOMES);
 	return varp;
 }
 
@@ -337,7 +337,7 @@ void Deme::getps(vector<double>& ps, int ch){
 				}
 			}
 		}
-		p = sum(states) / (double)(DEMEsize * NUMBERofCHROMOSOMES);
+		p = sum(states) / (double)(DEMEsize * 2);
 		ps.push_back(p);
 	}
 }
@@ -382,13 +382,13 @@ void Deme::summary(){
 	for(int i = 0; i < neigbsize; i++){
 		cout << setw(5) << left << neigbours[i] << " ";
 	}
-	cout << setw(12) << left << ((round(getMeanFitness() * 10000)) / 10000)
-	<< setw(12) << left << ((round(getProportionOfHeterozygotes() * 10000)) / 10000)
-	<< setw(12) << left << ((round(z * 10000)) / 10000)
-	<< setw(12) << left << ((round(varz * 10000)) / 10000);
+	cout << setw(12) << left << ((round(getMeanFitness() * 1000000)) / 1000000)
+	<< setw(12) << left << ((round(getProportionOfHeterozygotes() * 1000000)) / 1000000)
+	<< setw(12) << left << ((round(z * 1000000)) / 1000000)
+	<< setw(12) << left << ((round(varz * 1000000)) / 1000000);
 	if(LOCI * NUMBERofCHROMOSOMES > 1){
-		cout	<< setw(12) << left << ((round(varp * 10000)) / 10000)
-		<< setw(12) << left << ((round(getLD(z,varz,varp) * 10000)) / 10000);
+		cout	<< setw(12) << left << ((round(varp * 1000000)) / 1000000)
+		<< setw(12) << left << ((round(getLD(z,varz,varp) * 1000000)) / 1000000);
 	} 
 	if((LOCI * NUMBERofCHROMOSOMES) <= 16){
 		vector<double> ps;
