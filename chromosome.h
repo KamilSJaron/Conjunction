@@ -1,6 +1,6 @@
 using namespace std;
 
-static int RESOLUTION = 1; /*RESOLUTION is Ls in Baird 94; it has to work with one loci case*/
+static int LOCI = 1; /*LOCI is Ls in Baird 94; it has to work with one loci case*/
 static vector<double> PROBABILITYmap;
 
 //struct and functions
@@ -15,10 +15,10 @@ int tossAcoin (){
 int recombPosition (){
 	int roll = rand();
 	if(PROBABILITYmap.empty()){
-		if(RESOLUTION == 1){
+		if(LOCI == 1){
 			return 0;
 		} else {
-			return (roll % (RESOLUTION-1)) + 1;
+			return (roll % (LOCI-1)) + 1;
 		}
 	}
 	for(unsigned int i=0;i < PROBABILITYmap.size();i++){
@@ -56,11 +56,11 @@ class Chromosome
 		int getNumberOfJunctions() const; /*returns number of Junctions in chromosome*/
 		void getSizesOfBBlocks(vector<int>& sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
 		void makeRecombinant(Chromosome& chromNew,int numberOfChaisma);
-		bool CorCheck();
+// 		bool CorCheck();
 		
 /* COMUNICATION METHODS */
-		static void setResolution(int res){RESOLUTION = res;};
-		static int getResolution(){return RESOLUTION;}; /* return resolution of the chromosome */
+		static void setResolution(int res){LOCI = res;};
+		static int getResolution(){return LOCI;}; /* return resolution of the chromosome */
 		void clear(){chromosome.clear();}; /* method for deleting chromosome */
 		char read(int i){return chromosome[i];}; /* returns value of junction */
 		void write(int i, char l); /* makes new junction*/
@@ -73,39 +73,53 @@ class Chromosome
 };
 
 void Chromosome::showChromosome() const{
-	for(auto i=chromosome.begin(); i!=chromosome.end(); ++i){
+	for(map<int, char>::const_iterator i=chromosome.begin(); i!=chromosome.end(); ++i){
 		cout << i->first << ':' << i->second << '\n';
 	}
 }
 
 void Chromosome::viewChromosome() const{
-	if(RESOLUTION < 101){
-		cerr << "Number of loci is too small for plotting" << endl;
-	} else {
 	vector<int> vals;
 	vector<char> seq;
 	unsigned int index = 0;
 	int letter = 0;
-	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
-		vals.push_back(pos->first / ((double)RESOLUTION / 100));
-		seq.push_back(pos->second);
-	}
-	if(vals.empty()){
-		cerr << "ERROR: non initiated chromosome is impossible to plot" << endl;
-		return;
-	}
-	for(letter = 0; letter < 100; letter++){
-		if(vals[index] == letter && index < vals.size()){
-			index++;
+	if(LOCI < 101){
+		for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+			vals.push_back(pos->first / (double)LOCI);
+			seq.push_back(pos->second);
 		}
-		cout << seq[index-1];
-	}
-	cout << endl;
+		if(vals.empty()){
+			cerr << "ERROR: non initiated chromosome is impossible to plot" << endl;
+			return;
+		}
+		for(letter = 0; letter < LOCI; letter++){
+			if(vals[index] == letter && index < vals.size()){
+				index++;
+			}
+			cout << seq[index-1];
+		}
+		cout << endl;
+	} else {
+		for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+			vals.push_back(pos->first / ((double)LOCI / 100));
+			seq.push_back(pos->second);
+		}
+		if(vals.empty()){
+			cerr << "ERROR: non initiated chromosome is impossible to plot" << endl;
+			return;
+		}
+		for(letter = 0; letter < 100; letter++){
+			if(vals[index] == letter && index < vals.size()){
+				index++;
+			}
+			cout << seq[index-1];
+		}
+		cout << endl;
 	}
 }
 
 bool Chromosome::Acheck() const{
-	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(pos->second != 'A'){
 			return 0;
 		}
@@ -114,7 +128,7 @@ bool Chromosome::Acheck() const{
 }
 
 bool Chromosome::Bcheck() const{
-	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(pos->second != 'B'){
 			return 0;
 		}
@@ -126,7 +140,7 @@ int Chromosome::countB() const{
 	int sum = 0;
 	char last_seq = 'A';
 	int last_val = 0;
-	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(last_seq == 'B'){
 			sum += (pos->first - last_val);
 		}
@@ -134,7 +148,7 @@ int Chromosome::countB() const{
 		last_val = pos->first;
 	}
 	if(last_seq == 'B'){
-			sum += (RESOLUTION - last_val);
+			sum += (LOCI - last_val);
 	}
 	return sum;
 }
@@ -146,7 +160,7 @@ int Chromosome::getNumberOfJunctions() const{
 void Chromosome::getSizesOfBBlocks(vector<int>& sizes){
 	char last_seq = 'A';
 	int last_val = 0;
-	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(last_seq == 'B'){
 			sizes.push_back(pos->first - last_val);
 		}
@@ -154,21 +168,11 @@ void Chromosome::getSizesOfBBlocks(vector<int>& sizes){
 		last_val = pos->first;
 	}
 	if(last_seq == 'B'){
-			sizes.push_back((RESOLUTION - last_val) + 1);
+			sizes.push_back(LOCI - last_val);
 	}
 }
 
 void Chromosome::write(int i, char l){
-// 	if(i >= RESOLUTION){
-// 		cerr << "WARNING: trying to make junction out of RESOLUTION of chromosome." << endl;
-// 		return;
-// 	}
-// 	if(l != 'A' and l != 'B'){
-// 		cerr << "WARNING: trying to write junction followed by genetic information of unknown origin." << endl;
-// 		return;
-// 	}
-// + podminka, ze spoj jeste neexistuje	
-// + podminka, ze minuly spoj je jiny
 	chromosome[i] = l;
 }
 
@@ -178,12 +182,9 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 	vector<int> recombination;
 	chromNew.clear();
 	chromNew.write(0,'A');
-// 	cout << "Toss: " << starts_by << " numberOfChaisma: " << numberOfChaisma;
-
 	
 // 	this condition can be deleted if I will handle the numberOfChaisma=0 on some upper level
 	if(numberOfChaisma == 0){
-// 		cout << endl;
 		if(starts_by == 0){
 			return;
 		}
@@ -191,21 +192,16 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 		return;
 	}
 	
-	
 	int index, lastposition = 0;
-	  //inicialization, in case of starting B it will be overwrited
 	
-// 	cout << " Rec. positions:";
-	for(index=0;index<numberOfChaisma;index++){ //this loop is not needed to be ordered
+	for(index=0;index<numberOfChaisma;index++){
 		recombination.push_back(recombPosition());
-// 		cout << recombination[index] << ", ";
 	}
-// 	cout << endl;
 	
 	sort(recombination.begin(), recombination.end(), arrangeObject);
 	index = 0;
 	
-	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		while(recombination[index] <= pos->first && index < numberOfChaisma){
 			if (chromosome[lastposition] != 'A'){
 				if (starts_by == 1){
@@ -217,7 +213,6 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 			starts_by = abs(starts_by - 1);
 			index++;
 		}
-		
 		if(starts_by == 1){
 			chromNew.write(pos->first,pos->second);
 		}
@@ -236,15 +231,4 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 			index++;
 	}
 	return;
-}
-
-bool Chromosome::CorCheck(){
-	char last_char = 'x';
-	for(auto pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
-		if(last_char == pos->second){
-			return 1;
-		}
-		last_char = pos->second;
-	}
-	return 0;
 }

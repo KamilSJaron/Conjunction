@@ -1,22 +1,26 @@
 #include "chromosome.h"
-static int NUMBERofCHROMOSOMES = 1; /* mouse have 19+1, but now I am reproducing 84 results */
+static int NUMBERofCHROMOSOMES = 1;
 static double RECOMBINATIONrate = 1;
 static double SELECTIONpressure = 0.5;
 static double BETA = 1;
-
-
-using namespace std;
+static vector<double> SELECTIONmap;
+default_random_engine generator(random_device{}());
 
 // fctions
 int getNumberOfChromosomes(){
 	return NUMBERofCHROMOSOMES;
 }
 
-default_random_engine generator;
+
+void setPoisSeed(int SEED){
+	generator.seed(SEED);
+}
 
 int getChiasma(){
 	poisson_distribution<int> pois(RECOMBINATIONrate);
-	return pois(generator);
+	int roll = pois(generator);
+// 	cout << roll << " ";
+	return roll;
 }
 
 class Individual  
@@ -42,10 +46,6 @@ class Individual
 /* ASCII PLOTTING METHODS */
 		void readGenotype();
 		void viewGenotype();
-		
-/* GRAPHICS */
-		void plotGenotype();
-		void plotGenotype(int dev,int line,int height, int width, int demesize);
 		
 /* COMUNICATION */
 		static void setNumberOfChromosomes(int ch){NUMBERofCHROMOSOMES = ch;};
@@ -97,7 +97,6 @@ void Individual::replace_chromozome(int set, int position, map <int, char>  inpu
 }
 
 void Individual::makeGamete(vector<Chromosome>& gamete){
-// iniciatiaztion of variables
 	gamete.clear(); // variable for new gamete
 	gamete.reserve(NUMBERofCHROMOSOMES);
 	vector<int> chiasmas; // vector of randomes chismas
@@ -106,60 +105,45 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 	int rec_pos, numberOfChaisma, starts_by;
 
 /* for every chromosome... */
-// 	cout << NUMBERofCHROMOSOMES << endl;
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
-/* it is very important to understand syntax genome[set][chromosome] */
+/* syntax genome[set][chromosome] */
 		numberOfChaisma = getChiasma();
 		starts_by = tossAcoin();
 		
 /* no chiasma mean inheritance of whole one parent chromosome */
 		if(numberOfChaisma == 0){
-// 			cout << endl;
 			gamete.push_back(genome[starts_by][i]);
 			continue;
 		}
 		
 /* inicialization / restart of variables */
-// 		genome[0][i].showChromosome();
-// 		genome[0][i].showChromosome();
-		auto pos1=genome[0][i].begin();
-		auto pos2=genome[1][i].begin();
+		map<int, char>::const_iterator pos1=genome[0][i].begin();
+		map<int, char>::const_iterator pos2=genome[1][i].begin();
 		last_material_s1 = genome[0][i].read(0);
 		last_material_s2 = genome[1][i].read(0);
 		int last_roll = -1;
-// 		cout << "last material s1: " << last_material_s1 << endl;
-// 		cout << "last material s2: " << last_material_s2 << endl;
 		chiasmas.clear();
 		recombinant_ch.clear();
 // roll the chiasmas positions
-// 		cout << "Junctions: " << numberOfChaisma << " at: ";
 		for(int index=0;index<numberOfChaisma;index++){
 			rec_pos = recombPosition();
 			chiasmas.push_back(rec_pos);
-// 			cerr << " postion " << rec_pos;
 		}
-// 		cerr << endl;
 		sort(chiasmas.begin(), chiasmas.end(), arrangeObject);
 		
-// 		cerr << "Rolled: ";
 		for(int index=0;index<numberOfChaisma;index++){
-// 			cerr << chiasmas[index] << ' ';
 			if(last_roll == chiasmas[index]){
 				chiasmas.erase (chiasmas.begin()+index,chiasmas.begin()+index+1);
 				index -= 2;
 				numberOfChaisma -= 2;
 				last_roll = -1;
+			} else {
+				last_roll = chiasmas[index];
 			}
-			last_roll = chiasmas[index];
 		}
-// 		cerr << endl;
-		
-
 		if(chiasmas[0] != 0){
-// 			cerr << "Writing " << 0 << ' ' << genome[starts_by][i].read(0) << endl;
 			recombinant_ch.write(0,genome[starts_by][i].read(0));
 		} else {
-// 			cerr << "Writing " << 0 << ' ' << genome[(starts_by + 1) % 2][i].read(0) << endl;
 			recombinant_ch.write(0,genome[(starts_by + 1) % 2][i].read(0));
 		}
 		pos1++;
@@ -171,13 +155,12 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 				starts_by = (starts_by + 1) % 2;
 				continue;
 			}
-			if(rec_pos == RESOLUTION){
+			if(rec_pos == LOCI){
 				continue;
 			}
 			
 			if(starts_by==0){
 				while(pos1->first < rec_pos and pos1->first != genome[0][i].end()->first){
-// 					cerr << "wRiting " << pos1->first << ' ' << pos1->second << endl;
 					recombinant_ch.write(pos1->first,pos1->second);
 					last_material_s1 = pos1->second;
 					pos1++;
@@ -187,16 +170,13 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 					pos2++;
 				}
 				if(last_material_s1 == 'A' and last_material_s2 == 'B'){
-// 					cerr << "wrIting " << chiasmas[index] << ' ' << last_material_s2 << endl;
 					recombinant_ch.write(chiasmas[index],last_material_s2);
 				}
 				if(last_material_s1 == 'B' and last_material_s2 == 'A'){
-// 					cerr << "wriTing " << chiasmas[index] << ' ' << last_material_s2 << endl;
 					recombinant_ch.write(chiasmas[index],last_material_s2);
 				}
 			} else {
 				while(pos2->first < rec_pos and pos2->first != genome[1][i].end()->first){
-// 					cerr << "writIng " << pos2->first << ' ' << pos2->second << endl;
 					recombinant_ch.write(pos2->first,pos2->second);
 					last_material_s2 = pos2->second;
 					pos2++;
@@ -206,46 +186,36 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 					pos1++;
 				}
 				if(last_material_s1 == 'A' and last_material_s2 == 'B'){
-// 					cerr << "writiNg " << chiasmas[index] << ' ' << last_material_s1 << endl;
 					recombinant_ch.write(chiasmas[index],last_material_s1);
 				}
 				if(last_material_s1 == 'B' and last_material_s2 == 'A'){
-// 					cerr << "writinG " << chiasmas[index] << ' ' << last_material_s1 << endl;
 					recombinant_ch.write(chiasmas[index],last_material_s1);
 				}
 			}
 			starts_by = (starts_by + 1) % 2;
 		}
-	if(starts_by==0){
-		while(pos1->first != genome[0][i].end()->first){
-// 			cerr << "writing " << pos1->first << ' ' << pos1->second << endl;
-			recombinant_ch.write(pos1->first,pos1->second);
-			last_material_s1 = pos1->second;
-			pos1++;
+		if(starts_by==0){
+			while(pos1->first != genome[0][i].end()->first){
+				recombinant_ch.write(pos1->first,pos1->second);
+				last_material_s1 = pos1->second;
+				pos1++;
+			}
+			while(pos2->first != genome[1][i].end()->first){
+				last_material_s2 = pos2->second;
+				pos2++;
+			}
+		} else {
+			while(pos2->first != genome[1][i].end()->first){
+				recombinant_ch.write(pos2->first,pos2->second);
+				last_material_s2 = pos2->second;
+				pos2++;
+			}
+			while(pos1->first != genome[0][i].end()->first){
+				last_material_s1 = pos1->second;
+				pos1++;
+			}
 		}
-		while(pos2->first != genome[1][i].end()->first){
-			last_material_s2 = pos2->second;
-			pos2++;
-		}
-	} else {
-		while(pos2->first != genome[1][i].end()->first){
-// 			cerr << "writing " << pos2->first << ' ' << pos2->second << endl;
-			recombinant_ch.write(pos2->first,pos2->second);
-			last_material_s2 = pos2->second;
-			pos2++;
-		}
-		while(pos1->first != genome[0][i].end()->first){
-			last_material_s1 = pos1->second;
-			pos1++;
-		}
-	}
-
-// add recombined gamete to vector
 		gamete.push_back(recombinant_ch);
-// 		recombinant_ch.showChromosome();
-// 		if(recombinant_ch.CorCheck()){
-// 			cin.get();
-// 		}
 	}
 }
 
@@ -256,13 +226,8 @@ double Individual::getFitness(){
 		Bcount += genome[0][i].countB();
 		Bcount += genome[1][i].countB();
 	}
-	Bcount = Bcount / (RESOLUTION*2*NUMBERofCHROMOSOMES); /* relative B count*/
+	Bcount = Bcount / (LOCI*2*NUMBERofCHROMOSOMES); /* relative B count*/
 	fitness = 1 - (SELECTIONpressure * pow( 4 * Bcount * (1 - Bcount),BETA));
-// 	cerr << "B count " << Bcount << " fitness" << fitness << endl;
-// 	cerr << fitness << ' ';
-// 	if(fitness < 0.5 or fitness > 1){
-// 		cerr << "WARNING: The finess is " << fitness << endl;
-// 	}
 	return fitness;
 }
 
@@ -272,7 +237,7 @@ double Individual::getBprop() const{
 		prop += genome[0][i].countB();
 		prop += genome[1][i].countB();
 	}
-	prop = prop / (RESOLUTION*2*NUMBERofCHROMOSOMES);
+	prop = prop / (LOCI*2*NUMBERofCHROMOSOMES);
 	return prop;
 }
 
@@ -334,293 +299,6 @@ void Individual::viewGenotype(){
 	cout << endl;
 }
 
-void Individual::plotGenotype(){
-	char last_material_s1, last_material_s2;
-	int colA = 3, colB = 25, colH = 7;
-	int dev = 0, x1 = 1, x2 = 1;
-	int height = 10 * NUMBERofCHROMOSOMES;
-	int width = 512;
-	dev = g2_open_X11(width,height);
-	g2_set_line_width(dev,10);
-// // 	A = modra populace; B = zluta
-	for(int i=0; i < NUMBERofCHROMOSOMES; i++){
-		auto pos1=genome[0][i].begin();
-		auto pos2=genome[1][i].begin();
-		last_material_s1 = pos1->second;
-		last_material_s2 = pos2->second;
-		pos1++;
-		pos2++;
-		x1 = 1;
-		x2 = 1;
-		while(pos1->first != genome[0][i].end()->first){
-// 			cerr << "COMPARING:" << pos1->first << " " << pos2->first << "\n";
-			if(pos1->first <= pos2->first){
-				if(x1 < x2){
-					x1 = pos1->first;
-				} else {
-					x2 = pos1->first;
-				}
-				if(last_material_s1 == last_material_s2){
-					if(last_material_s1 == 'A'){
-						g2_pen(dev,colA);
-					} else {
-						g2_pen(dev,colB);
-					}
-				} else {
-					g2_pen(dev,colH);
-				}
-// 				cerr << x1 << ' ' << x2 << endl;
-				g2_line(dev,((double)x1 / RESOLUTION)*width,
-								(height-(i*10))-5,
-								((double)x2 / RESOLUTION)*width,
-								(height-(i*10))-5);
-				
-				last_material_s1 = pos1->second;
-				pos1++;
-				continue;
-			}
-			if(pos2->first == genome[1][i].end()->first){
-				break;
-			}
-			
-			while((pos2->first <= pos1->first) and pos2->first != genome[1][i].end()->first){
-				if(x1 < x2){
-					x1 = pos2->first;
-				} else {
-					x2 = pos2->first;
-				}
-				if(last_material_s1 == last_material_s2){
-					if(last_material_s1 == 'A'){
-						g2_pen(dev,colA);
-					} else {
-						g2_pen(dev,colB);
-					}
-				} else {
-					g2_pen(dev,colH);
-				}
-// 				cerr << x1 << ' ' << x2 << endl;
-				g2_line(dev,((double)x1 / RESOLUTION)*width,
-								(height-(i*10))-5,
-								((double)x2 / RESOLUTION)*width,
-								(height-(i*10))-5);
-				last_material_s2 = pos2->second;
-				pos2++;
-			}
-		}
-		
-		while(pos2->first != genome[1][i].end()->first){
-			if(x1 < x2){
-				x1 = pos2->first;
-			} else {
-				x2 = pos2->first;
-			}
-			if(last_material_s1 == last_material_s2){
-				if(last_material_s1 == 'A'){
-					g2_pen(dev,colA);
-				} else {
-					g2_pen(dev,colB);
-				}
-			} else {
-				g2_pen(dev,colH);
-			}
-// 			cerr << x1 << ' ' << x2 << endl;
-			g2_line(dev,((double)x1 / RESOLUTION)*width,
-							(height-(i*10))-5,
-							((double)x2 / RESOLUTION)*width,
-							(height-(i*10))-5);
-			last_material_s2 = pos2->second;
-			pos2++;
-		}
-		
-		while(pos1->first != genome[0][i].end()->first){
-			if(x1 < x2){
-				x1 = pos1->first;
-			} else {
-				x2 = pos1->first;
-			}
-			if(last_material_s1 == last_material_s2){
-				if(last_material_s1 == 'A'){
-					g2_pen(dev,colA);
-				} else {
-					g2_pen(dev,colB);
-				}
-			} else {
-				g2_pen(dev,colH);
-			}
-// 			cerr << x1 << ' ' << x2 << endl;
-			g2_line(dev,((double)x1 / RESOLUTION)*width,
-							(height-(i*10))-5,
-							((double)x2 / RESOLUTION)*width,
-							(height-(i*10))-5);
-			last_material_s1 = pos1->second;
-			pos1++;
-		}
-// 		cerr << pos1->first << " " << genome[0][i].end()->first << endl;
-// 		cerr << pos2->first << " " << genome[1][i].end()->first << endl;
-		
-		if(x1 < x2){
-				x1 = RESOLUTION;
-			} else {
-				x2 = RESOLUTION;
-		}
-		if(last_material_s1 == last_material_s2){
-			if(last_material_s1 == 'A'){
-					g2_pen(dev,colA);
-			} else {
-					g2_pen(dev,colB);
-			}
-		} else {
-			g2_pen(dev,colH);
-		}
-		g2_line(dev,((double)x1 / RESOLUTION)*width,
-						(height-(i*10))-5,
-						((double)x2 / RESOLUTION)*width,
-						(height-(i*10))-5);
-	}
-	return;
-}
-
-void Individual::plotGenotype(int dev,int line,int height, int width, int demesize){
-	char last_material_s1, last_material_s2;
-	int x_buf_1 = 1, x_buf_2 = 1;
-	int x1 = 1, x2 = 1, y = 1;
-	int colA = 3, colB = 25, colH = 7;
-	g2_set_line_width(dev,height);
-// // 	A = modra populace; B = zluta
-	for(int i=0; i < NUMBERofCHROMOSOMES; i++){
-		auto pos1=genome[0][i].begin();
-		auto pos2=genome[1][i].begin();
-		last_material_s1 = pos1->second;
-		last_material_s2 = pos2->second;
-		pos1++;
-		pos2++;
-		x_buf_1 = 1;
-		x_buf_2 = 1;
-		while(pos1->first != genome[0][i].end()->first){
-			if(pos1->first <= pos2->first){
-				if(x_buf_1 < x_buf_2){
-					x_buf_1 = pos1->first;
-				} else {
-					x_buf_2 = pos1->first;
-				}
-				if(last_material_s1 == last_material_s2){
-					if(last_material_s1 == 'A'){
-						g2_pen(dev,colA);
-					} else {
-						g2_pen(dev,colB);
-					}
-				} else {
-					g2_pen(dev,colH);
-				}
-				x1 = (((double)x_buf_1 / RESOLUTION)*width) + (i * width);
-				y = ((height*demesize) - (line * height)) - ((height - 1) / 2);
-				x2 = (((double)x_buf_2 / RESOLUTION)*width) + (i * width);
-				g2_line(dev,x1,y,x2,y);
-				
-				last_material_s1 = pos1->second;
-				pos1++;
-				continue;
-			}
-			if(pos2->first == genome[1][i].end()->first){
-				break;
-			}
-			
-			while((pos2->first <= pos1->first) and pos2->first != genome[1][i].end()->first){
-				if(x_buf_1 < x_buf_2){
-					x_buf_1 = pos2->first;
-				} else {
-					x_buf_2 = pos2->first;
-				}
-				if(last_material_s1 == last_material_s2){
-					if(last_material_s1 == 'A'){
-						g2_pen(dev,colA);
-					} else {
-						g2_pen(dev,colB);
-					}
-				} else {
-					g2_pen(dev,colH);
-				}
-				x1 = (((double)x_buf_1 / RESOLUTION)*width) + (i * width);
-				y = ((height*demesize) - (line * height)) - ((height - 1) / 2);
-				x2 = (((double)x_buf_2 / RESOLUTION)*width) + (i * width);
-				g2_line(dev,x1,y,x2,y);
-				
-				last_material_s2 = pos2->second;
-				pos2++;
-			}
-		}
-		
-		while(pos2->first != genome[1][i].end()->first){
-			if(x_buf_1 < x_buf_2){
-				x_buf_1 = pos2->first;
-			} else {
-				x_buf_2 = pos2->first;
-			}
-			if(last_material_s1 == last_material_s2){
-				if(last_material_s1 == 'A'){
-					g2_pen(dev,colA);
-				} else {
-					g2_pen(dev,colB);
-				}
-			} else {
-				g2_pen(dev,colH);
-			}
-			x1 = (((double)x_buf_1 / RESOLUTION)*width) + (i * width);
-			y = ((height*demesize) - (line * height)) - ((height - 1) / 2);
-			x2 = (((double)x_buf_2 / RESOLUTION)*width) + (i * width);
-			g2_line(dev,x1,y,x2,y);
-				
-			last_material_s2 = pos2->second;
-			pos2++;
-		}
-		
-		while(pos1->first != genome[0][i].end()->first){
-			if(x_buf_1 < x_buf_2){
-				x_buf_1 = pos1->first;
-			} else {
-				x_buf_2 = pos1->first;
-			}
-			if(last_material_s1 == last_material_s2){
-				if(last_material_s1 == 'A'){
-					g2_pen(dev,colA);
-				} else {
-					g2_pen(dev,colB);
-				}
-			} else {
-				g2_pen(dev,colH);
-			}
-			x1 = (((double)x_buf_1 / RESOLUTION)*width) + (i * width);
-			y = ((height*demesize) - (line * height)) - ((height - 1) / 2);
-			x2 = (((double)x_buf_2 / RESOLUTION)*width) + (i * width);
-			g2_line(dev,x1,y,x2,y);
-			
-			last_material_s1 = pos1->second;
-			pos1++;
-		}
-		
-		if(x_buf_1 < x_buf_2){
-				x_buf_1 = RESOLUTION;
-			} else {
-				x_buf_2 = RESOLUTION;
-		}
-		
-		if(last_material_s1 == last_material_s2){
-			if(last_material_s1 == 'A'){
-					g2_pen(dev,colA);
-			} else {
-					g2_pen(dev,colB);
-			}
-		} else {
-			g2_pen(dev,colH);
-		}
-		x1 = (((double)x_buf_1 / RESOLUTION)*width) + (i * width);
-		y = ((height*demesize) - (line * height)) - ((height - 1) / 2);
-		x2 = (((double)x_buf_2 / RESOLUTION)*width) + (i * width);
-		g2_line(dev,x1,y,x2,y);
-	}
-	return;
-}
-
 class Imigrant  
 {
 	public:
@@ -632,21 +310,11 @@ class Imigrant
 		
 // /* COMPUTIONG METHODS */
 		void makeGamete(Imigrant& descendant); //
-// 		void replace_chromozome(int set, int position,map <int, char> input_chrom);
 		double getFitness();
-// 		int getBcount() const;
 		double getBprop() const;
 		void getSizesOfBBlocks(vector<int>& sizes);
 		bool Acheck() const;
 		bool Bcheck() const;
-// 		
-// /* ASCII PLOTTING METHODS */
-// 		void readGenotype();
-// 		void viewGenotype();
-// 		
-// /* GRAPHICS */
-// 		void plotGenotype();
-// 		void plotGenotype(int dev,int line,int height, int width, int demesize);
 	
 	private:
 		vector<Chromosome> genome;
@@ -680,7 +348,7 @@ double Imigrant::getBprop() const{
 	for(int ch = 0;ch < NUMBERofCHROMOSOMES;ch++){
 		prop += genome[ch].countB();
 	}
-	prop = prop / (NUMBERofCHROMOSOMES * RESOLUTION);
+	prop = prop / (NUMBERofCHROMOSOMES * LOCI);
 	return prop;
 }
 

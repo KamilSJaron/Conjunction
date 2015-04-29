@@ -6,13 +6,11 @@
 #include <algorithm> // sort
 #include <fstream>
 #include <new> // alocation of memory in heap
-#include <regex>
+#include <vector>
 #include <iomanip>
 #include <time.h>
-#include<g2.h>
-#include<g2_X11.h>
-#include<g2_PS.h>
-#include<g2_gd.h>
+#include <omp.h>
+
 
 #include "universe.h" // Class of individuals
 
@@ -23,16 +21,17 @@ static int NUMBERofSAVES = 1;
 using namespace std;
 
 // list of fctions
-void parameterSlave(string parameter, double value);
-void parameterSlave(char parameter, double value);
-void parameterSlave(string parameter, vector<double>& valvec, vector<double>& paravec, vector<char>& para);
-void probMAPslave(string parameter, vector<double>& velvec);
-int worldSlave(string& line, Universe* World);
-int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARAvec2,vector<double>& PARAvec3,vector<char>& PARAnames);
-int testParameters(Universe* World);
-void const showVector(vector<double>& valvec);
-void simulate(Universe* World, int save_pos);
-void simulate(Universe* World);
+void parameterSlave(string parameter, double value); // sends value to corresponding parameter
+void parameterSlave(char parameter, double value); // sends value to corresponding parameter
+void parameterSlave(string parameter, vector<double>& valvec, vector<double>& paravec, vector<char>& para); // sets parameter as vector of values
+void probMAPslave(vector<double>& velvec); // saves parameter probabiliy map and ensure correction (length, normalization)
+void seleMAPslave(vector<double>& velvec); // saves parameter probabiliy map and ensure correction (length, normalization)
+int worldSlave(string& line, Universe* World); // creates the world according to description (prbably should be moved inside of the Class)
+int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARAvec2,vector<double>& PARAvec3,vector<char>& PARAnames); // reads the setting file and parse it, setting parameters through slave functions
+int testParameters(Universe* World); // function for mendelian tests of parameters (recombination, selection); will be deleted to full version
+void const showVector(vector<double>& valvec); // prints the vector on error stream (confirmation of parameter setting)
+void simulate(Universe* World, int save_pos); // simulation and saving the output to file_save_pos.dat
+void simulate(Universe* World); // simulation with one save in file.dat or without
 
 int main()
 {
@@ -48,10 +47,11 @@ int main()
 	}
 	
 	srand (SEEDtoRAND); // setting a seed
+	setPoisSeed (SEEDtoRAND);
 	
 	clock_t t_total1, t_total2;
 	int run = 0;
-	int pos1 = 0, pos2 = 0, pos3 = 0, save_pos = 0;
+	int pos1 = 0, pos2 = 0, pos3 = 0, save_pos = 0; // indexing variables for vector variable handling togheder with the creation of filenames
 	int ten_stop1 = 0, ten_stop2 = 0, ten_stop3 = 0;
 	
 	if(PARAnames.size() >= 1){
@@ -72,6 +72,7 @@ int main()
 	}
 	NAMEofOUTPUTfile = NAMEofOUTPUTfile + string(".dat");
 	
+// 	this moster construction handles simulation for 0 to 3 defined vector variables
 	if(PARAnames.size() >= 1){
 		t_total1 = clock();
 		for(unsigned int j = 0;j < PARAvector1.size();j++){
@@ -139,15 +140,15 @@ int main()
 
 
 void parameterSlave(string parameter, double value){
-	if(parameter == "RESOLUTION"){
+	if(parameter == "LOCI"){
 		Chromosome::setResolution(int(value));
-		cerr << "Setting parameter RESOLUTION to: " << value << endl;
+		cerr << "Setting parameter LOCI to: " << value << endl;
 		return;
 	}
 	if(parameter == "PROBABILITYmap"){
 		cerr << "Warning: parameter PROBABILITYmap is expected in form..." << endl 
 		<< "      [ v1, v2, v3, ... vn]" << endl 
-		<< "      where n is RESOLUTION + 1 and sumation of vi is 1 for i = 1 ... n" << endl;
+		<< "      where n is LOCI + 1 and sumation of vi is 1 for i = 1 ... n" << endl;
 		return;
 	}
 	if(parameter == "NUMBERofCHROMOSOMES"){
@@ -197,7 +198,7 @@ void parameterSlave(string parameter, double value){
 void parameterSlave(char parameter, double value){
 	if(parameter == 'L'){
 		Chromosome::setResolution(int(value));
-		cerr << "Setting parameter RESOLUTION to: " << value << endl;
+		cerr << "Setting parameter LOCI to: " << value << endl;
 		return;
 	}
 	if(parameter == 'C'){
@@ -230,12 +231,12 @@ void parameterSlave(char parameter, double value){
 }
 
 
-void probMAPslave(string parameter, vector<double>& velvec){
+void probMAPslave(vector<double>& velvec){
 		if(!velvec.empty()){
 			PROBABILITYmap = velvec;
 			double sum_of_elems=0;
-			if(PROBABILITYmap.size() != unsigned(RESOLUTION + 1)){
-				cerr << "Warning: Length of probability map do not match the number of Loci (parameter RESOLUTION)" << endl;
+			if(PROBABILITYmap.size() != unsigned(LOCI + 1)){
+				cerr << "Warning: Length of probability map do not match the number of Loci (parameter LOCI)" << endl;
 				cerr << "        The default PROBABILITYmap will be used..." << endl;
 				PROBABILITYmap.clear();
 			} else {
@@ -259,9 +260,9 @@ void probMAPslave(string parameter, vector<double>& velvec){
 		
 		if(PROBABILITYmap.empty() == true){
 			cerr << "0, ";
-			if(RESOLUTION < 20){
-				for(int i = 0; i < (RESOLUTION - 1); i++){
-					cerr << (1. / double(RESOLUTION - 1)) << ", " ;
+			if(LOCI < 20){
+				for(int i = 0; i < (LOCI - 1); i++){
+					cerr << (1. / double(LOCI - 1)) << ", " ;
 				}
 			} else {
 				cerr << "1 / (L - 1) , ... , 1 / (L - 1), ";
@@ -278,17 +279,34 @@ void probMAPslave(string parameter, vector<double>& velvec){
 			sum += PROBABILITYmap[PROBABILITYmap.size()-1];
 			PROBABILITYmap[PROBABILITYmap.size()-1] = sum;
 		}
-		cerr << "Warning: unknown setting of PROBABILITYmap." << endl;
+		return;
+}
+
+void seleMAPslave(vector<double>& velvec){
+		SELECTIONmap = velvec;
+		if(SELECTIONmap.size() != unsigned(LOCI)){
+			cerr << "Warning: Length of selection map do not match the number of Loci (parameter LOCI)" << endl;
+			SELECTIONmap.clear();
+		}
+		cerr << "Setting parameter SELECTIONmap to: [";
+		for(unsigned int i = 0;i < SELECTIONmap.size()-1;i++){
+			cerr << SELECTIONmap[i] << ", ";
+		}
+		cerr << SELECTIONmap[SELECTIONmap.size()-1] << "]" << endl;
 		return;
 }
 
 void parameterSlave(string parameter, vector<double>& valvec, vector<double>& paravec, vector<char>& para){
 	paravec = valvec;
 	if(parameter == "PROBABILITYmap"){
-		probMAPslave(parameter, valvec);
+		probMAPslave(valvec);
 		return;
 	}
-	if(parameter == "RESOLUTION"){
+	if(parameter == "SELECTIONmap"){
+		seleMAPslave(valvec);
+		return;
+	}
+	if(parameter == "LOCI"){
 		para.push_back('L');
 		cerr << para.size() << ". vector variable resolution (L) is set to ";
 		showVector(paravec);
@@ -384,7 +402,7 @@ int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARA
 					if(parameter.substr(0,5) == "WORLD"){
 						myfile.close();
 						if(PROBABILITYmap.empty()){
-							probMAPslave("PROBABILITYmap",paravec);
+							probMAPslave(paravec);
 						}
 						return worldSlave(line, World);
 					} else {
@@ -482,7 +500,7 @@ int worldSlave(string& line, Universe* World){
 			if(isdigit(line[i])){
 				number.push_back((line[i]));
 			} else {
-				istringstream(number) >> n;
+				n = stoi( number );
 				if(type == "HybridZone"){
 					World->setHeight(n);
 					if(n == 1){
@@ -527,24 +545,22 @@ int worldSlave(string& line, Universe* World){
 					World->setDimension(0);
 					return 8;
 				}
+				if(type == "LowMigrationBazykin"){
+					World->setHeight(1);
+					World->setDimension(2);
+					World->setNumberOfEdges(4);
+					World->setUDEdgesType("reflexive");
+					World->setLREdgesType("extending");
+					World->basicUnitCreator('b', 'A');
+					World->basicUnitCreator('r', 'B');
+					cerr << "World is quick defined as " << n << " demes long hybrid zone." << endl;
+					return 0;
+				}
 				cerr << "Error: Unknown pre-defined world " << type << endl;
 				return 1;
 			}
 		}
 	}
-	return 0;
-}
-
-int testParameters(Universe* World){
-	World->set(0,"halfAhalfhetero");
-	for(int i=0;i < NUMBERofGENERATIONS;i++){
-		cerr << "Genertion " << i << endl; 
-		cerr << "Homozygotes A: " << World->getProportionOfHomozygotes(0,'A') << endl;
-		cerr << "Heterozygotes: "<< World->getProportionOfHeterozygotes(0) << endl;
-		cerr << "Homozygotes B: "<< World->getProportionOfHomozygotes(0,'B') << endl;
-		World->Breed(0);
-	}
-	
 	return 0;
 }
 
@@ -561,7 +577,7 @@ const void showVector(vector< double >& valvec){
 }
 
 void simulate(Universe* World, int save_pos){
-// 	clock_t t1, t2;
+	clock_t t1, t2;
 	clock_t t_sim1, t_sim2;
 	int order = 0, check = 0, modulo = ceil((double)NUMBERofGENERATIONS / NUMBERofSAVES);
 	
@@ -569,11 +585,11 @@ void simulate(Universe* World, int save_pos){
 	World->listOfDemes();
 	t_sim1 = clock();
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
-// 		t1=clock();
+		t1=clock();
 		World->migration();
 		World->globalBreeding();
-// 		t2=clock();
-// 		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+		t2=clock();
+		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 		if(((i % modulo)+1) == modulo and i != NUMBERofGENERATIONS - 1){
 			order++;
 			NAMEofOUTPUTfile[save_pos] = '0' + char(order);
@@ -603,7 +619,7 @@ void simulate(Universe* World, int save_pos){
 }
 
 void simulate(Universe* World){
-// 	clock_t t1, t2;
+	clock_t t1, t2;
 	clock_t t_sim1, t_sim2;
 	int check = 0;
 	
@@ -611,11 +627,11 @@ void simulate(Universe* World){
 	World->listOfDemes();
 	t_sim1 = clock();
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
-// 		t1=clock();
+		t1=clock();
 		World->migration();
 		World->globalBreeding();
-// 		t2=clock();
-// 		cerr << "Generation: " << i << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+		t2=clock();
+		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 	}
 	t_sim2 = clock();
 	if(NUMBERofSAVES == 1){

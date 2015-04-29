@@ -20,7 +20,6 @@ class Universe
 		
 // 		computing functions
 		int migration(); // int will be the errorcode
-		void globalNaiveBreeding();
 		void Breed(int index);
 		void set(int index, string type);
 		void globalBreeding();
@@ -37,12 +36,8 @@ class Universe
 		double getProportionOfHomozygotes(int index, char type);
 		void showOneDeme(int index);
 		void viewOneDeme(int index);
-		void plotOneDeme(int index);
-		void plotOneDeme(int index, const char*  fileName);
 		void plotHeadOfDeme(int i);
 		void viewDemesOneByOne();
-		void plotDemesOneByOne();
-		void plotDemesOneByOne(char fileNamepattern[]);
 		int SaveTheUniverse(int order);
 		int SaveTheUniverse(int order, string type);
 		int SaveTheUniverse(string type);
@@ -54,26 +49,22 @@ class Universe
 		void setUDEdgesType(string ed_type);
 		void setDimension(int dim);
 		void setNumberOfEdges(int nue);
-		void restart();
-		void clear();
-		
-		int getNumOfDemesInColumn(){return number_of_demes_u_d;};
-		int getSpaceSize(){return space.size();};
-		int getIndex(int i);
+		void restart(); // crear the space, creates a new one (2 columns, rows defined by user)
+		void clear();	// deletes all demes
 	
 	private:
 // 		inner fctions
-		int upper_border(int index, int max_index);
+		int upper_border(int index, int max_index); // function returns index of upper neigbour for new demes
 		int lower_border(int index, int max_index);
 		int side_border(int reflexive, int extending);
 // 		variables
-		map<int, Deme*> space;
-		int dimension, edges_per_deme;
-		int number_of_demes_l_r, number_of_demes_u_d;
-		string type_of_l_r_edges, type_of_u_d_edges;
-		int index_last_left, index_next_left;
+		map<int, Deme*> space; // container of Demes for non zero dimensional simation
+		int dimension, edges_per_deme; // defines migration and extension of hybrid zone
+		int number_of_demes_l_r, number_of_demes_u_d; // defines the size of the space
+		string type_of_l_r_edges, type_of_u_d_edges; // defines the behavior of the l / r and u /d edges of HZ
+		int index_last_left, index_next_left; // variables handling dynamic extension of hybrid zone
 		int index_last_right, index_next_right;
-		vector<Imigrant> GogolBordello;
+		vector<Imigrant> GogolBordello; // container of individuals for 0 dimensional simualtion
 };
 
 Universe::Universe(int dim, int ed_per_deme, int num_of_demes_l_r,string ed_l_r, int num_of_demes_u_d, string edges_u_d){
@@ -86,20 +77,21 @@ Universe::Universe(int dim, int ed_per_deme, int num_of_demes_l_r,string ed_l_r,
 }
 
 Universe::Universe(){
-// 	dimension = 2;
-// 	edges_per_deme = 4;
-// 	number_of_demes_l_r = 6;
-// 	type_of_l_r_edges = "extending";
-// 	number_of_demes_u_d = 1;
-// 	type_of_u_d_edges = "reflexive";
+// 	melo by to fungovat i z temahle nesmyslnyma hodnotama, abych si byl jisty, ze vdycky budou vsechny parametry nastaveny
+// 	dimension = -1;
+// 	edges_per_deme = 0;
+	number_of_demes_l_r = 0;
+// 	type_of_l_r_edges = "";
+// 	number_of_demes_u_d = 0;
+// 	type_of_u_d_edges = "";
 }
 
-// I have to add char init to initiate demes as pure A, pure B, mixed or pure A/B with some incoming individuals
+// char init initiates demes as pure A, pure B, mixed or pure A/B with some incoming individuals
 void Universe::basicUnitCreator(char type, char init){
 	int max_index = space.size();
-// 	cerr << "Space size: " << max_index << endl;
 	vector<int> new_indexes;
 	int index;
+// 	1D world definition
 	if(dimension == 1){
 		switch (type) {
 			case 'b':
@@ -136,9 +128,9 @@ void Universe::basicUnitCreator(char type, char init){
 		return;
 	}
 	
+// 	2D world definition
 	switch (type) {
 		case 'b':
-// 			case of creating all new indexes
 			index_next_left = number_of_demes_u_d;
 			index_next_right = number_of_demes_u_d * 2;
 			index_last_left = 0;
@@ -184,21 +176,6 @@ void Universe::basicUnitCreator(char type, char init){
 	}
 	return;
 }
-
-// void Universe::infSimulator(vector<Imigrant>& GogolBordello, int NUMofGEN){
-// 	for(int generation = 1; generation < NUMofGEN; generation ++){
-// // 		migration
-// 		for(int i = 0; i < DEMEsize;i++){
-// 			GogolBordello.push_back(Imigrant('B'));
-// 		}
-// // 		selection & reproduction
-// 		
-// 		
-// 	}
-// // 	create zero dimensional space
-// // 	one specialized deme with redefined migration and breeding?
-// }
-
 
 int Universe::upper_border(int index, int max_index){
 	if(type_of_u_d_edges == "reflexive"){
@@ -286,9 +263,10 @@ int Universe::side_border(int reflexive, int extending){
 
 
 int Universe::migration(){
+	const int demesize = Deme::getDEMEsize();
 	if(dimension == 0){
-		GogolBordello.reserve(DEMEsize);
-		for(int i = 0; i < DEMEsize;i++){
+		GogolBordello.reserve(demesize);
+		for(int i = 0; i < demesize;i++){
 			GogolBordello.push_back(Imigrant('B'));
 		}
 // 		cerr << "GB size: " <<	GogolBordello.size() << endl;
@@ -304,10 +282,10 @@ int Universe::migration(){
 	map<int, vector<Individual>> bufferVectorMap;
 	
 	vector<int> neigbours;
-	int MigInd = Deme::getDEMEsize() / (2 * edges_per_deme );
+	int MigInd = demesize / (2 * edges_per_deme );
 	int deme_index;
 	/*bufferVectorMap is container for all individuals imigrating to all demes*/
-	for (auto deme=space.begin(); deme!=space.end(); ++deme){
+	for (map<int, Deme*>::const_iterator deme=space.begin(); deme!=space.end(); ++deme){
 // 		cerr << i << endl;
 // 		cerr << "lets transfer individuals of DEME " << i << endl;
 		neigbours = deme->second->getNeigbours();
@@ -328,7 +306,7 @@ int Universe::migration(){
 		}
 	}
 
-	for(auto buff=bufferVectorMap.begin(); buff!=bufferVectorMap.end(); ++buff){
+	for(map<int, vector<Individual>>::iterator buff=bufferVectorMap.begin(); buff!=bufferVectorMap.end(); ++buff){
 		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
 			for(int k=0;k < MigInd; k++){
 				bufferVectorMap[buff->first].push_back(Individual('A'));
@@ -359,20 +337,15 @@ int Universe::migration(){
 	return 0;
 }
 
-void Universe::globalNaiveBreeding(){
-	for (auto i=space.begin(); i!=space.end(); ++i){
-		i->second->quickBreed();
-	}
-}
-
 void Universe::Breed(int index){
 	space[index]->Breed();
 }
 
 void Universe::set(int index,string type){
+	int demesize = Deme::getDEMEsize();
 	vector<Individual> migBuffer;
 	if(type == "pureA"){
-		for(int i=0;i<DEMEsize;i++){
+		for(int i=0;i<demesize;i++){
 			migBuffer.push_back('A');
 		}
 		space[index]->integrateMigrantVector(migBuffer);
@@ -380,7 +353,7 @@ void Universe::set(int index,string type){
 	}
 	
 	if(type == "pureB"){
-		for(int i=0;i<DEMEsize;i++){
+		for(int i=0;i<demesize;i++){
 			migBuffer.push_back('B');
 		}
 		space[index]->integrateMigrantVector(migBuffer);
@@ -388,13 +361,13 @@ void Universe::set(int index,string type){
 	}
 	
 	if(type == "hetero"){
-		for(int i=0;i<DEMEsize/4;i++){
+		for(int i=0;i<demesize/4;i++){
 			migBuffer.push_back('A');
 		}
-		for(int i=0;i<DEMEsize/2;i++){
+		for(int i=0;i<demesize/2;i++){
 			migBuffer.push_back('C');
 		}
-		for(int i=0;i<DEMEsize/4;i++){
+		for(int i=0;i<demesize/4;i++){
 			migBuffer.push_back('B');
 		}
 		space[index]->integrateMigrantVector(migBuffer);
@@ -402,10 +375,10 @@ void Universe::set(int index,string type){
 	}
 	
 	if(type == "halfAhalfhetero"){
-		for(int i=0;i<DEMEsize/2;i++){
+		for(int i=0;i<demesize/2;i++){
 			migBuffer.push_back('A');
 		}
-		for(int i=0;i<DEMEsize/2;i++){
+		for(int i=0;i<demesize/2;i++){
 			migBuffer.push_back('C');
 		}
 		space[index]->integrateMigrantVector(migBuffer);
@@ -420,6 +393,7 @@ void Universe::set(int index,string type){
 void Universe::globalBreeding(){
 	if(dimension == 0){
 		vector<Imigrant> new_generation;
+		new_generation.reserve(GogolBordello.size());
 		Imigrant desc;
 		double fitness;
 		int num_of_desc;
@@ -445,23 +419,39 @@ void Universe::globalBreeding(){
 		}
 		GogolBordello.clear();
 		GogolBordello = new_generation;
+		cout << "Population size: " << GogolBordello.size() << endl;
 		new_generation.clear();
 		return;
 	}
 	
 	vector<int> indexes;
-	for (auto i=space.begin(); i!=space.end(); ++i){
+	for (map<int, Deme*>::const_iterator i=space.begin(); i!=space.end(); ++i){
 		indexes.push_back(i->first);
 	}
 	
 	int index = 0;
 	int i_size = indexes.size();
 	
-// 	#pragma omp parallel for //even worse than before...
-	for(int i = 0; i < i_size; i++){
-		index = indexes[i];
-		space[index]->Breed();
-	}
+// 	#pragma omp parallel
+// 	{
+// 
+// 		{
+// 		#ifdef _OPENMP
+// 		int tnum = omp_get_num_threads();
+// 		#else
+// 		int tnum = 1;
+// 		#endif
+// 
+// 		cout << "Number of threads " << tnum << " "<< i_size << endl;
+// 		}
+// 
+// 	#pragma omp parallel for
+		for(int i = 0; i < i_size; i++){
+			index = indexes[i];
+			space[index]->Breed();
+		}
+// 	}
+	return;
 }
 
 bool Universe::Acheck(vector<Individual>& buffer){
@@ -525,10 +515,7 @@ void Universe::restart(){
 	if(dimension == 0){
 		GogolBordello.clear();
 	} else {
-		for (auto i=space.begin(); i!=space.end(); ++i){
-			delete i->second;
-		}
-		space.clear();
+		clear();
 		basicUnitCreator('b', 'A');
 		basicUnitCreator('r', 'B');
 		cerr << "World is reset." << endl;
@@ -537,7 +524,7 @@ void Universe::restart(){
 }
 
 void Universe::clear(){
-	for (auto i=space.begin(); i!=space.end(); ++i){
+	for (map<int, Deme*>::const_iterator i=space.begin(); i!=space.end(); ++i){
 		delete i->second;
 	}
 	space.clear();
@@ -545,13 +532,13 @@ void Universe::clear(){
 }
 
 
-int Universe::getIndex(int i){
-	if((unsigned)i >= space.size()){
-		return -1;
-	} else {
-		return space[i]->getDemeIndex();
-	}
-}
+// int Universe::getIndex(int i){
+// 	if((unsigned)i >= space.size()){
+// 		return -1;
+// 	} else {
+// 		return space[i]->getDemeIndex();
+// 	}
+// }
 
   // // // // 
  //  PLOT //
@@ -567,61 +554,72 @@ void Universe::listOfParameters(){
 }
 
 void Universe::listOfDemes(){
+	cerr << "of dimension: " << dimension << endl;
 	if(dimension == 0){
 		cerr << "Population of imigrants has " << GogolBordello.size() << endl;
 	} else {
 		cerr << "World of size " << space.size() << endl;
-	}
-	cerr << "of dimension: " << dimension << endl;
-	cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
-	cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
-	if(type_of_l_r_edges != "extending"){
-		cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
-	}
-	cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
-	cerr << "                 EDGE" << endl;
-	cerr << setw(7) << right << "DEME " << setw(7) << left << " LEFT" << setw(6) << left << "RIGHT" << setw(5) << left << "UP" << setw(6) << left << "DOWN" << endl;
-	for (auto i=space.begin(); i!=space.end(); ++i){
-		i->second->showDeme();
+		cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
+		cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
+		if(type_of_l_r_edges != "extending"){
+			cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
+		}
+		cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
+		cerr << "                 EDGE" << endl;
+		cerr << setw(7) << right << "DEME " << setw(7) << left << " LEFT" << setw(6) << left << "RIGHT" << setw(5) << left << "UP" << setw(6) << left << "DOWN" << endl;
+		for (map<int, Deme*>::const_iterator i=space.begin(); i!=space.end(); ++i){
+			i->second->showDeme();
+		}
 	}
 }
 
 void Universe::summary(){
-	int worlsize = space.size();
-	cout << "World of size " << worlsize << endl;
-	cout << "of dimension: " << dimension << endl;
-	cout << "Number of demes up to down: " << number_of_demes_u_d << endl;
-	cout << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
-	if(type_of_l_r_edges != "extending"){
-		cout << "Number of demes left to right: " << number_of_demes_l_r << endl;
-	}
-	cout << "Type of borders left to right: " << type_of_l_r_edges << endl;
-	cout << "                 EDGE" << endl;
-	cout << setw(7) << right << "DEME " 
-	<< setw(7) << left << " LEFT" 
-	<< setw(6) << left << "RIGHT" 
-	<< setw(5) << left << "UP" 
-	<< setw(6) << left << "DOWN" 
-	<< setw(12) << left << "mean f"
-	<< setw(12) << left << "f(heter)"
-	<< setw(12) << left << "meanHI" 
-	<< setw(12) << left << "var(HI)" 
-	<< setw(12) << left << "var(p)" 
-	<< setw(12) << left << "LD";
-	if(RESOLUTION * NUMBERofCHROMOSOMES == 2){
-		cout << setw(40) << right << "genotypes: AAAA AAAB AABB ABBB BBBB" << endl;
+	if(dimension == 0){
+		cout << "Selection: " << SELECTIONpressure << endl;
+		cout << "Recombination rate: " << RECOMBINATIONrate << endl;
+		cout << "Theta: " << SELECTIONpressure / RECOMBINATIONrate << endl;
+		cout << "Number of Imigrants per generation: " << DEMEsize << endl;
 	} else {
-		if(RESOLUTION * NUMBERofCHROMOSOMES == 1){
-			cout << setw(10) << "genotypes: " << right << setw(30) << "             AA       AB       BB" << endl;
-		} else {
-			cout << endl;
+		int worlsize = space.size();
+		cerr << "World of size " << worlsize << endl;
+		cerr << "of dimension: " << dimension << endl;
+		cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
+		cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
+		if(type_of_l_r_edges != "extending"){
+			cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
 		}
-	}
-	for (auto i=space.begin(); i!=space.end(); ++i){
-// 		if(i->first == 9){
-		i->second->summary();
-// 			i->second->readAllGenotypes();
-// 		}
+		cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
+		cout << "                 EDGE" << endl;
+		cout << setw(7) << right << "DEME " 
+		<< setw(7) << left << " LEFT" 
+		<< setw(6) << left << "RIGHT"; 
+		if(dimension == 2){
+			cout << setw(6) << left << "UP" 
+			<< setw(6) << left << "DOWN";
+		}
+		cout << setw(12) << left << "mean f"
+		<< setw(12) << left << "f(heter)"
+		<< setw(12) << left << "meanHI" 
+		<< setw(12) << left << "var(HI)";
+		if(LOCI * NUMBERofCHROMOSOMES > 1){
+			cout << setw(12) << left << "var(p)" 
+			<< setw(12) << left << "LD";
+		}
+		
+		if(LOCI * NUMBERofCHROMOSOMES <= 16){
+			for(int ch = 0;ch < NUMBERofCHROMOSOMES;ch++){
+				for(int l = 0; l < LOCI;l++){
+					cout << left << "Ch" << ch+1 << "l" << l+1 << setw(7) << ' ';
+				}
+			}
+		}
+		cout << endl;
+		for (map<int, Deme*>::const_iterator i=space.begin(); i!=space.end(); ++i){
+	// 		if(i->first == 9){
+			i->second->summary();
+	// 			i->second->readAllGenotypes();
+	// 		}
+		}
 	}
 }
 
@@ -642,58 +640,14 @@ void Universe::viewOneDeme(int index){
 	space[index]->viewDeme();
 }
 
-void Universe::plotOneDeme(int index){
-	space[index]->plotDeme();
-}
-
-void Universe::plotOneDeme(int index, const char* fileName){
-	space[index]->plotDeme(fileName);
-}
-
 void Universe::plotHeadOfDeme(int index){
 	space[index]->plotHeadOfDeme();
 }
 
 void Universe::viewDemesOneByOne(){
-	for (auto i=space.begin(); i!=space.end(); ++i){
+	for (map<int, Deme*>::const_iterator i=space.begin(); i!=space.end(); ++i){
 		cout << "***** DEME " << i->first << " *****" << endl;
 		i->second->viewDeme();
-		cin.get();
-	}
-}
-
-void Universe::plotDemesOneByOne(){
-	for (auto i=space.begin(); i!=space.end(); ++i){
-		cout << "***** DEME " << i->first << " *****" << endl;
-		i->second->plotDeme();
-		cin.get();
-	}
-}
-
-void Universe::plotDemesOneByOne(char fileNamepattern[]){
-	int len = strlen(fileNamepattern);
-  static char* newName = fileNamepattern;
-	char decimal = '0', unit = '0';
-/*potebuju nejak z paterny udelat specificky nazev ktery budu moct poslat jako argument do plotovaci fce*/
-/* Mám pocit, že to bude fungovat jen pro 20 nik */ 
-	for (auto i=space.begin(); i!=space.end(); ++i){
-		if(i->first > 10){
-			decimal = '1';
-			if(i->first > 20){
-				decimal = '2';
-				if(i->first == 30){
-					cerr << "WARNING: Too much pictures. Only first 30 are plotted.";
-					break;
-				}
-			}
-		}
-		cout << "Unit: " << i->first % 10 << ' '; 
-		unit = char('0' + i->first % 10);
-
-		fileNamepattern[len - 6] = decimal;
-		fileNamepattern[len - 5] = unit;
-		cout << "***** DEME " << i->first << " *****" << endl;
-		i->second->plotDeme(newName);
 		cin.get();
 	}
 }
@@ -714,26 +668,32 @@ int Universe::SaveTheUniverse(int order){
 	if (ofile.fail()){
 		return 1;
 	}  
-	
-	for(unsigned int i = 0; i < space.size(); i++){
-		props = space[index]->getBproportions();
-		ofile << index << '\t';
-		for(unsigned int ind = 0; ind < props.size(); ind++){
-			ofile << props[ind] << '\t';
+	if(dimension == 0){
+		vector<int> blockSizes;
+		for(unsigned int index = 0; index < GogolBordello.size(); index++){
+			GogolBordello[index].getSizesOfBBlocks(blockSizes);
+			for(unsigned int i = 0;i < blockSizes.size(); i++){
+				ofile << blockSizes[i] / double(LOCI) << endl;
+			}
+			blockSizes.clear();
 		}
-		ofile << endl;
-		if(index != index_last_right){
-// 			cerr << index << ' ';
-// 			cerr << space[index]->getNeigbours()[0] << ' ';
-			index = space[index]->getNeigbours()[1];
-		} else {
-			break;
+	} else {
+		for(unsigned int i = 0; i < space.size(); i++){
+			props = space[index]->getBproportions();
+			ofile << index << '\t';
+			for(unsigned int ind = 0; ind < props.size(); ind++){
+				ofile << props[ind] << '\t';
+			}
+			ofile << endl;
+			if(index != index_last_right){
+				index = space[index]->getNeigbours()[1];
+			} else {
+				break;
+			}
 		}
 	}
 	
 	ofile.close();
-	
-// 	index_last_left = space[index_last_left]->zsgetNeigbours()[2];
 	cerr << "The output was sucesfully saved to: " << fn << endl;
 	return 0;
 }
@@ -755,6 +715,18 @@ int Universe::SaveTheUniverse(int order, string type){
 		return 1;
 	}  
 	
+	if(dimension == 0){
+		vector<int> blockSizes;
+		for(unsigned int index = 0; index < GogolBordello.size(); index++){
+			GogolBordello[index].getSizesOfBBlocks(blockSizes);
+			for(unsigned int i = 0;i < blockSizes.size(); i++){
+				ofile << blockSizes[i] / double(LOCI) << endl;
+			}
+			blockSizes.clear();
+		}
+		ofile.close();
+		return 0;
+	}
 	if(type == "complete"){
 		for(unsigned int i = 0; i < space.size(); i++){
 			props = space[index]->getBproportions();
@@ -774,14 +746,15 @@ int Universe::SaveTheUniverse(int order, string type){
 		return 0;
 	}
 	if(type == "average"){
-		double avrg;
+		int demesize = Deme::getDEMEsize();
+		double avrg = 0;
 		for(unsigned int i = 0; i < space.size(); i++){
 			props = space[index]->getBproportions();
 			ofile << index << '\t';
 			for(unsigned int ind = 0; ind < props.size(); ind++){
 				avrg += props[ind];
 			}
-			avrg = avrg / DEMEsize;
+			avrg = avrg / demesize;
 			ofile << avrg << endl;
 			if(index != index_last_right){
 				index = space[index]->getNeigbours()[1];
@@ -809,20 +782,18 @@ int Universe::SaveTheUniverse(string type){
 		return 1;
 	}  
 	
+	
 	if(dimension == 0){
-		for(unsigned int ch = 0;ch < GogolBordello.size();ch++){
-// 			GogolBordello[ch].getBprop();
-			vector<int> IndBlocks;
-			GogolBordello[index].getSizesOfBBlocks(IndBlocks);
-			for(vector<int>::iterator it = IndBlocks.begin(); it != IndBlocks.end(); ++it) {
-				ofile << *it / double(RESOLUTION) << endl;
+vector<int> blockSizes;
+		for(unsigned int index = 0; index < GogolBordello.size(); index++){
+			GogolBordello[index].getSizesOfBBlocks(blockSizes);
+			for(unsigned int i = 0;i < blockSizes.size(); i++){
+				ofile << blockSizes[i] / double(LOCI) << endl;
 			}
-// 			ofile << ch << '\t';
-// 			for(unsigned int ind = 0; ind < props.size(); ind++){
-// 					ofile << props[ind] << '\t';
-// 			}
-// 			ofile << endl;
+			blockSizes.clear();
 		}
+		ofile.close();
+		return 0;
 	} else {
 		if(type == "complete"){
 			for(unsigned int i = 0; i < space.size(); i++){
@@ -844,14 +815,15 @@ int Universe::SaveTheUniverse(string type){
 		return 0;
 	}
 	if(type == "average"){
-		double avrg;
+		int demesize = Deme::getDEMEsize();
+		double avrg = 0;
 		for(unsigned int i = 0; i < space.size(); i++){
 			props = space[index]->getBproportions();
 			ofile << index << '\t';
 			for(unsigned int ind = 0; ind < props.size(); ind++){
 				avrg += props[ind];
 			}
-			avrg = avrg / DEMEsize;
+			avrg = avrg / demesize;
 			ofile << avrg << endl;
 			if(index != index_last_right){
 				index = space[index]->getNeigbours()[1];
