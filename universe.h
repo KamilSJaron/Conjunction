@@ -64,7 +64,7 @@ class Universe
 		string type_of_l_r_edges, type_of_u_d_edges; // defines the behavior of the l / r and u /d edges of HZ
 		int index_last_left, index_next_left; // variables handling dynamic extension of hybrid zone
 		int index_last_right, index_next_right;
-		vector<Imigrant> GogolBordello; // container of individuals for 0 dimensional simualtion
+		vector<Imigrant> zeroD_immigrant_pool; // container of individuals for 0 dimensional simualtion
 };
 
 Universe::Universe(int dim, int ed_per_deme, int num_of_demes_l_r,string ed_l_r, int num_of_demes_u_d, string edges_u_d){
@@ -265,9 +265,9 @@ int Universe::side_border(int reflexive, int extending){
 int Universe::migration(){
 	const int demesize = Deme::getDEMEsize();
 	if(dimension == 0){
-		GogolBordello.reserve(demesize);
+		zeroD_immigrant_pool.reserve(demesize);
 		for(int i = 0; i < demesize;i++){
-			GogolBordello.push_back(Imigrant('B'));
+			zeroD_immigrant_pool.push_back(Imigrant('B'));
 		}
 // 		cerr << "GB size: " <<	GogolBordello.size() << endl;
 		return 0;
@@ -279,46 +279,34 @@ int Universe::migration(){
 
 	int index_last_left_fix = index_last_left;
 	int index_last_right_fix = index_last_right;
-	map<int, vector<Individual>> bufferVectorMap;
+	map<int, vector<Individual>> ImmigranBuffer;
 	
 	vector<int> neigbours;
 	int MigInd = demesize / (2 * edges_per_deme );
 	int deme_index;
 	/*bufferVectorMap is container for all individuals imigrating to all demes*/
 	for (map<int, Deme*>::const_iterator deme=space.begin(); deme!=space.end(); ++deme){
-// 		cerr << i << endl;
-// 		cerr << "lets transfer individuals of DEME " << i << endl;
 		neigbours = deme->second->getNeigbours();
-		
-// 		following code should be deleted afterwards, slowing down the program (testing)
-// 		if(neigbours.size() != (unsigned)edges_per_deme){
-// 			cerr << "ERROR: More neigbours than edges: " << neigbours.size() << " != " << edges_per_deme << endl;
-// 			return -1;
-// 		}
-
 		for(unsigned int j=0;j < neigbours.size();j++){
 			deme_index = neigbours[j];
 			for(int k=0;k < MigInd; k++){
-				bufferVectorMap[deme_index].push_back(deme->second->getIndividual(k));
-// 				cerr << "from " << world[i]->getDemeIndex() << " to " << deme_index << endl;
-// 				world[i]->getIndividual(k).plotGenotype();
+				ImmigranBuffer[deme_index].push_back(deme->second->getIndividual(k));
 			}
 		}
 	}
 
-	for(map<int, vector<Individual>>::iterator buff=bufferVectorMap.begin(); buff!=bufferVectorMap.end(); ++buff){
+	for(map<int, vector<Individual>>::iterator buff=ImmigranBuffer.begin(); buff!=ImmigranBuffer.end(); ++buff){
 		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
 			for(int k=0;k < MigInd; k++){
-				bufferVectorMap[buff->first].push_back(Individual('A'));
+				ImmigranBuffer[buff->first].push_back(Individual('A'));
 			}
 		}
 		if(buff->first >= index_last_right_fix and buff->first < index_last_right_fix + number_of_demes_u_d){
 			for(int k=0;k < MigInd; k++){
-				bufferVectorMap[buff->first].push_back(Individual('B'));
+				ImmigranBuffer[buff->first].push_back(Individual('B'));
 			}
 		}
 		
-// 		cerr << "Buffer " << buff->first << " has size " << buff->second.size() << endl;
 		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
 			if(Acheck(buff->second)){
 				continue;
@@ -331,7 +319,6 @@ int Universe::migration(){
 			}
 			basicUnitCreator('r', 'B');
 		}
-// 		cout << "Integating to deme " << buff->first << " " << buff->second.size() << " individuals" << endl;
 		space[buff->first]->integrateMigrantVector(buff->second);
 	}
 	return 0;
@@ -393,16 +380,16 @@ void Universe::set(int index,string type){
 void Universe::globalBreeding(){
 	if(dimension == 0){
 		vector<Imigrant> new_generation;
-		new_generation.reserve(GogolBordello.size());
+		new_generation.reserve(zeroD_immigrant_pool.size());
 		Imigrant desc;
 		double fitness;
 		int num_of_desc;
 // 
-		for(unsigned int index = 0; index < GogolBordello.size(); index++){
-			fitness = GogolBordello[index].getFitness();
+		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
+			fitness = zeroD_immigrant_pool[index].getFitness();
 			num_of_desc = getNumberOfDescendants(fitness);
 			for(int i=0;i<num_of_desc;i++){
-				GogolBordello[index].makeGamete(desc);
+				zeroD_immigrant_pool[index].makeGamete(desc);
 				if(desc.Acheck()){
 					continue;
 				}
@@ -410,16 +397,16 @@ void Universe::globalBreeding(){
 			}
 			num_of_desc = getNumberOfDescendants(fitness);
 			for(int i=0;i<num_of_desc;i++){
-				GogolBordello[index].makeGamete(desc);
+				zeroD_immigrant_pool[index].makeGamete(desc);
 				if(desc.Acheck()){
 					continue;
 				}
 				new_generation.push_back(desc);
 			}
 		}
-		GogolBordello.clear();
-		GogolBordello = new_generation;
-		cout << "Population size: " << GogolBordello.size() << endl;
+		zeroD_immigrant_pool.clear();
+		zeroD_immigrant_pool = new_generation;
+		cout << "Population size: " << zeroD_immigrant_pool.size() << endl;
 		new_generation.clear();
 		return;
 	}
@@ -513,7 +500,7 @@ void Universe::setNumberOfEdges(int nue){
 
 void Universe::restart(){
 	if(dimension == 0){
-		GogolBordello.clear();
+		zeroD_immigrant_pool.clear();
 	} else {
 		clear();
 		basicUnitCreator('b', 'A');
@@ -556,7 +543,7 @@ void Universe::listOfParameters(){
 void Universe::listOfDemes(){
 	cerr << "of dimension: " << dimension << endl;
 	if(dimension == 0){
-		cerr << "Population of imigrants has " << GogolBordello.size() << endl;
+		cerr << "Population of imigrants has " << zeroD_immigrant_pool.size() << endl;
 	} else {
 		cerr << "World of size " << space.size() << endl;
 		cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
@@ -670,8 +657,8 @@ int Universe::SaveTheUniverse(int order){
 	}  
 	if(dimension == 0){
 		vector<int> blockSizes;
-		for(unsigned int index = 0; index < GogolBordello.size(); index++){
-			GogolBordello[index].getSizesOfBBlocks(blockSizes);
+		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
+			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
 			for(unsigned int i = 0;i < blockSizes.size(); i++){
 				ofile << blockSizes[i] / double(LOCI) << endl;
 			}
@@ -717,8 +704,8 @@ int Universe::SaveTheUniverse(int order, string type){
 	
 	if(dimension == 0){
 		vector<int> blockSizes;
-		for(unsigned int index = 0; index < GogolBordello.size(); index++){
-			GogolBordello[index].getSizesOfBBlocks(blockSizes);
+		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
+			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
 			for(unsigned int i = 0;i < blockSizes.size(); i++){
 				ofile << blockSizes[i] / double(LOCI) << endl;
 			}
@@ -785,8 +772,8 @@ int Universe::SaveTheUniverse(string type){
 	
 	if(dimension == 0){
 vector<int> blockSizes;
-		for(unsigned int index = 0; index < GogolBordello.size(); index++){
-			GogolBordello[index].getSizesOfBBlocks(blockSizes);
+		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
+			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
 			for(unsigned int i = 0;i < blockSizes.size(); i++){
 				ofile << blockSizes[i] / double(LOCI) << endl;
 			}
