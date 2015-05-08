@@ -27,6 +27,7 @@ void parameterSlave(string parameter, vector<double>& valvec, vector<double>& pa
 void probMAPslave(vector<double>& velvec); // saves parameter probabiliy map and ensure correction (length, normalization)
 void seleMAPslave(vector<double>& velvec); // saves parameter probabiliy map and ensure correction (length, normalization)
 int worldSlave(string& line, Universe* World); // creates the world according to description (prbably should be moved inside of the Class)
+int standardworldSlave(int dim, string& typeOfLRedge,int width,string& typeOfUDedge, int height, Universe* World);
 int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARAvec2,vector<double>& PARAvec3,vector<char>& PARAnames); // reads the setting file and parse it, setting parameters through slave functions
 int testParameters(Universe* World); // function for mendelian tests of parameters (recombination, selection); will be deleted to full version
 void const showVector(vector<double>& valvec); // prints the vector on error stream (confirmation of parameter setting)
@@ -41,13 +42,13 @@ int main()
 	vector<char> PARAnames;
 	
 	int check = setParameters(&World, PARAvector1, PARAvector2, PARAvector3,PARAnames);
-	if(check == 1){
+	if(check != 0){
 		cerr << "Exit: input file problem." << endl;
 		return 1;
 	}
 	
 	srand (SEEDtoRAND); // setting a seed
-	setPoisSeed (SEEDtoRAND);
+	setPoisSeed (SEEDtoRAND+1);
 	
 	clock_t t_total1, t_total2;
 	int run = 0;
@@ -440,13 +441,20 @@ int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARA
 		cerr << "Error: Cannot open file 'setting.txt'!\n"; return 1;
 		return 1;
 	}
+	if(World->empty()){
+		cerr << "Error: the world was not defined" << endl;
+		return -1;
+	}
 	
 	return 0;
 }
 
 int worldSlave(string& line, Universe* World){
 	int switcher = 0, n = 0;
+	double arenan = 0;
 	string type, number;
+	int stdHeight = 0, stdWidth = -1, stdDim = 0;
+	string stdLR, stdUD;
 	for(unsigned int i = 0;i < line.size();i++){
 		if(line[i] == '-'){
 			switcher = 1;
@@ -462,10 +470,13 @@ int worldSlave(string& line, Universe* World){
 						switcher = 2;
 						continue;
 					}
-// 					if(type == "standard"){
-// 						switcher = 12;
-// 						continue;
-// 					}
+					if(type == "standard"){
+						type.clear();
+						stdLR.clear();
+						stdUD.clear();
+						switcher = 12;
+						continue;
+					}
 // 					if(type == "complete"){
 // 						switcher = 22;
 // 						continue;
@@ -500,8 +511,8 @@ int worldSlave(string& line, Universe* World){
 			if(isdigit(line[i])){
 				number.push_back((line[i]));
 			} else {
-				n = stoi( number );
 				if(type == "HybridZone"){
+					n = stoi( number );
 					World->setHeight(n);
 					if(n == 1){
 						World->setDimension(1);
@@ -518,30 +529,52 @@ int worldSlave(string& line, Universe* World){
 					return 0;
 				}
 				if(type == "Arena"){
+					arenan = stod( number );
+					n = stoi( number );
 					World->setHeight(n);
 					World->setUDEdgesType("reflexive");
-					World->setLREdgesType("reflexive");
+					if(n > 2){
+						World->setLREdgesType("extending");
+					} else {
+						World->setLREdgesType("reflexive");
+					}
+					
 					if(n == 1){
 						World->setDimension(1);
-						World->setWidth(1); 
+						World->setWidth(1);
+						World->setNumberOfEdges(2);
+						World->basicUnitCreator('b', 'C');
+						return 0;
+					} else {
+						World->setNumberOfEdges(4);
+						World->setDimension(2);
 					}
+					
 					if(n % 2 == 0){
 						World->basicUnitCreator('b', 'A');
 					} else {
 						World->basicUnitCreator('b', 'C');
 					}
-					for(int i=0;i < (n / 2) - 1;i++){
+					
+					for(int i=0;i < (ceil(arenan / 2) - 2);i++){
 						World->basicUnitCreator('l', 'A');
 					}
-					for(int i=0;i < (n / 2);i++){
+					for(int i=0;i < floor(arenan / 2) - 1;i++){
 						World->basicUnitCreator('r', 'B');
 					}
+					
+					World->setUDEdgesType("reflexive");
+					World->setLREdgesType("reflexive");
+					if(n > 2){
+						World->basicUnitCreator('l', 'A');
+					}
+					World->basicUnitCreator('r', 'B');
+					
 					cerr << "World is quick-defined as " << n << 'x' << n << " demes arena." << endl;
 					return 0;
 				}
 				if(type == "InfInf"){
 					cerr << "World is quick-defined as zero dimensional border of infinite popualtions" << endl;
-// 					World->infSimulator(GogolBordello, NUMBERofGENERATIONS);
 					World->setDimension(0);
 					return 8;
 				}
@@ -560,8 +593,56 @@ int worldSlave(string& line, Universe* World){
 				return 1;
 			}
 		}
+		if(switcher == 12){
+			if(isdigit(line[i])){
+				switcher = 13;
+				number.push_back((line[i]));
+				stdDim = stoi(number);
+				number.clear();
+				continue;
+			}
+		}
+		if(switcher == 13){
+			if(line[i] == '\''){
+				switcher = 14;
+				continue;
+			}
+		}
+		if(switcher == 14){
+			if(line[i] == '\''){
+				if(stdLR.empty()){
+					stdLR = type;
+				} else {
+					stdUD = type;
+				}
+				type.clear();
+				switcher = 15;
+				continue;
+			}
+			type.push_back(line[i]);
+			continue;
+		}
+		if(switcher == 15){
+			if(isdigit(line[i])){
+				number.push_back((line[i]));
+				continue;
+			} else {
+				if(number.empty()){
+					continue;
+				} else {
+					if(stdWidth == -1){
+						stdWidth = stoi(number);
+					} else {
+						stdHeight = stoi(number);
+						return standardworldSlave(stdDim,stdLR,stdWidth,stdUD,stdHeight,World);
+					}
+					switcher = 13;
+				}
+			}
+		}
 	}
-	return 0;
+	
+	return -1;
 }
 
 const void showVector(vector< double >& valvec){
@@ -625,6 +706,7 @@ void simulate(Universe* World){
 	
 	cerr << "Starting world: " << endl;
 	World->listOfDemes();
+// 	World->summary();
 	t_sim1 = clock();
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
 		t1=clock();
@@ -645,4 +727,55 @@ void simulate(Universe* World){
 	cerr << "Ending world: " << endl;
 	World->listOfDemes();
 	World->summary();
+}
+
+int standardworldSlave(int dim, string& typeOfLRedge, int width, string& typeOfUDedge, int height, Universe* World){
+	if(dim < 0 or dim > 2){
+		cerr << "ERROR: Dimension can not be higher than 2 or negative." << endl;
+		return -1;
+	}
+	if(dim == 0){
+		World->setDimension(0);
+		return 8;
+	}
+	if(dim == 1){
+		World->setDimension(1);
+		World->setNumberOfEdges(2);
+		World->setHeight(1);
+	}
+	
+	if(dim == 2){
+		World->setDimension(2);
+		World->setNumberOfEdges(4);
+		World->setHeight(height);
+		World->setUDEdgesType(typeOfUDedge);
+	}
+	World->setWidth(width);
+	
+	if(width == 1){
+		World->setLREdgesType(typeOfLRedge);
+		World->basicUnitCreator('b', 'C');
+		return 0;
+	}
+	if(width == 2){
+		World->setLREdgesType(typeOfLRedge);
+		World->basicUnitCreator('b', 'A');
+		World->basicUnitCreator('r', 'B');
+		return 0;
+	}
+	
+	double midpoint = double(width + 1) / 2;
+	World->setLREdgesType(typeOfLRedge);
+	World->basicUnitCreator('b', 'A');
+
+	for(double i = 2; i < width; i++){
+		if(i < midpoint){
+			World->basicUnitCreator('r', 'A');
+		} else {
+			World->basicUnitCreator('r', 'B');
+		}
+	}
+	World->setLREdgesType(typeOfLRedge);
+	World->basicUnitCreator('r', 'B');
+	return 0;
 }

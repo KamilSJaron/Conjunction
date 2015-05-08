@@ -27,6 +27,7 @@ class Universe
 // 		testing functions vector<Chromosome>& gamete
 		bool Acheck(vector<Individual>& buffer);
 		bool Bcheck(vector<Individual>& buffer);
+		bool empty(){return (space.size() == 0);};
 		
 // 		plotting functions
 		void listOfParameters();
@@ -119,11 +120,36 @@ void Universe::basicUnitCreator(char type, char init){
 			case 'r':
 				new_indexes.clear();
 				new_indexes.push_back(index_last_right);
-				new_indexes.push_back(max_index + 2);
+				if(type_of_l_r_edges == "wrapping"){
+					if(index_next_right == number_of_demes_l_r){
+						new_indexes.push_back(0);
+					} else {
+						new_indexes.push_back(max_index + 2);
+					}
+				}
+				if(type_of_l_r_edges == "reflexive"){
+					if(index_next_right == number_of_demes_l_r){
+						new_indexes.push_back(index_next_right);
+					} else {
+						new_indexes.push_back(max_index + 2);
+					}
+				}
+				if(type_of_l_r_edges == "extending"){
+					new_indexes.push_back(max_index + 2);
+				}
+				if(type_of_l_r_edges == "infinite"){
+					if(index_next_right == number_of_demes_l_r){
+						new_indexes.push_back(-8);
+					} else {
+						new_indexes.push_back(max_index + 2);
+					}
+				}
+				
 				space[index_next_right] = new Deme(index_next_right,new_indexes,init);
 				index_last_right = index_next_right;
 				index_next_right = max_index + 2;
 				break;
+				
 		}
 		return;
 	}
@@ -185,22 +211,7 @@ int Universe::upper_border(int index, int max_index){
 			return index - 1;
 		}
 	}
-	if(type_of_u_d_edges == "extending"){
-		if(index == max_index){
-			return index + number_of_demes_u_d;
-		} else {
-			return index - 1;
-		}
-	}
-	if(type_of_u_d_edges == "population_border"){
-// 		lets say, that population_border is marked by 666 label
-		if(index == max_index){
-			return 666;
-		} else {
-			return index - 1;
-		}
-	}
-	if(type_of_u_d_edges == "wrap"){
+	if(type_of_u_d_edges == "wrapping"){
 		if(index == max_index){
 			return index + (number_of_demes_u_d-1);
 		} else {
@@ -219,22 +230,7 @@ int Universe::lower_border(int index, int max_index){
 			return index + 1;
 		}
 	}
-	if(type_of_u_d_edges == "extending"){
-		if(index == max_index + number_of_demes_u_d  - 1){
-			return max_index;
-		} else {
-			return index + 1;
-		}
-	}
-	if(type_of_u_d_edges == "population_border"){
-// 		lets say, that population_border is marked by 666 label
-		if(index == max_index + number_of_demes_u_d  - 1){
-			return 666;
-		} else {
-			return index + 1;
-		}
-	}
-	if(type_of_u_d_edges == "wrap"){
+	if(type_of_u_d_edges == "wrapping"){
 		if(index == max_index + number_of_demes_u_d  - 1){
 			return index - (number_of_demes_u_d-1);
 		} else {
@@ -253,9 +249,15 @@ int Universe::side_border(int reflexive, int extending){
 		return extending;
 // 		index_next_left + i
 	}
-	if(type_of_l_r_edges == "population_border"){
-// 		lets say, that population_border is marked by 666 label
-		return 666;
+	if(type_of_l_r_edges == "wrapping"){
+		return number_of_demes_l_r;
+	}
+	if(type_of_l_r_edges == "infinite"){
+		if(reflexive < number_of_demes_l_r * number_of_demes_u_d and reflexive > number_of_demes_u_d){
+			return extending;
+		} else {
+			return -8;
+		}
 	}
 	cerr << "The type of left-right edges is not valid." << endl;
 	return -1;
@@ -289,6 +291,9 @@ int Universe::migration(){
 		neigbours = deme->second->getNeigbours();
 		for(unsigned int j=0;j < neigbours.size();j++){
 			deme_index = neigbours[j];
+			if(deme_index == -8){
+				continue;
+			}
 			for(int k=0;k < MigInd; k++){
 				ImmigranBuffer[deme_index].push_back(deme->second->getIndividual(k));
 			}
@@ -297,16 +302,17 @@ int Universe::migration(){
 
 	for(map<int, vector<Individual>>::iterator buff=ImmigranBuffer.begin(); buff!=ImmigranBuffer.end(); ++buff){
 		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
+			cout << "Filling deme: " << buff->first << "A" << endl;
 			for(int k=0;k < MigInd; k++){
 				ImmigranBuffer[buff->first].push_back(Individual('A'));
 			}
 		}
 		if(buff->first >= index_last_right_fix and buff->first < index_last_right_fix + number_of_demes_u_d){
+			cout << "Filling deme: " << buff->first << "B" << endl;
 			for(int k=0;k < MigInd; k++){
 				ImmigranBuffer[buff->first].push_back(Individual('B'));
 			}
 		}
-		
 		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
 			if(Acheck(buff->second)){
 				continue;
@@ -771,7 +777,7 @@ int Universe::SaveTheUniverse(string type){
 	
 	
 	if(dimension == 0){
-vector<int> blockSizes;
+		vector<int> blockSizes;
 		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
 			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
 			for(unsigned int i = 0;i < blockSizes.size(); i++){
@@ -801,7 +807,7 @@ vector<int> blockSizes;
 		ofile.close();
 		return 0;
 	}
-	if(type == "average"){
+	if(type == "averages"){
 		int demesize = Deme::getDEMEsize();
 		double avrg = 0;
 		for(unsigned int i = 0; i < space.size(); i++){
