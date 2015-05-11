@@ -17,6 +17,7 @@
 static int SEEDtoRAND = 1; //seed only for rand() fction, values of the poisson distribution are always generated with same initial seed
 static int NUMBERofGENERATIONS = 500; // #define NUM_OF_IMIGRANTS 100 /* number of complete heterozygotious imigrants per generation (assuming, that Pois(1)*500 would be very close to 500, cause computationally it is not worth the computational time)*/
 static int NUMBERofSAVES = 1;
+static int DELAY = 0;
 
 using namespace std;
 
@@ -68,11 +69,19 @@ int main()
 		pos3 = NAMEofOUTPUTfile.find('\\');
 	}
 	if(NUMBERofSAVES > 1){
-		NAMEofOUTPUTfile = NAMEofOUTPUTfile + string("_*");
+		if(NUMBERofSAVES > 9){
+			NAMEofOUTPUTfile = NAMEofOUTPUTfile + string("_0*");
+		} else {
+			NAMEofOUTPUTfile = NAMEofOUTPUTfile + string("_*");
+		}
 		save_pos = NAMEofOUTPUTfile.find('*');
 	}
 	NAMEofOUTPUTfile = NAMEofOUTPUTfile + string(".dat");
-	
+	cerr << "*** OUTPUT INFO ***" << endl;
+	cerr << "Name of the file: " << NAMEofOUTPUTfile << endl;
+	cerr << "Type of the file: " << TYPEofOUTPUTfile << endl;
+	cerr << "Number of files: " << NUMBERofSAVES << endl;
+	cerr << "*******************" << endl;
 // 	this moster construction handles simulation for 0 to 3 defined vector variables
 	if(PARAnames.size() >= 1){
 		t_total1 = clock();
@@ -130,7 +139,7 @@ int main()
 		t_total2 = clock();
 		cerr << "TOTAL TIME OF THE SIMULATION IS " << ((float)t_total2 - (float)t_total1) / CLOCKS_PER_SEC << endl;
 	} else {
-		simulate(&World);  //both simulate edit for 0 dim case
+		simulate(&World,save_pos);  //both simulate edit for 0 dim case
 	}
 // 	 	char filePattern[] = "../playground/pictXX.png";
 	
@@ -190,6 +199,11 @@ void parameterSlave(string parameter, double value){
 	if(parameter == "NUMBERofSAVES"){
 		NUMBERofSAVES = (int(value));
 		cerr << "Setting parameter NUMBERofSAVES to: " << value << endl;
+		return;
+	}
+	if(parameter == "DELAY"){
+		DELAY = (int(value));
+		cerr << "Setting parameter DELAY to: " << value << endl;
 		return;
 	}
 	cerr << "Warning: unknown parameter: " << parameter << endl;
@@ -377,6 +391,12 @@ int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARA
 					}
 					continue;
 				}
+				if(parameter.substr(0,16) == "TYPEofOUTPUTfile"){
+					if(!isspace(line[i])){
+						number += line[i];
+					}
+					continue;
+				}
 				if(switcher == 1){
 					if(isalpha(line[i])){
 						parameter.push_back(line[i]);
@@ -396,6 +416,12 @@ int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARA
 //				string or value
 					if(parameter.substr(0,16) == "NAMEofOUTPUTfile"){
 						NAMEofOUTPUTfile = number;
+						number.clear();
+						parameter.clear();
+						continue;
+					}
+					if(parameter.substr(0,16) == "TYPEofOUTPUTfile"){
+						TYPEofOUTPUTfile = number;
 						number.clear();
 						parameter.clear();
 						continue;
@@ -660,9 +686,9 @@ const void showVector(vector< double >& valvec){
 void simulate(Universe* World, int save_pos){
 	clock_t t1, t2;
 	clock_t t_sim1, t_sim2;
-	int order = 0, check = 0, modulo = ceil((double)NUMBERofGENERATIONS / NUMBERofSAVES);
+	int order = 0, check = 0, modulo = ceil((double)(NUMBERofGENERATIONS-DELAY-1) / NUMBERofSAVES);
 	
-	cerr << "Starting world: " << endl;
+	cerr << "Starting I world: " << endl;
 	World->listOfDemes();
 	t_sim1 = clock();
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
@@ -671,10 +697,17 @@ void simulate(Universe* World, int save_pos){
 		World->globalBreeding();
 		t2=clock();
 		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-		if(((i % modulo)+1) == modulo and i != NUMBERofGENERATIONS - 1){
+		cerr << "i modulo + 1: " << ((i % modulo)+1) << endl;
+
+		if(((i % modulo)+1) == modulo and i != NUMBERofGENERATIONS - 1 and i >= DELAY){
 			order++;
-			NAMEofOUTPUTfile[save_pos] = '0' + char(order);
-			check = World->SaveTheUniverse("complete");
+			if(order >= 10){
+				NAMEofOUTPUTfile[save_pos-1] = '0' + char(order / 10 % 10);
+				NAMEofOUTPUTfile[save_pos] = '0' + char(order % 10);
+			} else {
+				NAMEofOUTPUTfile[save_pos] = '0' + char(order);
+			}
+			check = World->SaveTheUniverse(TYPEofOUTPUTfile);
 			if(check != 0){
 				cerr << "Error in saving the output." << endl;
 				return;
@@ -684,10 +717,15 @@ void simulate(Universe* World, int save_pos){
 	t_sim2 = clock();
 	if(NUMBERofSAVES > 1){
 		order++;
-		NAMEofOUTPUTfile[save_pos] = '0' + char(order);
+		if(order >= 10){
+			NAMEofOUTPUTfile[save_pos-1] = '0' + char(order / 10 % 10);
+			NAMEofOUTPUTfile[save_pos] = '0' + char(order % 10);
+		} else {
+			NAMEofOUTPUTfile[save_pos] = '0' + char(order);
+		}
 	}
 	if(NUMBERofSAVES > 0){
-		check = World->SaveTheUniverse("complete");
+		check = World->SaveTheUniverse(TYPEofOUTPUTfile);
 		if(check != 0){
 			cerr << "Error in saving the output." << endl;
 			return;
@@ -704,7 +742,7 @@ void simulate(Universe* World){
 	clock_t t_sim1, t_sim2;
 	int check = 0;
 	
-	cerr << "Starting world: " << endl;
+	cerr << "Starting II world: " << endl;
 	World->listOfDemes();
 // 	World->summary();
 	t_sim1 = clock();
@@ -717,7 +755,7 @@ void simulate(Universe* World){
 	}
 	t_sim2 = clock();
 	if(NUMBERofSAVES == 1){
-		check = World->SaveTheUniverse("complete");
+		check = World->SaveTheUniverse(TYPEofOUTPUTfile);
 		if(check != 0){
 			cerr << "Error in saving the output." << endl;
 			return;

@@ -54,6 +54,7 @@ class Deme
 // plotting functions
 		void showDeme();
 		void summary();
+		void summary(ofstream& ofile);
 		void viewDeme();
 		void readAllGenotypes();
 		void readGenotypeFrequencies();
@@ -401,6 +402,36 @@ void Deme::summary(){
 		}
 	}
 	cout << endl;
+}
+
+void Deme::summary(ofstream& ofile){
+	double z = getMeanBproportion();
+	double varz = getVARhi();
+	double varp = getVARp();
+	int neigbsize = neigbours.size();
+	ofile << setw(5) << right << index << ":  ";
+	for(int i = 0; i < neigbsize; i++){
+		ofile << setw(5) << left << neigbours[i] << " ";
+	}
+	ofile << setw(12) << left << ((round(getMeanFitness() * 1000000)) / 1000000)
+	<< setw(12) << left << ((round(getProportionOfHeterozygotes() * 1000000)) / 1000000)
+	<< setw(12) << left << ((round(z * 1000000)) / 1000000)
+	<< setw(12) << left << ((round(varz * 1000000)) / 1000000);
+	if(LOCI * NUMBERofCHROMOSOMES > 1){
+		ofile	<< setw(12) << left << ((round(varp * 1000000)) / 1000000)
+		<< setw(12) << left << ((round(getLD(z,varz,varp) * 1000000)) / 1000000);
+	} 
+	if((LOCI * NUMBERofCHROMOSOMES) <= 16){
+		vector<double> ps;
+		for(int ch = 0;ch < NUMBERofCHROMOSOMES; ch++){
+			ps.clear();
+			getps(ps,ch);
+			for(unsigned int l = 0; l < ps.size();l++){
+				ofile << setw(12) << left << ((round(ps[l] * 10000)) / 10000);
+			}
+		}
+	}
+	ofile << endl;
 }
 
 

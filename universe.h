@@ -3,6 +3,7 @@
 using namespace std;
 
 static string NAMEofOUTPUTfile = "out";
+static string TYPEofOUTPUTfile = "summary";
 
 int getNumberOfDescendants(double fitness){
 	poisson_distribution<int> pois(fitness);
@@ -39,8 +40,8 @@ class Universe
 		void viewOneDeme(int index);
 		void plotHeadOfDeme(int i);
 		void viewDemesOneByOne();
-		int SaveTheUniverse(int order);
-		int SaveTheUniverse(int order, string type);
+// 		int SaveTheUniverse(int order);
+// 		int SaveTheUniverse(int order, string type);
 		int SaveTheUniverse(string type);
 		
 // 		parameter changing functions
@@ -302,13 +303,11 @@ int Universe::migration(){
 
 	for(map<int, vector<Individual>>::iterator buff=ImmigranBuffer.begin(); buff!=ImmigranBuffer.end(); ++buff){
 		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
-			cout << "Filling deme: " << buff->first << "A" << endl;
 			for(int k=0;k < MigInd; k++){
 				ImmigranBuffer[buff->first].push_back(Individual('A'));
 			}
 		}
 		if(buff->first >= index_last_right_fix and buff->first < index_last_right_fix + number_of_demes_u_d){
-			cout << "Filling deme: " << buff->first << "B" << endl;
 			for(int k=0;k < MigInd; k++){
 				ImmigranBuffer[buff->first].push_back(Individual('B'));
 			}
@@ -645,52 +644,52 @@ void Universe::viewDemesOneByOne(){
 	}
 }
 
-int Universe::SaveTheUniverse(int order){
-	string fn = NAMEofOUTPUTfile;
-	if(fn.find('X') > 50){
-		cerr << "Warrning, the 'X' in the filename is missing." << endl; // udelat to tak, aby v pripade, ze tam neni X, aby to ulozilo jen nakonci.
-		cerr << "            current name is "<< NAMEofOUTPUTfile << endl;
-	}
-	fn[fn.find('X')] = char(order+'0');
-	
-	int index = index_last_left;
-	ofstream ofile;
-	vector<double> props;
-	
-	ofile.open(fn); // Opens file
-	if (ofile.fail()){
-		return 1;
-	}  
-	if(dimension == 0){
-		vector<int> blockSizes;
-		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
-			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
-			for(unsigned int i = 0;i < blockSizes.size(); i++){
-				ofile << blockSizes[i] / double(LOCI) << endl;
-			}
-			blockSizes.clear();
-		}
-	} else {
-		for(unsigned int i = 0; i < space.size(); i++){
-			props = space[index]->getBproportions();
-			ofile << index << '\t';
-			for(unsigned int ind = 0; ind < props.size(); ind++){
-				ofile << props[ind] << '\t';
-			}
-			ofile << endl;
-			if(index != index_last_right){
-				index = space[index]->getNeigbours()[1];
-			} else {
-				break;
-			}
-		}
-	}
-	
-	ofile.close();
-	cerr << "The output was sucesfully saved to: " << fn << endl;
-	return 0;
-}
-
+// int Universe::SaveTheUniverse(int order){
+// 	string fn = NAMEofOUTPUTfile;
+// 	if(fn.find('X') > 50){
+// 		cerr << "Warrning, the 'X' in the filename is missing." << endl; // udelat to tak, aby v pripade, ze tam neni X, aby to ulozilo jen nakonci.
+// 		cerr << "            current name is "<< NAMEofOUTPUTfile << endl;
+// 	}
+// 	fn[fn.find('X')] = char(order+'0');
+// 	
+// 	int index = index_last_left;
+// 	ofstream ofile;
+// 	vector<double> props;
+// 	
+// 	ofile.open(fn); // Opens file
+// 	if (ofile.fail()){
+// 		return 1;
+// 	}  
+// 	if(dimension == 0){
+// 		vector<int> blockSizes;
+// 		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
+// 			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
+// 			for(unsigned int i = 0;i < blockSizes.size(); i++){
+// 				ofile << blockSizes[i] / double(LOCI) << endl;
+// 			}
+// 			blockSizes.clear();
+// 		}
+// 	} else {
+// 		for(unsigned int i = 0; i < space.size(); i++){
+// 			props = space[index]->getBproportions();
+// 			ofile << index << '\t';
+// 			for(unsigned int ind = 0; ind < props.size(); ind++){
+// 				ofile << props[ind] << '\t';
+// 			}
+// 			ofile << endl;
+// 			if(index != index_last_right){
+// 				index = space[index]->getNeigbours()[1];
+// 			} else {
+// 				break;
+// 			}
+// 		}
+// 	}
+// 	
+// 	ofile.close();
+// 	cerr << "The output was sucesfully saved to: " << fn << endl;
+// 	return 0;
+// }
+/*
 int Universe::SaveTheUniverse(int order, string type){
 	string fn = NAMEofOUTPUTfile;
 	if(fn.find('X') > 50){
@@ -738,23 +737,49 @@ int Universe::SaveTheUniverse(int order, string type){
 		ofile.close();
 		return 0;
 	}
-	if(type == "average"){
-		int demesize = Deme::getDEMEsize();
-		double avrg = 0;
-		for(unsigned int i = 0; i < space.size(); i++){
-			props = space[index]->getBproportions();
-			ofile << index << '\t';
-			for(unsigned int ind = 0; ind < props.size(); ind++){
-				avrg += props[ind];
-			}
-			avrg = avrg / demesize;
-			ofile << avrg << endl;
-			if(index != index_last_right){
-				index = space[index]->getNeigbours()[1];
-			} else {
-				break;
+	if(type == "summary"){
+		int worlsize = space.size();
+		cerr << "World of size " << worlsize << endl;
+		cerr << "of dimension: " << dimension << endl;
+		cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
+		cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
+		if(type_of_l_r_edges != "extending"){
+			cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
+		}
+		cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
+		ofile << "                 EDGE" << endl;
+		ofile << setw(7) << right << "DEME " 
+		<< setw(7) << left << " LEFT" 
+		<< setw(6) << left << "RIGHT"; 
+		if(dimension == 2){
+			ofile << setw(6) << left << "UP" 
+			<< setw(6) << left << "DOWN";
+		}
+		ofile << setw(12) << left << "mean f"
+		<< setw(12) << left << "f(heter)"
+		<< setw(12) << left << "meanHI" 
+		<< setw(12) << left << "var(HI)";
+		if(LOCI * NUMBERofCHROMOSOMES > 1){
+			ofile << setw(12) << left << "var(p)" 
+			<< setw(12) << left << "LD";
+		}
+		
+		if(LOCI * NUMBERofCHROMOSOMES <= 16){
+			for(int ch = 0;ch < NUMBERofCHROMOSOMES;ch++){
+				for(int l = 0; l < LOCI;l++){
+					ofile << left << "Ch" << ch+1 << "l" << l+1 << setw(7) << ' ';
+				}
 			}
 		}
+		ofile << endl;
+		for (map<int, Deme*>::const_iterator i=space.begin(); i!=space.end(); ++i){
+	// 		if(i->first == 9){
+			i->second->summary();
+	// 			i->second->readAllGenotypes();
+	// 		}
+		}
+		
+		
 		cerr << "The output was sucesfully saved to: " << fn << endl;
 		ofile.close();
 		return 0;
@@ -763,7 +788,7 @@ int Universe::SaveTheUniverse(int order, string type){
 	cerr << "WARNING: The output was not saved" << endl;
 	cerr << "         unknow saving format" << endl;
 	return 1;
-}
+}*/
 
 int Universe::SaveTheUniverse(string type){
 	int index = index_last_left;
@@ -802,31 +827,53 @@ int Universe::SaveTheUniverse(string type){
 					break;
 				}
 			}
-	}
-		cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
-		ofile.close();
-		return 0;
-	}
-	if(type == "averages"){
-		int demesize = Deme::getDEMEsize();
-		double avrg = 0;
-		for(unsigned int i = 0; i < space.size(); i++){
-			props = space[index]->getBproportions();
-			ofile << index << '\t';
-			for(unsigned int ind = 0; ind < props.size(); ind++){
-				avrg += props[ind];
-			}
-			avrg = avrg / demesize;
-			ofile << avrg << endl;
-			if(index != index_last_right){
-				index = space[index]->getNeigbours()[1];
-			} else {
-				break;
-			}
+			cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
+			ofile.close();
+			return 0;
 		}
-		cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
-		ofile.close();
-		return 0;
+		if(type == "summary"){
+			int worlsize = space.size();
+			cerr << "World of size " << worlsize << endl;
+			cerr << "of dimension: " << dimension << endl;
+			cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
+			cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
+			if(type_of_l_r_edges != "extending"){
+				cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
+			}
+			cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
+			ofile << "                 EDGE" << endl;
+			ofile << setw(7) << right << "DEME " 
+			<< setw(7) << left << " LEFT" 
+			<< setw(6) << left << "RIGHT"; 
+			if(dimension == 2){
+				ofile << setw(6) << left << "UP" 
+				<< setw(6) << left << "DOWN";
+			}
+			ofile << setw(12) << left << "mean f"
+			<< setw(12) << left << "f(heter)"
+			<< setw(12) << left << "meanHI" 
+			<< setw(12) << left << "var(HI)";
+			if(LOCI * NUMBERofCHROMOSOMES > 1){
+				ofile << setw(12) << left << "var(p)" 
+				<< setw(12) << left << "LD";
+			}
+			
+			if(LOCI * NUMBERofCHROMOSOMES <= 16){
+				for(int ch = 0;ch < NUMBERofCHROMOSOMES;ch++){
+					for(int l = 0; l < LOCI;l++){
+						ofile << left << "Ch" << ch+1 << "l" << l+1 << setw(7) << ' ';
+					}
+				}
+			}
+			ofile << endl;
+			for (map<int, Deme*>::const_iterator i=space.begin(); i!=space.end(); ++i){
+				i->second->summary(ofile);
+			}
+			
+			cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
+			ofile.close();
+			return 0;
+		}
 	}
 
 	cerr << "WARNING: The output was not saved" << endl;
