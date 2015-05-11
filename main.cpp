@@ -86,6 +86,9 @@ int main()
 	if(PARAnames.size() >= 1){
 		t_total1 = clock();
 		for(unsigned int j = 0;j < PARAvector1.size();j++){
+			if(NUMBERofSAVES > 9){
+				NAMEofOUTPUTfile[save_pos - 1] = '0';
+			}
 // 			setting for next simulation
 			parameterSlave(PARAnames[0],PARAvector1[j]);
 			if(j < unsigned(ten_stop1 + 10)){
@@ -98,6 +101,9 @@ int main()
 			
 			if(PARAnames.size() >= 2){
 				for(unsigned int k = 0;k < PARAvector2.size();k++){
+					if(NUMBERofSAVES > 9){
+						NAMEofOUTPUTfile[save_pos - 1] = '0';
+					}
 					parameterSlave(PARAnames[1],PARAvector2[k]);
 					if(k < unsigned(ten_stop2 + 10)){
 						NAMEofOUTPUTfile[pos2] = char(k + '0' - ten_stop2);
@@ -109,6 +115,9 @@ int main()
 					
 					if(PARAnames.size() == 3){
 						for(unsigned int l = 0;l < PARAvector3.size();l++){
+							if(NUMBERofSAVES > 9){
+								NAMEofOUTPUTfile[save_pos - 1] = '0';
+							}
 							parameterSlave(PARAnames[2],PARAvector3[l]);
 							if(l < unsigned(ten_stop3 + 10)){
 								NAMEofOUTPUTfile[pos3] = char(l + '0' - ten_stop3);
@@ -355,6 +364,7 @@ void parameterSlave(string parameter, vector<double>& valvec, vector<double>& pa
 		para.push_back('D');
 		cerr << para.size() << ". vector variable is deme size (D) is set to ";
 		showVector(paravec);
+		Deme::setDEMEsize(int(paravec[0]));
 		return;
 	}
 	cerr << "Warning: Unknown parameter variable " << parameter << endl;
@@ -411,6 +421,9 @@ int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARA
 					}
 				}
 			}
+			
+			cout << "parameter: " << parameter << " to " << value << endl;
+			
 			if(!parameter.empty()){
 				if(paravec.empty()){
 //				string or value
