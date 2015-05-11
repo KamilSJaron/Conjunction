@@ -559,7 +559,7 @@ int worldSlave(string& line, Universe* World){
 					} else {
 						World->setDimension(2);
 						World->setNumberOfEdges(4);
-						World->setUDEdgesType("wrap");
+						World->setUDEdgesType("wrapping");
 					}
 					World->setLREdgesType("extending");
 					World->basicUnitCreator('b', 'A');
@@ -710,8 +710,6 @@ void simulate(Universe* World, int save_pos){
 		World->globalBreeding();
 		t2=clock();
 		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-		cerr << "i modulo + 1: " << ((i % modulo)+1) << endl;
-
 		if(((i % modulo)+1) == modulo and i != NUMBERofGENERATIONS - 1 and i >= DELAY){
 			order++;
 			if(order >= 10){
