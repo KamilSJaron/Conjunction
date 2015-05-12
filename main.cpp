@@ -615,7 +615,7 @@ int worldSlave(string& line, Universe* World){
 				if(type == "InfInf"){
 					cerr << "World is quick-defined as zero dimensional border of infinite popualtions" << endl;
 					World->setDimension(0);
-					return 8;
+					return 0;
 				}
 				if(type == "LowMigrationBazykin"){
 					World->setHeight(1);
