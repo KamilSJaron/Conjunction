@@ -49,7 +49,7 @@ class Individual
 		
 /* COMUNICATION */
 		static void setNumberOfChromosomes(int ch){NUMBERofCHROMOSOMES = ch;};
-		static void setRECOMBINATIONrate(double Rr){RECOMBINATIONrate = Rr;};
+		static void setLAMBDA(double Rr){RECOMBINATIONrate = Rr;};
 		static void setSELECTIONpressure(double Sp){SELECTIONpressure = Sp;};
 		static void setBETA(double beta){BETA = beta;};
 	

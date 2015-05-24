@@ -43,6 +43,7 @@ class Universe
 // 		int SaveTheUniverse(int order);
 // 		int SaveTheUniverse(int order, string type);
 		int SaveTheUniverse(string type);
+		void getLD();
 		
 // 		parameter changing functions
 		void setHeight(int heig);
@@ -411,7 +412,13 @@ void Universe::globalBreeding(){
 		}
 		zeroD_immigrant_pool.clear();
 		zeroD_immigrant_pool = new_generation;
-		cout << "Population size: " << zeroD_immigrant_pool.size() << endl;
+		double material = 0;
+		int pop_size = zeroD_immigrant_pool.size();
+		for(int i = 0;i < pop_size;i++){
+			material += zeroD_immigrant_pool[i].getBprop();
+		}
+		cout << "Population size: " << pop_size << endl;
+		cout << "Amount of material: " << material << endl;
 		new_generation.clear();
 		return;
 	}
@@ -589,7 +596,7 @@ void Universe::summary(){
 			cout << setw(6) << left << "UP" 
 			<< setw(6) << left << "DOWN";
 		}
-		cout << setw(12) << left << "mean f"
+		cout << setw(12) << left << "meanf"
 		<< setw(12) << left << "f(heter)"
 		<< setw(12) << left << "meanHI" 
 		<< setw(12) << left << "var(HI)";
@@ -881,7 +888,12 @@ int Universe::SaveTheUniverse(string type){
 	return 1;
 }
 
-
+void Universe::getLD(){
+	for (map<int, Deme*>::const_iterator i=space.begin(); i!=space.end(); ++i){
+		cout << i->second->getLD() << '\t';
+	}
+	cout << endl;
+}
 
 
 

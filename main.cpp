@@ -175,9 +175,9 @@ void parameterSlave(string parameter, double value){
 		cerr << "Setting parameter NUMBERofCHROMOSOMES to: " << value << endl;
 		return;
 	}
-	if(parameter == "RECOMBINATIONrate"){
-		Individual::setRECOMBINATIONrate(value);
-		cerr << "Setting parameter RECOMBINATIONrate to: " << value << endl;
+	if(parameter == "LAMBDA"){
+		Individual::setLAMBDA(value);
+		cerr << "Setting parameter LAMBDA to: " << value << endl;
 		return;
 	}
 	if(parameter == "SELECTIONpressure"){
@@ -231,8 +231,8 @@ void parameterSlave(char parameter, double value){
 		return;
 	}
 	if(parameter == 'r'){
-		Individual::setRECOMBINATIONrate(value);
-		cerr << "Setting parameter RECOMBINATIONrate to: " << value << endl;
+		Individual::setLAMBDA(value);
+		cerr << "Setting parameter LAMBDA to: " << value << endl;
 		return;
 	}
 	if(parameter == 's'){
@@ -342,9 +342,9 @@ void parameterSlave(string parameter, vector<double>& valvec, vector<double>& pa
 		showVector(paravec);
 		return;
 	}
-	if(parameter == "RECOMBINATIONrate"){
+	if(parameter == "LAMBDA"){
 		para.push_back('r');
-		cerr << para.size() << ". vector variable recombination rate (r) is set to ";
+		cerr << para.size() << ". vector variable LAMBDA (l) is set to ";
 		showVector(paravec);
 		return;
 	}
@@ -422,7 +422,7 @@ int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARA
 				}
 			}
 			
-			cout << "parameter: " << parameter << " to " << value << endl;
+// 			cout << "parameter: " << parameter << " to " << value << endl;
 			
 			if(!parameter.empty()){
 				if(paravec.empty()){
@@ -707,7 +707,9 @@ void simulate(Universe* World, int save_pos){
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
 		t1=clock();
 		World->migration();
+// 		World->summary();
 		World->globalBreeding();
+// 		World->getLD();
 		t2=clock();
 		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 		if(((i % modulo)+1) == modulo and i != NUMBERofGENERATIONS - 1 and i >= DELAY){
@@ -761,6 +763,8 @@ void simulate(Universe* World){
 		t1=clock();
 		World->migration();
 		World->globalBreeding();
+// 		World->summary();
+// 		World->getLD();
 		t2=clock();
 		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 	}
@@ -776,6 +780,7 @@ void simulate(Universe* World){
 	cerr << "Ending world: " << endl;
 	World->listOfDemes();
 	World->summary();
+// 	World->getLD();
 }
 
 int standardworldSlave(int dim, string& typeOfLRedge, int width, string& typeOfUDedge, int height, Universe* World){
