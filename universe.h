@@ -17,6 +17,9 @@ class Universe
 		Universe(int dimension, int edges_per_deme, int number_of_demes_l_r,string edges_l_r, int number_of_demes_u_d, string edges_u_d);
 		Universe();
 		void basicUnitCreator(char type, char init);
+		void worldSlave();
+		
+		
 // 		void infSimulator(vector<Imigrant>& GogolBordello, int NUMofGEN);
 		
 // 		computing functions
@@ -199,7 +202,7 @@ void Universe::basicUnitCreator(char type, char init){
 			index_last_right = index;
 			break;
 		default:
-			cerr << "I have no idea, what do you mean by... " << type << " I understand only 'b' basic, 'l' left and 'r' right, type of basic unit.. try it again please." << endl;
+			cerr << "Error: I have no idea, what do you mean by... " << type << " I understand only 'b' basic, 'l' left and 'r' right, type of basic unit.. try it again please." << endl;
 			break;
 	}
 	return;
@@ -220,7 +223,7 @@ int Universe::upper_border(int index, int max_index){
 			return index - 1;
 		}
 	}
-	cerr << "The type of upper-down edges is not valid." << endl;
+	cerr << "Error: The type of upper-down edges is not valid." << endl;
 	return -1;
 }
 
@@ -239,20 +242,31 @@ int Universe::lower_border(int index, int max_index){
 			return index + 1;
 		}
 	}
-	cerr << "The type of upper-down edges is not valid." << endl;
+	cerr << "Error: The type of upper-down edges is not valid." << endl;
 	return -1;
 }
 
 int Universe::side_border(int reflexive, int extending){
 	if(type_of_l_r_edges == "reflexive"){
-		return reflexive;
+		if(reflexive < number_of_demes_l_r * number_of_demes_u_d and reflexive > number_of_demes_u_d){
+			return extending;
+		} else {
+			return reflexive;
+		}
 	}
 	if(type_of_l_r_edges == "extending"){
 		return extending;
-// 		index_next_left + i
 	}
 	if(type_of_l_r_edges == "wrapping"){
-		return number_of_demes_l_r;
+		if(reflexive < number_of_demes_l_r * number_of_demes_u_d and reflexive > number_of_demes_u_d){
+			return extending;
+		} else {
+			if(reflexive < number_of_demes_u_d){
+				return number_of_demes_l_r * number_of_demes_u_d + reflexive % number_of_demes_u_d;
+			} else {
+				return reflexive % number_of_demes_u_d;
+			}
+		}
 	}
 	if(type_of_l_r_edges == "infinite"){
 		if(reflexive < number_of_demes_l_r * number_of_demes_u_d and reflexive > number_of_demes_u_d){
@@ -261,8 +275,34 @@ int Universe::side_border(int reflexive, int extending){
 			return -8;
 		}
 	}
-	cerr << "The type of left-right edges is not valid." << endl;
+	cerr << "Error: The type of left-right edges is not valid." << endl;
 	return -1;
+}
+
+void Universe::worldSlave(){
+	if(number_of_demes_l_r == 1){
+		basicUnitCreator('b', 'C');
+		return;
+	}
+	if(number_of_demes_l_r == 2){
+		basicUnitCreator('b', 'A');
+		basicUnitCreator('r', 'B');
+		return;
+	}
+	
+	double midpoint = double(number_of_demes_l_r + 1) / 2;
+	basicUnitCreator('b', 'A');
+	
+	for(double i = 2; i < number_of_demes_l_r; i++){
+		if(i < midpoint){
+			basicUnitCreator('r', 'A');
+		} else {
+			basicUnitCreator('r', 'B');
+		}
+	}
+	basicUnitCreator('r', 'B');
+	
+	return;	
 }
 
 
@@ -279,6 +319,9 @@ int Universe::migration(){
 	if(space.empty()){
 		cerr << "ERROR: Missing demes" << endl;
 		return -1;
+	}
+	if(edges_per_deme == 0){
+		return 0;
 	}
 
 	int index_last_left_fix = index_last_left;
@@ -418,7 +461,7 @@ void Universe::globalBreeding(){
 			material += zeroD_immigrant_pool[i].getBprop();
 		}
 		cout << "Population size: " << pop_size << endl;
-		cout << "Amount of material: " << material << endl;
+// 		cout << "Amount of material: " << material << endl;
 		new_generation.clear();
 		return;
 	}
@@ -515,8 +558,7 @@ void Universe::restart(){
 		zeroD_immigrant_pool.clear();
 	} else {
 		clear();
-		basicUnitCreator('b', 'A');
-		basicUnitCreator('r', 'B');
+		worldSlave();
 		cerr << "World is reset." << endl;
 	}
 	return;
@@ -650,152 +692,6 @@ void Universe::viewDemesOneByOne(){
 		cin.get();
 	}
 }
-
-// int Universe::SaveTheUniverse(int order){
-// 	string fn = NAMEofOUTPUTfile;
-// 	if(fn.find('X') > 50){
-// 		cerr << "Warrning, the 'X' in the filename is missing." << endl; // udelat to tak, aby v pripade, ze tam neni X, aby to ulozilo jen nakonci.
-// 		cerr << "            current name is "<< NAMEofOUTPUTfile << endl;
-// 	}
-// 	fn[fn.find('X')] = char(order+'0');
-// 	
-// 	int index = index_last_left;
-// 	ofstream ofile;
-// 	vector<double> props;
-// 	
-// 	ofile.open(fn); // Opens file
-// 	if (ofile.fail()){
-// 		return 1;
-// 	}  
-// 	if(dimension == 0){
-// 		vector<int> blockSizes;
-// 		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
-// 			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
-// 			for(unsigned int i = 0;i < blockSizes.size(); i++){
-// 				ofile << blockSizes[i] / double(LOCI) << endl;
-// 			}
-// 			blockSizes.clear();
-// 		}
-// 	} else {
-// 		for(unsigned int i = 0; i < space.size(); i++){
-// 			props = space[index]->getBproportions();
-// 			ofile << index << '\t';
-// 			for(unsigned int ind = 0; ind < props.size(); ind++){
-// 				ofile << props[ind] << '\t';
-// 			}
-// 			ofile << endl;
-// 			if(index != index_last_right){
-// 				index = space[index]->getNeigbours()[1];
-// 			} else {
-// 				break;
-// 			}
-// 		}
-// 	}
-// 	
-// 	ofile.close();
-// 	cerr << "The output was sucesfully saved to: " << fn << endl;
-// 	return 0;
-// }
-/*
-int Universe::SaveTheUniverse(int order, string type){
-	string fn = NAMEofOUTPUTfile;
-	if(fn.find('X') > 50){
-		cerr << "Warrning, the 'X' in the filename is missing." << endl; // udelat to tak, aby v pripade, ze tam neni X, aby to ulozilo jen nakonci.
-		cerr << "            current name is "<< NAMEofOUTPUTfile << endl;
-	}
-	fn[fn.find('X')] = char(order+'0');
-	
-	int index = index_last_left;
-	ofstream ofile;
-	vector<double> props;
-	
-	ofile.open(fn); // Opens file
-	if (ofile.fail()){
-		return 1;
-	}  
-	
-	if(dimension == 0){
-		vector<int> blockSizes;
-		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
-			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
-			for(unsigned int i = 0;i < blockSizes.size(); i++){
-				ofile << blockSizes[i] / double(LOCI) << endl;
-			}
-			blockSizes.clear();
-		}
-		ofile.close();
-		return 0;
-	}
-	if(type == "complete"){
-		for(unsigned int i = 0; i < space.size(); i++){
-			props = space[index]->getBproportions();
-			ofile << index << '\t';
-			for(unsigned int ind = 0; ind < props.size(); ind++){
-				ofile << props[ind] << '\t';
-			}
-			ofile << endl;
-			if(index != index_last_right){
-				index = space[index]->getNeigbours()[1];
-			} else {
-				break;
-			}
-		}
-		cerr << "The output was sucesfully saved to: " << fn << endl;
-		ofile.close();
-		return 0;
-	}
-	if(type == "summary"){
-		int worlsize = space.size();
-		cerr << "World of size " << worlsize << endl;
-		cerr << "of dimension: " << dimension << endl;
-		cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
-		cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
-		if(type_of_l_r_edges != "extending"){
-			cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
-		}
-		cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
-		ofile << "                 EDGE" << endl;
-		ofile << setw(7) << right << "DEME " 
-		<< setw(7) << left << " LEFT" 
-		<< setw(6) << left << "RIGHT"; 
-		if(dimension == 2){
-			ofile << setw(6) << left << "UP" 
-			<< setw(6) << left << "DOWN";
-		}
-		ofile << setw(12) << left << "mean f"
-		<< setw(12) << left << "f(heter)"
-		<< setw(12) << left << "meanHI" 
-		<< setw(12) << left << "var(HI)";
-		if(LOCI * NUMBERofCHROMOSOMES > 1){
-			ofile << setw(12) << left << "var(p)" 
-			<< setw(12) << left << "LD";
-		}
-		
-		if(LOCI * NUMBERofCHROMOSOMES <= 16){
-			for(int ch = 0;ch < NUMBERofCHROMOSOMES;ch++){
-				for(int l = 0; l < LOCI;l++){
-					ofile << left << "Ch" << ch+1 << "l" << l+1 << setw(7) << ' ';
-				}
-			}
-		}
-		ofile << endl;
-		for (map<int, Deme*>::const_iterator i=space.begin(); i!=space.end(); ++i){
-	// 		if(i->first == 9){
-			i->second->summary();
-	// 			i->second->readAllGenotypes();
-	// 		}
-		}
-		
-		
-		cerr << "The output was sucesfully saved to: " << fn << endl;
-		ofile.close();
-		return 0;
-	}
-
-	cerr << "WARNING: The output was not saved" << endl;
-	cerr << "         unknow saving format" << endl;
-	return 1;
-}*/
 
 int Universe::SaveTheUniverse(string type){
 	int index = index_last_left;
