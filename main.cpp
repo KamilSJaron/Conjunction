@@ -9,8 +9,6 @@
 #include <vector>
 #include <iomanip>
 #include <time.h>
-#include <omp.h>
-
 
 #include "universe.h" // Class of individuals
 
