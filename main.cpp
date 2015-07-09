@@ -45,7 +45,7 @@ int main()
 	}
 	
 	srand (SEEDtoRAND); // setting a seed
-	setPoisSeed (SEEDtoRAND+1);
+// 	setPoisSeed (SEEDtoRAND+1);
 	
 	clock_t t_total1, t_total2;
 	int run = 0;

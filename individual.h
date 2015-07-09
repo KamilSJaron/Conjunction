@@ -4,23 +4,33 @@ static double RECOMBINATIONrate = 1;
 static double SELECTIONpressure = 0.5;
 static double BETA = 1;
 static vector<double> SELECTIONmap;
-default_random_engine generator(random_device{}());
 
 // fctions
 int getNumberOfChromosomes(){
 	return NUMBERofCHROMOSOMES;
 }
 
-
-void setPoisSeed(int SEED){
-	generator.seed(SEED);
+// uniform
+double uniform(){
+	int x = RAND_MAX;
+	int detailness = 100000;
+	while(x >= RAND_MAX - (RAND_MAX % detailness)){
+		x = rand();
+	}
+	return double(x % detailness) / (detailness-1);
 }
 
 int getChiasma(){
-	poisson_distribution<int> pois(RECOMBINATIONrate);
-	int roll = pois(generator);
-// 	cout << roll << " ";
-	return roll;
+	int result = 0;
+	double q = exp(-RECOMBINATIONrate);
+	double p = q;
+	double roll = uniform();
+	while(roll > q){
+		result++;
+		p = p * RECOMBINATIONrate / result;
+		q = q + p;
+	}
+	return result;
 }
 
 class Individual  

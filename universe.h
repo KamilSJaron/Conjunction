@@ -6,8 +6,16 @@ static string NAMEofOUTPUTfile = "out";
 static string TYPEofOUTPUTfile = "summary";
 
 int getNumberOfDescendants(double fitness){
-	poisson_distribution<int> pois(fitness);
-	return pois(generator);
+	int result = 0;
+	double q = exp(-fitness);
+	double p = q;
+	double roll = uniform();
+	while(roll > q){
+		result++;
+		p = p * fitness / result;
+		q = q + p;
+	}
+	return result;
 }
 
 class Universe  
@@ -326,7 +334,7 @@ int Universe::migration(){
 
 	int index_last_left_fix = index_last_left;
 	int index_last_right_fix = index_last_right;
-	map<int, vector<Individual>> ImmigranBuffer;
+	map<int, vector<Individual> > ImmigranBuffer;
 	
 	vector<int> neigbours;
 	int MigInd = demesize / (2 * edges_per_deme );
@@ -345,7 +353,7 @@ int Universe::migration(){
 		}
 	}
 
-	for(map<int, vector<Individual>>::iterator buff=ImmigranBuffer.begin(); buff!=ImmigranBuffer.end(); ++buff){
+	for(map<int, vector<Individual> >::iterator buff=ImmigranBuffer.begin(); buff!=ImmigranBuffer.end(); ++buff){
 		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
 			for(int k=0;k < MigInd; k++){
 				ImmigranBuffer[buff->first].push_back(Individual('A'));
