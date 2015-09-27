@@ -52,6 +52,7 @@ class Individual
 		bool Bcheck() const;
 		map<int, char>::iterator getChromosomeBegining(int set, int chrom);
 		int getNumberOfJunctions(int set, int chrom);
+		int getNumberOfJunctions();
 		
 /* ASCII PLOTTING METHODS */
 		void readGenotype();
@@ -288,6 +289,17 @@ map< int, char >::iterator Individual::getChromosomeBegining(int set, int chrom)
 int Individual::getNumberOfJunctions(int set, int chrom){
 	return genome[set][chrom].getNumberOfJunctions();
 }
+
+int Individual::getNumberOfJunctions(){
+	int sum = 0;
+	for(int set = 0; set < 2; set++){
+		for(int chrom = 0; chrom < NUMBERofCHROMOSOMES; chrom++){
+			sum += genome[set][chrom].getNumberOfJunctions();
+		}
+	}
+	return sum;
+}
+
 
 void Individual::readGenotype(){
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){

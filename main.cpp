@@ -16,6 +16,7 @@ static int SEEDtoRAND = 1; //seed only for rand() fction, values of the poisson 
 static int NUMBERofGENERATIONS = 500; // #define NUM_OF_IMIGRANTS 100 /* number of complete heterozygotious imigrants per generation (assuming, that Pois(1)*500 would be very close to 500, cause computationally it is not worth the computational time)*/
 static int NUMBERofSAVES = 1;
 static int DELAY = 0;
+static int SAMPLING = 0;
 
 using namespace std;
 
@@ -78,7 +79,7 @@ int main()
 	cerr << "Type of the file: " << TYPEofOUTPUTfile << endl;
 	cerr << "Number of files: " << NUMBERofSAVES << endl;
 	cerr << "*******************" << endl;
-// 	this moster construction handles simulation for 0 to 3 defined vector variables
+// 	this monster construction handles simulation for 0 to 3 defined vector variables
 	if(PARAnames.size() >= 1){
 		t_total1 = clock();
 		for(unsigned int j = 0;j < PARAvector1.size();j++){
@@ -206,6 +207,11 @@ void parameterSlave(string parameter, double value){
 	if(parameter == "DELAY"){
 		DELAY = (int(value));
 		cerr << "Setting parameter DELAY to: " << value << endl;
+		return;
+	}
+	if(parameter == "SAMPLING"){
+		SAMPLING = (int(value));
+		cerr << "Setting parameter SAMPLING to: " << value << endl;
 		return;
 	}
 	cerr << "Warning: unknown parameter: " << parameter << endl;

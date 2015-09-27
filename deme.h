@@ -40,7 +40,9 @@ class Deme
 		void getFitnessVector(vector<double>& fitnessVector);
 		void permutation(); // permutation function
 		void integrateMigrantVector(vector<Individual>& migBuffer);
-		vector<double> getBproportions() const; // not used
+// 		vector<double> getBproportions() const; // not used
+		void getBproportions(vector<double>& props) const; // not used
+		void getJunctionNumbers(vector<double>& juncs) const; // not used
 		double getMeanBproportion() const;
 		double getProportionOfHomozygotes(char population) const;
 		double getProportionOfHeterozygotes() const;
@@ -205,14 +207,25 @@ void Deme::integrateMigrantVector(vector<Individual>& migBuffer){
 	return;
 }
 
-vector<double> Deme::getBproportions() const{
-	vector<double> props;
+// vector<double>
+void Deme::getBproportions(vector<double>& props) const{
+	props.clear();
 	props.reserve(DEMEsize);
 	for(int i = 0;i < DEMEsize;i++){
 		props.push_back(deme[i].getBprop());
 	}
-	return props;
+	return;
 }
+
+void Deme::getJunctionNumbers(vector< double >& juncs) const{
+	juncs.clear();
+	juncs.reserve(DEMEsize);
+	for(int i = 0;i < DEMEsize;i++){
+		juncs.push_back(deme[i].getNumberOfJunctions());
+	}
+	return;
+}
+
 
 double Deme::getMeanBproportion() const{
 	double props = 0;

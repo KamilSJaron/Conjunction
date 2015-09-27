@@ -71,6 +71,12 @@ class Universe
 		int upper_border(int index, int max_index); // function returns index of upper neigbour for new demes
 		int lower_border(int index, int max_index);
 		int side_border(int reflexive, int extending);
+		int save_complete(ofstream& ofile);
+		int save_hybridIndices(ofstream& ofile);
+		int save_hybridIndicesJunctions(ofstream& ofile);
+		int save_summary(ofstream& ofile);
+		int save_line(ofstream& ofile, int index, vector<double>& vec);
+		
 // 		variables
 		map<int, Deme*> space; // container of Demes for non zero dimensional simation
 		int dimension, edges_per_deme; // defines migration and extension of hybrid zone
@@ -286,6 +292,111 @@ int Universe::side_border(int reflexive, int extending){
 	cerr << "Error: The type of left-right edges is not valid." << endl;
 	return -1;
 }
+
+// int save_complete();
+// 		int save_hybridInces();
+// 		int save_hybridIncesJunctions();
+// 		int save_summary();
+int Universe::save_complete(ofstream& ofile){
+	cerr << "WARNING: The output was not sucesfully saved to: " << NAMEofOUTPUTfile << endl;
+	cerr << "Saving of complete record is not implemented yet!!!" << NAMEofOUTPUTfile << endl;
+	ofile.close();
+	return 0;
+}
+
+
+int Universe::save_hybridIndices(ofstream& ofile){
+	int index = index_last_left;
+	vector<double> props;
+	for(unsigned int i = 0; i < space.size(); i++){
+		space[index]->getBproportions(props);
+		save_line(ofile,index,props);
+		if(index != index_last_right){
+			index = space[index]->getNeigbours()[1];
+		} else {
+			break;
+		}
+	}
+	cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
+	ofile.close();
+	return 0;
+}
+
+int Universe::save_hybridIndicesJunctions(ofstream& ofile){
+	int index = index_last_left;
+	vector<double> props;
+	for(unsigned int i = 0; i < space.size(); i++){
+		space[index]->getBproportions(props);
+		save_line(ofile,index,props);
+// 		getSizesOfBBlocks neni dobra fce, musim napsat novou... Tohle je na test konstruktu.
+		space[index]->getJunctionNumbers(props);
+		save_line(ofile,index,props);
+		if(index != index_last_right){
+			index = space[index]->getNeigbours()[1];
+		} else {
+			break;
+		}
+	}
+	cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
+	ofile.close();
+	return 0;
+}
+
+int Universe::save_line(ofstream& ofile, int index, vector< double >& vec){
+	ofile << index << '\t';
+	for(unsigned int ind = 0; ind < vec.size(); ind++){
+		ofile << vec[ind] << '\t';
+	}
+	ofile << endl;
+	return 0;
+}
+
+
+
+int Universe::save_summary(ofstream& ofile){
+	int worlsize = space.size();
+	cerr << "World of size " << worlsize << endl;
+	cerr << "of dimension: " << dimension << endl;
+	cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
+	cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
+	if(type_of_l_r_edges != "extending"){
+		cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
+	}
+	cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
+	ofile << "                 EDGE" << endl;
+	ofile << setw(7) << right << "DEME " 
+	<< setw(7) << left << " LEFT" 
+	<< setw(6) << left << "RIGHT"; 
+	if(dimension == 2){
+		ofile << setw(6) << left << "UP" 
+		<< setw(6) << left << "DOWN";
+	}
+	ofile << setw(12) << left << "mean f"
+	<< setw(12) << left << "f(heter)"
+	<< setw(12) << left << "meanHI" 
+	<< setw(12) << left << "var(HI)";
+	if(LOCI * NUMBERofCHROMOSOMES > 1){
+		ofile << setw(12) << left << "var(p)" 
+		<< setw(12) << left << "LD";
+	}
+
+	if(LOCI * NUMBERofCHROMOSOMES <= 16){
+		for(int ch = 0;ch < NUMBERofCHROMOSOMES;ch++){
+			for(int l = 0; l < LOCI;l++){
+				ofile << left << "Ch" << ch+1 << "l" << l+1 << setw(7) << ' ';
+			}
+		}
+	}
+	ofile << endl;
+	for (map<int, Deme*>::const_iterator i=space.begin(); i!=space.end(); ++i){
+		i->second->summary(ofile);
+	}
+
+	cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
+	ofile.close();
+	return 0;
+}
+
 
 void Universe::worldSlave(){
 	if(number_of_demes_l_r == 1){
@@ -702,7 +813,6 @@ void Universe::viewDemesOneByOne(){
 }
 
 int Universe::SaveTheUniverse(string type){
-	int index = index_last_left;
 	ofstream ofile;
 	vector<double> props;
 	
@@ -725,65 +835,16 @@ int Universe::SaveTheUniverse(string type){
 		return 0;
 	} else {
 		if(type == "complete"){
-			for(unsigned int i = 0; i < space.size(); i++){
-				props = space[index]->getBproportions();
-				ofile << index << '\t';
-				for(unsigned int ind = 0; ind < props.size(); ind++){
-					ofile << props[ind] << '\t';
-				}
-				ofile << endl;
-				if(index != index_last_right){
-					index = space[index]->getNeigbours()[1];
-				} else {
-					break;
-				}
-			}
-			cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
-			ofile.close();
-			return 0;
+			return save_complete(ofile);
 		}
 		if(type == "summary"){
-			int worlsize = space.size();
-			cerr << "World of size " << worlsize << endl;
-			cerr << "of dimension: " << dimension << endl;
-			cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
-			cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
-			if(type_of_l_r_edges != "extending"){
-				cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
-			}
-			cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
-			ofile << "                 EDGE" << endl;
-			ofile << setw(7) << right << "DEME " 
-			<< setw(7) << left << " LEFT" 
-			<< setw(6) << left << "RIGHT"; 
-			if(dimension == 2){
-				ofile << setw(6) << left << "UP" 
-				<< setw(6) << left << "DOWN";
-			}
-			ofile << setw(12) << left << "mean f"
-			<< setw(12) << left << "f(heter)"
-			<< setw(12) << left << "meanHI" 
-			<< setw(12) << left << "var(HI)";
-			if(LOCI * NUMBERofCHROMOSOMES > 1){
-				ofile << setw(12) << left << "var(p)" 
-				<< setw(12) << left << "LD";
-			}
-			
-			if(LOCI * NUMBERofCHROMOSOMES <= 16){
-				for(int ch = 0;ch < NUMBERofCHROMOSOMES;ch++){
-					for(int l = 0; l < LOCI;l++){
-						ofile << left << "Ch" << ch+1 << "l" << l+1 << setw(7) << ' ';
-					}
-				}
-			}
-			ofile << endl;
-			for (map<int, Deme*>::const_iterator i=space.begin(); i!=space.end(); ++i){
-				i->second->summary(ofile);
-			}
-			
-			cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
-			ofile.close();
-			return 0;
+			return save_summary(ofile);
+		}
+		if(type == "hybridIndices"){
+			return save_hybridIndices(ofile);
+		}
+		if(type == "hybridIndicesJunctions"){
+			return save_hybridIndicesJunctions(ofile);
 		}
 	}
 
