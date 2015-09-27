@@ -309,8 +309,10 @@ int Universe::save_hybridIndices(ofstream& ofile){
 	int index = index_last_left;
 	vector<double> props;
 	for(unsigned int i = 0; i < space.size(); i++){
-		space[index]->getBproportions(props);
-		save_line(ofile,index,props);
+		for(int y = 0; y < number_of_demes_u_d; y++){
+			space[index+y]->getBproportions(props);
+			save_line(ofile,index+y,props);
+		}
 		if(index != index_last_right){
 			index = space[index]->getNeigbours()[1];
 		} else {
@@ -326,11 +328,12 @@ int Universe::save_hybridIndicesJunctions(ofstream& ofile){
 	int index = index_last_left;
 	vector<double> props;
 	for(unsigned int i = 0; i < space.size(); i++){
-		space[index]->getBproportions(props);
-		save_line(ofile,index,props);
-// 		getSizesOfBBlocks neni dobra fce, musim napsat novou... Tohle je na test konstruktu.
-		space[index]->getJunctionNumbers(props);
-		save_line(ofile,index,props);
+		for(int y = 0; y < number_of_demes_u_d; y++){
+			space[index+y]->getBproportions(props);
+			save_line(ofile,index+y,props);
+			space[index+y]->getJunctionNumbers(props);
+			save_line(ofile,index+y,props);
+		}
 		if(index != index_last_right){
 			index = space[index]->getNeigbours()[1];
 		} else {
