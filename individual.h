@@ -48,6 +48,7 @@ class Individual
 		double getFitness();
 		int getBcount() const;
 		double getBprop() const;
+		double getHetProp();
 		bool Acheck() const;
 		bool Bcheck() const;
 		map<int, char>::iterator getChromosomeBegining(int set, int chrom);
@@ -66,6 +67,7 @@ class Individual
 	
 	private:
 		vector<Chromosome> genome[2];
+		int getOneChromeHetero(bool write, map<int, char>::const_iterator& pos, int chromosome, int last_pos);
 };
 
 Individual::Individual(){
@@ -252,6 +254,78 @@ double Individual::getBprop() const{
 	return prop;
 }
 
+double Individual::getHetProp(){
+	bool write;
+	long numberOFhetLOCI = 0;
+	int last_pos = 0;
+	map<int, char>::const_iterator pos1, pos2;
+	
+	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
+		pos1=genome[0][i].begin(); pos2=genome[1][i].begin();
+		last_pos = 0;
+		write = !(pos1->second == pos2->second);
+		pos1++; pos2++;
+		if((pos1 == genome[0][i].end()) & (pos2 == genome[1][i].end())){
+			numberOFhetLOCI += LOCI * write;
+			continue;
+		}
+		
+		if(pos1 == genome[0][i].end()){
+			numberOFhetLOCI += getOneChromeHetero(write, pos2, i, 0);
+			continue;
+		}
+		
+		if(pos2 == genome[1][i].end()){
+			numberOFhetLOCI += getOneChromeHetero(write, pos1, i, 0);
+			continue;
+		}
+		
+		while(pos1 != genome[0][i].end() and pos2 != genome[1][i].end()){
+			if(pos1->first < pos2->first){
+				last_pos = pos1->first;
+				pos1++;
+				write = !write;
+				continue;
+			}
+			
+			if(pos1->first > pos2->first){
+				numberOFhetLOCI += (pos2->first - last_pos) * write;
+				last_pos = pos2->first;
+				pos1++;
+				write = !write;
+				continue;
+			}
+			
+			if(pos1->first == pos2->first){
+				numberOFhetLOCI += (pos1->first - last_pos) * write;
+				last_pos = pos2->first;
+				pos1++; pos2++;
+				continue;
+			}
+			
+			cerr << "WARNING: Heterozygotisity counting problem (junc level)!";
+		}
+		
+		if((pos1 == genome[0][i].end()) & (pos2 == genome[1][i].end())){
+			numberOFhetLOCI += (LOCI - last_pos) * write;
+			continue;
+		}
+		
+		if(pos1 == genome[0][i].end()){
+			numberOFhetLOCI += getOneChromeHetero(write, pos2, i, last_pos);
+			continue;
+		}
+		
+		if(pos2 == genome[1][i].end()){
+			numberOFhetLOCI += getOneChromeHetero(write, pos1, i, last_pos);
+			continue;
+		}
+		cerr << "WARNING: Heterozygotisity counting problem (ch level)!";
+	}
+	return ((double)numberOFhetLOCI / (LOCI * NUMBERofCHROMOSOMES));
+}
+
+
 int Individual::getBcount() const{
 	int count = 0;
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){
@@ -418,3 +492,16 @@ void Imigrant::makeGamete(Imigrant& descendant){
 	descendant = Imigrant(gamete);
 }
 
+int Individual::getOneChromeHetero(bool write, map<int, char>::const_iterator& pos, int chromosome, int last_pos){
+	int numberOFhetLOCI = 0;
+	
+	while((pos != genome[0][chromosome].end()) and (pos != genome[1][chromosome].end())){
+		numberOFhetLOCI += (pos->first - last_pos) * write;
+		last_pos = pos->first;
+		pos++;
+		write = !write;
+	}
+	numberOFhetLOCI += (LOCI - last_pos) * write;
+	
+	return numberOFhetLOCI;
+}

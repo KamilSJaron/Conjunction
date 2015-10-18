@@ -293,13 +293,26 @@ int Universe::side_border(int reflexive, int extending){
 	return -1;
 }
 
-// int save_complete();
-// 		int save_hybridInces();
-// 		int save_hybridIncesJunctions();
-// 		int save_summary();
 int Universe::save_complete(ofstream& ofile){
-	cerr << "WARNING: The output was not sucesfully saved to: " << NAMEofOUTPUTfile << endl;
-	cerr << "Saving of complete record is not implemented yet!!!" << NAMEofOUTPUTfile << endl;
+	cerr << "WARNING: experimental option: " << NAMEofOUTPUTfile << endl;
+	int index = index_last_left;
+	vector<double> props;
+	for(unsigned int i = 0; i < space.size(); i++){
+		for(int y = 0; y < number_of_demes_u_d; y++){
+			space[index+y]->getBproportions(props);
+			save_line(ofile,index+y,props);
+			space[index+y]->getJunctionNumbers(props);
+			save_line(ofile,index+y,props);
+			space[index+y]->getHeterozygoty(props);
+			save_line(ofile,index+y,props);
+		}
+		if(index != index_last_right){
+			index = space[index]->getNeigbours()[1];
+		} else {
+			break;
+		}
+	}
+	cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
 	ofile.close();
 	return 0;
 }

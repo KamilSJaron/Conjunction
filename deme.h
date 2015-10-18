@@ -41,8 +41,9 @@ class Deme
 		void permutation(); // permutation function
 		void integrateMigrantVector(vector<Individual>& migBuffer);
 // 		vector<double> getBproportions() const; // not used
-		void getBproportions(vector<double>& props) const; // not used
-		void getJunctionNumbers(vector<double>& juncs) const; // not used
+		void getBproportions(vector<double>& props) const;
+		void getJunctionNumbers(vector<double>& juncs) const;
+		void getHeterozygoty(vector<double>& heterozs);
 		double getMeanBproportion() const;
 		double getProportionOfHomozygotes(char population) const;
 		double getProportionOfHeterozygotes() const;
@@ -226,6 +227,14 @@ void Deme::getJunctionNumbers(vector< double >& juncs) const{
 	return;
 }
 
+void Deme::getHeterozygoty(vector< double >& heterozs){
+	heterozs.clear();
+	heterozs.reserve(DEMEsize);
+	for(int i = 0;i < DEMEsize;i++){
+		heterozs.push_back(deme[i].getHetProp());
+	}
+	return;
+}
 
 double Deme::getMeanBproportion() const{
 	double props = 0;
