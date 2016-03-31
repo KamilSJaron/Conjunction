@@ -107,7 +107,7 @@ following code can be uncommented and used for manual testing */
 int testIndividual(){
 	Individual Lili;
 	Individual Hugo('C');
-    Individual Igor('B', 3, 50, 2.3, 0.3, 4);
+    Individual Igor('B', 3, 50, 2.3);
 // 		Individual(	vector<Chromosome>& gamete1, 
 // 					vector<Chromosome>& gamete2, 
 // 					double input_lamda,

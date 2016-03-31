@@ -30,8 +30,6 @@ double uniform(){
 Individual::Individual(){
 	number_of_chromosomes = 1;
 	lambda = 0;
-	selection_pressure = 0;
-	beta = 0;
 
 	genome[0].reserve(number_of_chromosomes);
 	genome[1].reserve(number_of_chromosomes);
@@ -44,8 +42,6 @@ Individual::Individual(){
 Individual::Individual(char origin){
 	number_of_chromosomes = 1;
 	lambda = 0;
-	selection_pressure = 0;
-	beta = 0;
 
 	genome[0].reserve(number_of_chromosomes);
 	genome[1].reserve(number_of_chromosomes);
@@ -63,11 +59,9 @@ Individual::Individual(char origin){
 }
 
 Individual::Individual(	char origin, int input_ch, int input_loci, 
-						double input_lamda, double input_sp, double input_beta){
+						double input_lamda){
 	number_of_chromosomes = input_ch;
 	lambda = input_lamda;
-	selection_pressure = input_sp;
-	beta = input_beta;
 
 	genome[0].reserve(number_of_chromosomes);
 	genome[1].reserve(number_of_chromosomes);
@@ -86,13 +80,9 @@ Individual::Individual(	char origin, int input_ch, int input_loci,
 
 Individual::Individual(	vector<Chromosome>& gamete1, 
 						vector<Chromosome>& gamete2, 
-						double input_lamda,
-						double input_sp,
-						double input_beta){
+						double input_lamda){
 	number_of_chromosomes = gamete1.size();
 	lambda = input_lamda;
-	selection_pressure = input_sp;
-	beta = input_beta;
 	
 	genome[0].reserve(number_of_chromosomes);
 	genome[1].reserve(number_of_chromosomes);
@@ -249,19 +239,6 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		}
 		gamete.push_back(recombinant_ch);
 	}
-}
-
-double Individual::getFitness(){
-	double Bcount = 0;
-	double fitness = 0;
-	int loci = genome[0][0].getResolution();
-	for(int i=0;i<number_of_chromosomes;i++){
-		Bcount += genome[0][i].countB();
-		Bcount += genome[1][i].countB();
-	}
-	Bcount = Bcount / (loci*2*number_of_chromosomes); /* relative B count*/
-	fitness = 1 - (selection_pressure * pow( 4 * Bcount * (1 - Bcount),beta));
-	return fitness;
 }
 
 double Individual::getBprop() const{
@@ -423,14 +400,6 @@ void Individual::setNumberOfChromosomes(int ch){
 
 void Individual::setLambda(double Rr){
 	lambda = Rr;
-}
-
-void Individual::setSelectionPressure(double Sp){
-	selection_pressure = Sp;
-}
-
-void Individual::setBeta(double in_beta){
-	beta = in_beta;
 }
 
 /* PRIVATE */

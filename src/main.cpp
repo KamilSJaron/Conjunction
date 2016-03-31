@@ -33,14 +33,14 @@ int main(int argc, char **argv)
     	}
     	if(strcmp( argv[1], "--version") == 0){
     		cerr << "Forsim v1.2.development" << endl;
-    		cerr << "... on the way to be nice program" << endl;
+    		cerr << "... on the way to be a nice program" << endl;
     	}
 
     }
     
     Chromosome t1('A', 6);
-    Individual George;
-    Individual Luis('B', 3, 100, 1, 0.3, 1);
+    Individual George('C');
+    Individual Luis('B', 3, 100, 1);
 
     return 0;
 }
