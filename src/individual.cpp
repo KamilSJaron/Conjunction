@@ -3,8 +3,8 @@
 #include <vector>
 #include <cmath>
 
-#include "chromosome.h"
-#include "individual.h"
+#include "../include/chromosome.h"
+#include "../include/individual.h"
 using namespace std;
 
 // I was lazy to make another file for this structure shared by Individual and Chromosome

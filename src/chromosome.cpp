@@ -2,7 +2,7 @@
 #include <map>
 #include <vector>
 
-#include "chromosome.h"
+#include "../include/chromosome.h"
 using namespace std;
 
 struct arrangeClass {
