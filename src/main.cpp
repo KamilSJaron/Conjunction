@@ -2,8 +2,8 @@
 #include <map>
 #include <vector>
 
-#include "../include/chromosome.h"
-#include "../include/individual.h"
+#include "../include/Chromosome.h"
+#include "../include/Individual.h"
 #include "../test/forsim_test.h"
 using namespace std;
 

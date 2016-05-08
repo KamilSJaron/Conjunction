@@ -7,8 +7,8 @@
 using namespace std;
 
 #include "forsim_test.h"
-#include "../include/chromosome.h"
-#include "../include/individual.h"
+#include "../include/Chromosome.h"
+#include "../include/Individual.h"
 
 int testChromosome(){
 	Chromosome ch1('A',50);

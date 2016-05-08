@@ -3,14 +3,11 @@
 #include <vector>
 #include <cmath>
 
-#include "../include/chromosome.h"
-#include "../include/individual.h"
-using namespace std;
+#include "../include/Arrange.h"
+#include "../include/Chromosome.h"
+#include "../include/Individual.h"
 
-// I was lazy to make another file for this structure shared by Individual and Chromosome
-struct arrangeClass {
-  bool operator() (int i,int j) { return (i<j);}
-} arrangeObjectIndividual; 
+using namespace std;
 
 int tossAcoin (){
   return rand() % 2;
@@ -146,12 +143,12 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		
 		chiasmas.clear();
 		recombinant_ch.clear();
-// roll the chiasmas positions
+/* roll the chiasmas positions */
 		for(int index=0;index<numberOfChaisma;index++){
 			rec_pos = genome[0][i].recombPosition();
 			chiasmas.push_back(rec_pos);
 		}
-		sort(chiasmas.begin(), chiasmas.end(), arrangeObjectIndividual);
+		sort(chiasmas.begin(), chiasmas.end(), arrangeObject);
 		
 		for(int index=0;index<numberOfChaisma;index++){
 			if(last_roll == chiasmas[index]){

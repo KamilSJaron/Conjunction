@@ -2,12 +2,13 @@
 #include <map>
 #include <vector>
 
-#include "../include/chromosome.h"
+#include "../include/Chromosome.h"
+//#include "../include/Arrange.h"
 using namespace std;
 
 struct arrangeClass {
   bool operator() (int i,int j) { return (i<j);}
-} arrangeObject;
+} arrangeObjectCH;
 
 /* INITIATION */
 Chromosome::Chromosome(char starting_char, int size){
@@ -150,7 +151,7 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 		recombination.push_back(recombPosition());
 	}
 	
-	sort(recombination.begin(), recombination.end(), arrangeObject);
+	sort(recombination.begin(), recombination.end(), arrangeObjectCH);
 	
 	/*for(index=0;index<numberOfChaisma;index++){
 		cout << recombination[index] << ' ';

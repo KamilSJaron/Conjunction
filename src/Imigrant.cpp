@@ -3,8 +3,10 @@
 #include <vector>
 #include <cmath>
 
-#include "../include/chromosome.h"
-#include "../include/imigrant.h"
+#include "../include/Chromosome.h"
+#include "../include/Imigrant.h"
+
+using namespace std;
 
 //imigrants have no lambda right now
 #define LAMBDA 1

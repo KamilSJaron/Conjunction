@@ -1,8 +1,6 @@
 #ifndef INDIVIDUAL_H
 #define INDIVIDUAL_H
 
-using namespace std;
-
 class Individual  
 {
 	public:
@@ -10,21 +8,21 @@ class Individual
 		Individual();
 		Individual(char origin); /* init Individual as 'A', 'B' or pure "AB" heterozygot*/
 		Individual(char origin, int input_ch, int input_loci, double input_lamda);
-		Individual(	vector<Chromosome>& gamete1, 
-					vector<Chromosome>& gamete2, 
+		Individual(	std::vector<Chromosome>& gamete1,
+					std::vector<Chromosome>& gamete2,
 					double input_lamda); /*init Individual by gametes on imput */
 		~Individual(); /* destructor */
 		
 /* COMPUTIONG METHODS */
-		void replace_chromozome(int set, int position,map <int, char> input_chrom, int size);
+		void replace_chromozome(int set, int position,std::map <int, char> input_chrom, int size);
 		int getChiasma();
-		void makeGamete(vector<Chromosome>& gamete);
+		void makeGamete(std::vector<Chromosome>& gamete);
 		int getBcount() const;
 		double getBprop() const;
 		double getHetProp();
 		bool Acheck() const;
 		bool Bcheck() const;
-		map<int, char>::iterator getChromosomeBegining(int set, int chrom);
+		std::map<int, char>::iterator getChromosomeBegining(int set, int chrom);
 		int getNumberOfJunctions(int set, int chrom);
 		int getNumberOfJunctions();
 		
@@ -38,12 +36,12 @@ class Individual
 			
 	private:
 	/*data*/
-		vector<Chromosome> genome[2];
+		std::vector<Chromosome> genome[2];
 		int number_of_chromosomes;
 		double lambda;
 		
 	/*inner functions*/
-		int getOneChromeHetero(bool write, map<int, char>::const_iterator& pos, int chromosome, int last_pos);
+		int getOneChromeHetero(bool write, std::map<int, char>::const_iterator& pos, int chromosome, int last_pos);
 };
 
 #endif
