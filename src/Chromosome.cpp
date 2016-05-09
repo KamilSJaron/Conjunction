@@ -3,12 +3,7 @@
 #include <vector>
 
 #include "../include/Chromosome.h"
-//#include "../include/Arrange.h"
 using namespace std;
-
-struct arrangeClass {
-  bool operator() (int i,int j) { return (i<j);}
-} arrangeObjectCH;
 
 /* INITIATION */
 Chromosome::Chromosome(char starting_char, int size){
@@ -151,7 +146,7 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 		recombination.push_back(recombPosition());
 	}
 	
-	sort(recombination.begin(), recombination.end(), arrangeObjectCH);
+	sort(recombination.begin(), recombination.end());
 	
 	/*for(index=0;index<numberOfChaisma;index++){
 		cout << recombination[index] << ' ';

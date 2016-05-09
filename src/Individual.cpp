@@ -3,7 +3,6 @@
 #include <vector>
 #include <cmath>
 
-#include "../include/Arrange.h"
 #include "../include/Chromosome.h"
 #include "../include/Individual.h"
 
@@ -148,7 +147,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 			rec_pos = genome[0][i].recombPosition();
 			chiasmas.push_back(rec_pos);
 		}
-		sort(chiasmas.begin(), chiasmas.end(), arrangeObject);
+		sort(chiasmas.begin(), chiasmas.end());
 		
 		for(int index=0;index<numberOfChaisma;index++){
 			if(last_roll == chiasmas[index]){
