@@ -74,6 +74,7 @@ class Universe
 		int save_complete(ofstream& ofile);
 		int save_hybridIndices(ofstream& ofile);
 		int save_hybridIndicesJunctions(ofstream& ofile);
+		int save_raspberrypi(ofstream& ofile);
 		int save_summary(ofstream& ofile);
 		int save_line(ofstream& ofile, int index, vector<double>& vec);
 		
@@ -354,6 +355,43 @@ int Universe::save_hybridIndicesJunctions(ofstream& ofile){
 		}
 	}
 	cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
+	ofile.close();
+	return 0;
+}
+
+int Universe::save_raspberrypi(ofstream& ofile){
+	
+	if(space.size() != 64){
+		cerr << "Wrong number of demes (" << space.size() << "), define 64 demes for raspberrypi file output \n";
+		return 1;
+	}
+	
+	usleep(900);
+	cout << 'c' << endl;
+	usleep(100);
+	
+	int index = index_last_left;
+	double hybridIndex = 0, LD = 0;
+	int R = 0, G = 0, B = 0;
+	cout << "m ";
+	for(unsigned int i = 0; i < space.size(); i++){
+		for(int y = 0; y < number_of_demes_u_d; y++){
+			hybridIndex = space[index+y]->getMeanBproportion();
+			LD = space[index+y]->getLD();
+			R = (int) (hybridIndex * 255 * 0.5);
+			G = (int) (abs(LD) * 4 * 255);
+// 			cerr << LD << ' ';
+			B = (int) ((1 - hybridIndex) * 255 * 0.5);
+			cout << R << ' ' << G << ' ' << B << ' ';
+//			R G B 0 255 FF0, 00F
+		}
+		if(index != index_last_right){
+			index = space[index]->getNeigbours()[1];
+		} else {
+			break;
+		}
+	}
+	cout << endl;
 	ofile.close();
 	return 0;
 }
@@ -861,6 +899,9 @@ int Universe::SaveTheUniverse(string type){
 		}
 		if(type == "hybridIndicesJunctions"){
 			return save_hybridIndicesJunctions(ofile);
+		}
+		if(type == "raspberrypi"){
+			return save_raspberrypi(ofile);
 		}
 	}
 

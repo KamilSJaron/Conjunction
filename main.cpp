@@ -9,6 +9,7 @@
 #include <vector>
 #include <iomanip>
 #include <time.h>
+#include <unistd.h>
 
 #include "universe.h" // Class of individuals
 
@@ -660,6 +661,7 @@ int worldSlave(string& line, Universe* World){
 		}
 	}
 	
+	cerr << "You need to add space after last number, I am sorry, this is bug to be fixed!" << endl;
 	return -1;
 }
 
@@ -680,7 +682,6 @@ void simulate(Universe* World, int save_pos){
 	clock_t t_sim1, t_sim2;
 	int order = 0, check = 0, modulo = ceil((double)(NUMBERofGENERATIONS-DELAY-1) / NUMBERofSAVES);
 	World->restart();
-	
 	World->listOfDemes();
 	t_sim1 = clock();
 	for(int i=0; i < NUMBERofGENERATIONS;i++){
@@ -723,6 +724,6 @@ void simulate(Universe* World, int save_pos){
 	}
 	cerr << "FINISHING SIMULATION IN " << ((float)t_sim2 - (float)t_sim1) / CLOCKS_PER_SEC << endl;
 	cerr << "Ending world: " << endl;
-	World->listOfDemes();
-	World->summary();
+//	World->listOfDemes();
+//	World->summary();
 }
