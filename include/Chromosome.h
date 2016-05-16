@@ -6,7 +6,7 @@ class Chromosome
      public :
 /* INITIATION */
      	Chromosome(char starting_char, int size);
-     	Chromosome(){}; /* blank chromosome is used for recombination*/
+     	Chromosome(); /* blank chromosome is used for recombination*/
 		Chromosome(std::map <int, char> input_chrom, int size);
 		~Chromosome();
      	

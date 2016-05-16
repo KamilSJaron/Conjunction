@@ -3,7 +3,7 @@ CXXFLAGS = -std=c++11 -O3 -Wall
 
 
 PRG = forsim
-OBJ = ./src/main.o ./src/Chromosome.o ./src/Individual.o ./src/Imigrant.o ./src/SelectionModel.o  ./src/Deme.o ./test/forsim_test.o
+OBJ = ./src/main.o ./src/Chromosome.o ./src/Individual.o ./src/Imigrant.o ./src/Deme.o ./src/SelectionModel.o
 
 all: $(PRG)
 
@@ -12,5 +12,10 @@ $(PRG): $(OBJ)
 .cpp.o:
 	$(CXX) -o $@ -c $< $(CXXFLAGS)
 
+test: forsim_test
+
+forsim_test: forsim_test
+	$(CXX) -o forsim_test
+
 clean:
-	rm -f $(PRG) $(OBJ)
+	rm -f $(PRG) $(OBJ) $(TEST)

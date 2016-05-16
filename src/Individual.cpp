@@ -398,6 +398,18 @@ void Individual::setLambda(double Rr){
 	lambda = Rr;
 }
 
+int Individual::getNumberOfChromosomes() const{
+	return number_of_chromosomes;
+}
+
+double Individual::getLambda() const{
+	return lambda;
+}
+
+int Individual::getNumberOfLoci(int ch) const{
+	return genome[0][ch].getResolution();
+}
+
 /* PRIVATE */
 
 int Individual::getOneChromeHetero(bool write, map<int, char>::const_iterator& pos, int chromosome, int last_pos){

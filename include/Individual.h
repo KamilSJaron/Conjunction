@@ -33,6 +33,9 @@ class Individual
 /* COMUNICATION */
 		void setNumberOfChromosomes(int ch);
 		void setLambda(double Rr);
+		int getNumberOfChromosomes() const;
+		double getLambda() const;
+		int getNumberOfLoci(int ch) const;
 			
 	private:
 	/*data*/

@@ -6,6 +6,11 @@
 using namespace std;
 
 /* INITIATION */
+
+Chromosome::Chromosome(){
+	loci = 0;
+}
+
 Chromosome::Chromosome(char starting_char, int size){
 	chromosome[0] = starting_char;
 	loci = size;
