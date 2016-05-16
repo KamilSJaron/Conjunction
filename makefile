@@ -3,19 +3,22 @@ CXXFLAGS = -std=c++11 -O3 -Wall
 
 
 PRG = forsim
-OBJ = ./src/main.o ./src/Chromosome.o ./src/Individual.o ./src/Imigrant.o ./src/Deme.o ./src/SelectionModel.o
+TEST = forsim_test
+CLASSES = ./src/Chromosome.o ./src/Individual.o ./src/Imigrant.o ./src/Deme.o ./src/SelectionModel.o
+OBJ = ./src/main.o $(CLASSES)
 
 all: $(PRG)
 
 $(PRG): $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $^
+
 .cpp.o:
 	$(CXX) -o $@ -c $< $(CXXFLAGS)
 
-test: forsim_test
+test: $(TEST)
 
-forsim_test: forsim_test
-	$(CXX) -o forsim_test
+$(TEST): $(CLASSES)
+	$(CXX) -Wall -pedantic -o $(TEST) ./test/forsim_test.cpp $(CLASSES)
 
 clean:
 	rm -f $(PRG) $(OBJ) $(TEST)
