@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -O3 -Wall
+CXXFLAGS = -std=c++11 -O3 -Wall -pedantic
 
 
 PRG = forsim
@@ -18,7 +18,7 @@ $(PRG): $(OBJ)
 test: $(TEST)
 
 $(TEST): $(CLASSES)
-	$(CXX) -Wall -pedantic -o $(TEST) ./test/forsim_test.cpp $(CLASSES)
+	$(CXX) $(CXXFLAGS) -o $(TEST) ./test/forsim_test.cpp $(CLASSES)
 
 clean:
 	rm -f $(PRG) $(OBJ) $(TEST)

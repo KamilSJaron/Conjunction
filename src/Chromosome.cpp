@@ -32,47 +32,6 @@ void Chromosome::showChromosome() const{
 	}
 }
 
-void Chromosome::viewChromosome() const{
-	vector<int> vals;
-	vector<char> seq;
-	unsigned int index = 0;
-	int letter = 0;
-	if(loci < 101){
-		for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
-			vals.push_back(pos->first);
-			seq.push_back(pos->second);
-		}
-		if(vals.empty()){
-			cerr << "ERROR: non initiated chromosome is impossible to plot" << endl;
-			return;
-		}
-		for(letter = 0; letter < loci; letter++){
-			if(vals[index] == letter && index < vals.size()){
-				index++;
-			}
-			cout << seq[index-1];
-		}	
-		cout << endl;
-	} else {
-		for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
-			vals.push_back(pos->first / ((double)loci / 100));
-			seq.push_back(pos->second);
-		}
-		if(vals.empty()){
-			cerr << "ERROR: non initiated chromosome is impossible to plot" << endl;
-			return;
-		}
-		for(letter = 0; letter < 100; letter++){
-			if(vals[index] == letter && index < vals.size()){
-				index++;
-			}
-			cout << seq[index-1];
-		}
-		cout << endl;
-	}
-}
-
-
 /* COMUNICATION METHODS */ 
 bool Chromosome::Acheck() const{
 	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){

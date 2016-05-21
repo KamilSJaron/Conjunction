@@ -12,7 +12,6 @@ class Chromosome
      	
 /* PLOTTING METHODS */
 		void showChromosome() const; /*writes all junctions*/
-		void viewChromosome() const; /*ASCII visualisation*/ 
 		    	
 /* COMUNICATION METHODS */
 		bool Acheck() const; /*returns 1 if there are only A, 0 in other case*/

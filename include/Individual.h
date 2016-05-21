@@ -28,7 +28,6 @@ class Individual
 		
 /* ASCII PLOTTING METHODS */
 		void readGenotype();
-		void viewGenotype();
 		
 /* COMUNICATION */
 		void setNumberOfChromosomes(int ch);

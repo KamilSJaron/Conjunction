@@ -499,14 +499,6 @@ void Deme::summary(ofstream& ofile){
 	ofile << endl;
 }
 
-
-void Deme::viewDeme(){
-	for(int i=0;i<deme_size;i++){
-		cout << "Individual: " << i+1 << endl;
-		deme[i].viewGenotype();
-	}
-}
-
 void Deme::readAllGenotypes(){
 	for(int i=0;i<deme_size;i++){
 		cerr << "Individual: " << i << " B proportion: " << deme[i].getBprop() << endl;
@@ -528,14 +520,6 @@ void Deme::readGenotypeFrequencies(){
 	for(int i=0;i < number_chromosomes*number_loci*2 + 1;i++){
 		cout << ((round((freqs[i] / deme_size) * 10000)) / 10000) << ' ';
 	}
-}
-
-
-void Deme::plotHeadOfDeme(){
-	cout << "Individual: 0" << endl;
-	deme[0].viewGenotype();
-	cout << "Individual: 1" << endl;
-	deme[1].viewGenotype();
 }
 
  // // // // //

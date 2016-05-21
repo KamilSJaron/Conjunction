@@ -142,6 +142,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		
 		chiasmas.clear();
 		recombinant_ch.clear();
+		recombinant_ch.setResolution(loci);
 /* roll the chiasmas positions */
 		for(int index=0;index<numberOfChaisma;index++){
 			rec_pos = genome[0][i].recombPosition();
@@ -237,6 +238,15 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 	}
 }
 
+int Individual::getBcount() const{
+	int count = 0;
+	for(int i=0;i<number_of_chromosomes;i++){
+		count += genome[0][i].countB();
+		count += genome[1][i].countB();
+	}
+	return count;
+}
+
 double Individual::getBprop() const{
 	int loci = genome[0][0].getResolution();
 	double prop = 0;
@@ -321,16 +331,6 @@ double Individual::getHetProp(){
 	return ((double)number_of_het_loci / (loci * number_of_chromosomes));
 }
 
-int Individual::getBcount() const{
-	int count = 0;
-	for(int i=0;i<number_of_chromosomes;i++){
-		count += genome[0][i].countB();
-		count += genome[1][i].countB();
-	}
-	return count;
-}
-
-
 bool Individual::Acheck() const{
 	for(int i=0;i<number_of_chromosomes;i++){
 		if(genome[0][i].Acheck() and genome[1][i].Acheck()){
@@ -375,16 +375,6 @@ void Individual::readGenotype(){
 		genome[0][i].showChromosome();
 		cout << "---Chromozome---set-2---number-" << i+1 << "---" << endl;
 		genome[1][i].showChromosome();
-	}
-	cout << endl;
-}
-
-void Individual::viewGenotype(){
-	for(int i=0;i<number_of_chromosomes;i++){
-		cout << "---Chromozome---set-1---number-" << i+1 << "---" << endl;
-		genome[0][i].viewChromosome();
-		cout << "---Chromozome---set-2---number-" << i+1 << "---" << endl;
-		genome[1][i].viewChromosome();
 	}
 	cout << endl;
 }

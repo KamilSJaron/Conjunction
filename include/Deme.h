@@ -44,10 +44,8 @@ class Deme
 		void showDeme();
 		void summary();
 		void summary(std::ofstream& ofile);
-		void viewDeme();
 		void readAllGenotypes();
 		void readGenotypeFrequencies();
-		void plotHeadOfDeme();
 	
 	private:
 		void swap(int ind1, int ind2);

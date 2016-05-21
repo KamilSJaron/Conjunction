@@ -14,22 +14,23 @@ using namespace std;
 #include "IndividualTest.cpp"
 
 int main(int argc, char* argv[]){
-	if(strcmp( argv[1], "--test") == 0){
-		cerr << "Running all tests..." << endl;
-		if(testChromosome() == 0){
-			cerr << "Chromosome: passed" << endl;
-		} else {
-			cerr << "Chromosome: not passed" << endl;
-		}
-		if(testIndividual() == 0){
-			cerr << "Individual: passed" << endl;
-		} else {
-			cerr << "Individual: not passed" << endl;
-		}
-		cerr << "Deme: implemented, not tested" << endl;
-		cerr << "Universe: not implemented" << endl;
-		cerr << "Wrapper: not implemented" << endl;
-		return 0;
+
+	int seed = 0;
+	//set SEED
+
+	cerr << "Running all tests with random seed: " << seed << endl;
+	if(testChromosome() == 0){
+		cerr << "Chromosome: passed" << endl;
+	} else {
+		cerr << "Chromosome: not passed" << endl;
 	}
+	if(testIndividual() == 0){
+		cerr << "Individual: passed" << endl;
+	} else {
+		cerr << "Individual: not passed" << endl;
+	}
+	cerr << "Deme: implemented, not tested" << endl;
+	cerr << "Universe: not implemented" << endl;
+	cerr << "Wrapper: not implemented" << endl;
 	return 0;
 }

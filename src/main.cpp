@@ -28,23 +28,23 @@ int main(int argc, char **argv)
     Individual George('C', 1, 50, 3);
     Individual Luis('B', 3, 100, 1);
 
-    George.viewGenotype();
+    George.readGenotype();
 	vector<Chromosome> gamete1, gamete2;
     George.makeGamete(gamete1);
     George.makeGamete(gamete2);
 	Luis = Individual(gamete1,gamete2,0.4);
-	Luis.viewGenotype();
+	Luis.readGenotype();
 
     George.makeGamete(gamete1);
     George.makeGamete(gamete2);
 	Luis = Individual(gamete1,gamete2,0.4);
-	Luis.viewGenotype();
+	Luis.readGenotype();
 
 
     George.makeGamete(gamete1);
     George.makeGamete(gamete2);
 	Luis = Individual(gamete1,gamete2,0.4);
-	Luis.viewGenotype();
+	Luis.readGenotype();
 
 //    int myints[] = {1,2,3,4};
 //    std::vector<int> neigb (myints, myints + sizeof(myints) / sizeof(int) );
