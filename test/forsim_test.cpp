@@ -12,6 +12,7 @@ using namespace std;
 
 #include "ChromosomeTest.cpp"
 #include "IndividualTest.cpp"
+#include "DemeTest.cpp"
 
 int main(int argc, char* argv[]){
 
@@ -29,7 +30,11 @@ int main(int argc, char* argv[]){
 	} else {
 		cerr << "Individual: not passed" << endl;
 	}
-	cerr << "Deme: implemented, not tested" << endl;
+	if(testIndividual() == 0){
+		cerr << "Deme: passed" << endl;
+	} else {
+		cerr << "Deme: not passed" << endl;
+	}
 	cerr << "Universe: not implemented" << endl;
 	cerr << "Wrapper: not implemented" << endl;
 	return 0;

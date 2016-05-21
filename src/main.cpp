@@ -24,48 +24,6 @@ int main(int argc, char **argv)
 
     }
     
-    Chromosome t1('A', 6);
-    Individual George('C', 1, 50, 3);
-    Individual Luis('B', 3, 100, 1);
-
-    George.readGenotype();
-	vector<Chromosome> gamete1, gamete2;
-    George.makeGamete(gamete1);
-    George.makeGamete(gamete2);
-	Luis = Individual(gamete1,gamete2,0.4);
-	Luis.readGenotype();
-
-    George.makeGamete(gamete1);
-    George.makeGamete(gamete2);
-	Luis = Individual(gamete1,gamete2,0.4);
-	Luis.readGenotype();
-
-
-    George.makeGamete(gamete1);
-    George.makeGamete(gamete2);
-	Luis = Individual(gamete1,gamete2,0.4);
-	Luis.readGenotype();
-
-//    int myints[] = {1,2,3,4};
-//    std::vector<int> neigb (myints, myints + sizeof(myints) / sizeof(int) );
-//
-//    Deme Hell(0, neigb, 'C', 4, 0.8, 1, 1, 100, 1);;
-//
-//    Hell.showDeme();
-//    Hell.summary();
-//    Hell.viewDeme();
-//
-//    Hell.Breed();
-//
-//    Hell.showDeme();
-//    Hell.summary();
-//    Hell.viewDeme();
-//
-//    Hell.Breed();
-//
-//    Hell.showDeme();
-//    Hell.summary();
-//    Hell.viewDeme();
 
     return 0;
 }

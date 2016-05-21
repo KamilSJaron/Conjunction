@@ -1,20 +1,8 @@
-/*
- * IndividualTest.cpp
- *
- *  Created on: May 16, 2016
- *      Author: kjaron
- */
 
 int testIndividual(){
 	Individual Lili;
 	Individual Hugo('C');
     Individual Igor('C', 3, 50, 2.3);
-// 		Individual(	vector<Chromosome>& gamete1,
-// 					vector<Chromosome>& gamete2,
-// 					double input_lamda,
-// 					double input_sp,
-// 					double input_beta);
-//		void replace_chromozome(int set, int position,map <int, char> input_chrom, int size);
 
 	double sumCh = 0.0;
 	for(int i = 0; i < 10000; i++){
@@ -29,8 +17,12 @@ int testIndividual(){
 		return 2;
 	}
 
+	// to test all computing functions on semi-known system, one gamete for the tested individual Stuart
+	// will be a product of recombination and the second will be pure 'A' gamete. Therefore heterozygocity
+	// will be equivalent to proportion of B in the sirt set
 	vector<Chromosome> gamete1;;
 	Igor.makeGamete(gamete1);
+
 	vector<Chromosome> gamete2;
 	for(unsigned int i = 0; i < gamete1.size(); i++){
 		gamete2.push_back(Chromosome('A',gamete1[i].getResolution()));
@@ -71,6 +63,7 @@ int testIndividual(){
 		return 1;
 	}
 
+	// number of junctions independently derived from every chromosome compared to number of juctions derived from the method of individual
 	int number_junction = 0;
 	for(int i=0;i<Stuart.getNumberOfChromosomes();i++){
 		number_junction += gamete1[i].getNumberOfJunctions();

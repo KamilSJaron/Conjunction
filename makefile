@@ -16,6 +16,8 @@ $(PRG): $(OBJ)
 	$(CXX) -o $@ -c $< $(CXXFLAGS)
 
 test: $(TEST)
+	./$(TEST)
+	rm $(TEST)
 
 $(TEST): $(CLASSES)
 	$(CXX) $(CXXFLAGS) -o $(TEST) ./test/forsim_test.cpp $(CLASSES)
