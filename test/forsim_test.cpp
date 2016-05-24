@@ -16,10 +16,10 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 
-	int seed = 0;
-	//set SEED
-
+	int seed = time(NULL);
+	srand (seed);
 	cerr << "Running all tests with random seed: " << seed << endl;
+
 	if(testChromosome() == 0){
 		cerr << "Chromosome: passed" << endl;
 	} else {
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
 	} else {
 		cerr << "Deme: not passed" << endl;
 	}
-	cerr << "Universe: not implemented" << endl;
+	cerr << "World: not implemented" << endl;
 	cerr << "Wrapper: not implemented" << endl;
 	return 0;
 }
