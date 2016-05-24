@@ -18,7 +18,7 @@ double uniform(){
 	while(x >= RAND_MAX - (RAND_MAX % detailness)){
 		x = rand();
 	}
-	return double(x % detailness) / (detailness-1);
+	return double(x % detailness) / detailness;
 }
 
 /* DECLARATION */
