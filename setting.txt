@@ -14,20 +14,20 @@
 
 # Numerical parameters
 
-LOCI = 2                     # integer in {1;10000}
+LOCI = 100                     # integer in {1;10000}
 NUMBERofCHROMOSOMES = 1      # integer in {1;21}
-LAMBDA = 0.5        # real in {0;5}
-SELECTIONpressure = 0      # real in {0;1}
-BETA = 1                     # real in {0.0625;16}
-DEMEsize = 8192               # integer in {4;8192}, only powers of 4
+LAMBDA = 1        # real in {0;5}
+SELECTIONpressure = 0.05      # real in {0;1}
+BETA = 2                     # real in {0.0625;16}
+DEMEsize = 32               # integer in {4;8192}, only powers of 4
 SEED = 150518                # integer
-NUMBERofGENERATIONS = 50   # integer in {1,10000}
+NUMBERofGENERATIONS = 10000   # integer in {1,10000}
 
 #output parameters defining the output
 
-NUMBERofSAVES = 0                # integer smaller than number of generations
-NAMEofOUTPUTfile = 150429_out    # the sulfix will be added
-TYPEofOUTPUTfile = summary       # {complete, summary}
+NUMBERofSAVES = 500                # integer smaller than number of generations
+NAMEofOUTPUTfile = 160610_out    # the sulfix will be added
+TYPEofOUTPUTfile = raspberrypi       # {complete, summary, raspberrypi}
 DELAY = 0
 
 # Advanced optional parameters
@@ -37,8 +37,9 @@ DELAY = 0
 
 # World definition
 	
-WORLDdefinition -quick = 'HybridZone' 1 
+# WORLDdefinition -quick = 'HybridZone' 1 
 # {'HybridZone','LowMigrationBazykin','InfInf','Arena'}
 
-#WORLDdefinition -standard = 2 'reflexive' 5 'reflexive' 1
+WORLDdefinition -standard = 2 'infinite' 8 'wrapping' 8 
+
 #{'extending','wrapping','infinite','reflexive'}
