@@ -17,7 +17,6 @@ static int SEEDtoRAND = 1; //seed only for rand() fction, values of the poisson 
 static int NUMBERofGENERATIONS = 500; // #define NUM_OF_IMIGRANTS 100 /* number of complete heterozygotious imigrants per generation (assuming, that Pois(1)*500 would be very close to 500, cause computationally it is not worth the computational time)*/
 static int NUMBERofSAVES = 1;
 static int DELAY = 0;
-static int SAMPLING = 0;
 
 using namespace std;
 
@@ -160,7 +159,7 @@ void parameterSlave(string parameter, double value){
 		return;
 	}
 	if(parameter == "PROBABILITYmap"){
-		cerr << "Warning: parameter PROBABILITYmap is expected in form..." << endl 
+		cerr << "WARNING: parameter PROBABILITYmap is expected in form..." << endl 
 		<< "      [ v1, v2, v3, ... vn]" << endl 
 		<< "      where n is LOCI + 1 and sumation of vi is 1 for i = 1 ... n" << endl;
 		return;
@@ -210,12 +209,7 @@ void parameterSlave(string parameter, double value){
 		cerr << "Setting parameter DELAY to: " << value << endl;
 		return;
 	}
-	if(parameter == "SAMPLING"){
-		SAMPLING = (int(value));
-		cerr << "Setting parameter SAMPLING to: " << value << endl;
-		return;
-	}
-	cerr << "Warning: unknown parameter: " << parameter << endl;
+	cerr << "WARNING: unknown parameter: " << parameter << endl;
 	return;
 }
 
@@ -250,7 +244,7 @@ void parameterSlave(char parameter, double value){
 		cerr << "Setting parameter DEMEsize to: " << value << endl;
 		return;
 	}
-	cerr << "Warning: unknown parameter: " << parameter << endl;
+	cerr << "WARNING: unknown parameter: " << parameter << endl;
 	return;
 }
 
@@ -260,7 +254,7 @@ void probMAPslave(vector<double>& velvec){
 			PROBABILITYmap = velvec;
 			double sum_of_elems=0;
 			if(PROBABILITYmap.size() != unsigned(LOCI + 1)){
-				cerr << "Warning: Length of probability map do not match the number of Loci (parameter LOCI)" << endl;
+				cerr << "WARNING: Length of probability map do not match the number of Loci (parameter LOCI)" << endl;
 				cerr << "        The default PROBABILITYmap will be used..." << endl;
 				PROBABILITYmap.clear();
 			} else {
@@ -271,12 +265,12 @@ void probMAPslave(vector<double>& velvec){
 					for(unsigned int i=0;i<PROBABILITYmap.size();i++){
 						PROBABILITYmap[i] = PROBABILITYmap[i] / sum_of_elems;
 					}
-					cerr << "Warning: the PROBABILITYmap is not equal to 1" << endl;
+					cerr << "WARNING: the PROBABILITYmap is not equal to 1" << endl;
 					cerr << "        The PROBABILITYmap was normalized..." << endl;
 				}
 			}
 		} else {
-			cerr << "Warning: PROBABILITYmap was not defined" << endl;
+			cerr << "WARNING: PROBABILITYmap was not defined" << endl;
 			cerr << "        The default PROBABILITYmap will be used..." << endl;
 		}
 		
@@ -309,7 +303,7 @@ void probMAPslave(vector<double>& velvec){
 void seleMAPslave(vector<double>& velvec){
 		SELECTIONmap = velvec;
 		if(SELECTIONmap.size() != unsigned(LOCI)){
-			cerr << "Warning: Length of selection map do not match the number of Loci (parameter LOCI)" << endl;
+			cerr << "WARNING: Length of selection map do not match the number of Loci (parameter LOCI)" << endl;
 			SELECTIONmap.clear();
 		}
 		cerr << "Setting parameter SELECTIONmap to: [";
@@ -367,7 +361,7 @@ void parameterSlave(string parameter, vector<double>& valvec, vector<double>& pa
 		Deme::setDEMEsize(int(paravec[0]));
 		return;
 	}
-	cerr << "Warning: Unknown parameter variable " << parameter << endl;
+	cerr << "WARNING: Unknown parameter variable " << parameter << endl;
 	return;
 }
 
@@ -408,14 +402,14 @@ int setParameters(Universe* World, vector<double>& PARAvec1,vector<double>& PARA
 					continue;
 				}
 				if(switcher == 1){
-					if(isalpha(line[i])){
+					if(isalpha(line[i])){ // reading parameter name
 						parameter.push_back(line[i]);
 					}
 				} else {
-					if(isdigit(line[i]) or line[i] == '.'){
+					if(isdigit(line[i]) or line[i] == '.'){ //reading values (digits or decimal points)
 						number += line[i];
 					}
-					if((line[i] == ']' or line[i] == ',' or line[i] == ';')){
+					if((line[i] == ']' or line[i] == ',' or line[i] == ';')){ //converting value to intiger
 						paravec.push_back(stod(number));
 						number.clear();
 					}
@@ -633,35 +627,34 @@ int worldSlave(string& line, Universe* World){
 		if(switcher == 15){
 			if(isdigit(line[i])){
 				number.push_back((line[i]));
+				if(i+1 != line.size()){
+					continue;
+				}
+			}
+			if(number.empty()){
 				continue;
 			} else {
-				if(number.empty()){
-					continue;
+				if(stdWidth == -1){
+					stdWidth = stoi(number);
+					number.clear();
 				} else {
-					if(stdWidth == -1){
-						stdWidth = stoi(number);
-						number.clear();
+					stdHeight = stoi(number);
+					World->setDimension(stdDim);
+					if(stdDim == 1){
+						World->setNumberOfEdges(2);
 					} else {
-						stdHeight = stoi(number);
-						World->setDimension(stdDim);
-						if(stdDim == 1){
-							World->setNumberOfEdges(2);
-						} else {
-							World->setNumberOfEdges(4);
-						}
-						World->setHeight(stdHeight);
-						World->setWidth(stdWidth);
-						World->setUDEdgesType(stdUD);
-						World->setLREdgesType(stdLR);
-						return 0;
+						World->setNumberOfEdges(4);
 					}
-					switcher = 13;
+					World->setHeight(stdHeight);
+					World->setWidth(stdWidth);
+					World->setUDEdgesType(stdUD);
+					World->setLREdgesType(stdLR);
+					return 0;
 				}
+				switcher = 13;
 			}
 		}
 	}
-	
-	cerr << "You need to add space after last number, I am sorry, this is bug to be fixed!" << endl;
 	return -1;
 }
 

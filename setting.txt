@@ -40,6 +40,6 @@ DELAY = 0
 # WORLDdefinition -quick = 'HybridZone' 1 
 # {'HybridZone','LowMigrationBazykin','InfInf','Arena'}
 
-WORLDdefinition -standard = 2 'infinite' 8 'wrapping' 8 
+WORLDdefinition -standard = 2 'infinite' 8 'wrapping' 8
 
 #{'extending','wrapping','infinite','reflexive'}
