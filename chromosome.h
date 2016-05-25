@@ -55,6 +55,7 @@ class Chromosome
 		int countB() const; /*returns number of B loci in chromosome*/
 		int getNumberOfJunctions() const; /*returns number of Junctions in chromosome*/
 		void getSizesOfBBlocks(vector<int>& sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
+		void getSizesOfABlocks(vector<int>& sizes);
 		void makeRecombinant(Chromosome& chromNew,int numberOfChaisma);
 // 		bool CorCheck();
 		
@@ -168,7 +169,22 @@ void Chromosome::getSizesOfBBlocks(vector<int>& sizes){
 		last_val = pos->first;
 	}
 	if(last_seq == 'B'){
-			sizes.push_back(LOCI - last_val);
+		sizes.push_back(LOCI - last_val);
+	}
+}
+
+void Chromosome::getSizesOfABlocks(vector<int>& sizes){
+	char last_seq = 'B';
+	int last_val = 0;
+	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+		if(last_seq == 'A'){
+			sizes.push_back(pos->first - last_val);
+		}
+		last_seq = pos->second;
+		last_val = pos->first;
+	}
+	if(last_seq == 'A'){
+		sizes.push_back(LOCI - last_val);
 	}
 }
 

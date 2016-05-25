@@ -75,6 +75,7 @@ class Universe
 		int save_hybridIndices(ofstream& ofile);
 		int save_hybridIndicesJunctions(ofstream& ofile);
 		int save_raspberrypi(ofstream& ofile);
+		int save_blocks(ofstream& ofile);
 		int save_summary(ofstream& ofile);
 		int save_line(ofstream& ofile, int index, vector<double>& vec);
 		
@@ -396,6 +397,36 @@ int Universe::save_raspberrypi(ofstream& ofile){
 	return 0;
 }
 
+save_blocks(ofstream& ofile){
+	int deme_index = index_last_left;
+	vector<int> blockSizes;
+	for(unsigned int deme_order = 0; deme_order < space.size(); deme_order++){
+		for(int y = 0; y < number_of_demes_u_d; y++){
+//			space[index+y]->getBproportions(props);
+//			save_line(ofile,deme_index+y,props);
+
+
+// 		for(unsigned int index = 0; index < space.size(); index++){
+// 			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
+// 			for(unsigned int i = 0;i < blockSizes.size(); i++){
+// 				ofile << blockSizes[i] / double(LOCI) << endl;
+// 			}
+// 			blockSizes.clear();
+// 		}
+
+
+		}
+		if(index != index_last_right){
+			deme_index = space[deme_index]->getNeigbours()[1];
+		} else {
+			break;
+		}
+	}
+	cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
+	ofile.close();
+	return 0;
+}
+
 int Universe::save_line(ofstream& ofile, int index, vector< double >& vec){
 	ofile << index << '\t';
 	for(unsigned int ind = 0; ind < vec.size(); ind++){
@@ -626,8 +657,8 @@ void Universe::globalBreeding(){
 				new_generation.push_back(desc);
 			}
 		}
-		zeroD_immigrant_pool.clear();
-		zeroD_immigrant_pool = new_generation;
+		zeroD_immigrant_pool.clear(); // 1, this is incredibly stupid what I am doing here
+		zeroD_immigrant_pool = new_generation; // 2, I should change pointers instead of copy-pasting
 		double material = 0;
 		int pop_size = zeroD_immigrant_pool.size();
 		for(int i = 0;i < pop_size;i++){
@@ -635,7 +666,7 @@ void Universe::globalBreeding(){
 		}
 		cout << "Population size: " << pop_size << endl;
 // 		cout << "Amount of material: " << material << endl;
-		new_generation.clear();
+		new_generation.clear(); // 3, in memory
 		return;
 	}
 	
@@ -902,6 +933,9 @@ int Universe::SaveTheUniverse(string type){
 		}
 		if(type == "raspberrypi"){
 			return save_raspberrypi(ofile);
+		}
+		if(type == "blocks"){
+			return save_blocks(ofile);
 		}
 	}
 
