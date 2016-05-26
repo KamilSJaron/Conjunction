@@ -78,6 +78,7 @@ class Universe
 		int save_blocks(ofstream& ofile);
 		int save_summary(ofstream& ofile);
 		int save_line(ofstream& ofile, int index, vector<double>& vec);
+		int save_line(ofstream& ofile, int index, vector<int>& vec);
 		
 // 		variables
 		map<int, Deme*> space; // container of Demes for non zero dimensional simation
@@ -397,27 +398,20 @@ int Universe::save_raspberrypi(ofstream& ofile){
 	return 0;
 }
 
-save_blocks(ofstream& ofile){
-	int deme_index = index_last_left;
+int Universe::save_blocks(ofstream& ofile){
+	int index = index_last_left;
 	vector<int> blockSizes;
-	for(unsigned int deme_order = 0; deme_order < space.size(); deme_order++){
+	for(unsigned int i = 0; i < space.size(); i++){
 		for(int y = 0; y < number_of_demes_u_d; y++){
-//			space[index+y]->getBproportions(props);
-//			save_line(ofile,deme_index+y,props);
-
-
-// 		for(unsigned int index = 0; index < space.size(); index++){
-// 			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
-// 			for(unsigned int i = 0;i < blockSizes.size(); i++){
-// 				ofile << blockSizes[i] / double(LOCI) << endl;
-// 			}
-// 			blockSizes.clear();
-// 		}
-
-
+			for(unsigned int ind_index = 0; ind_index < Deme::getDEMEsize(); ind_index++){
+				space[index]->getSizesOfABlocks(blockSizes, ind_index);
+				save_line(ofile,index+y,blockSizes);
+				space[index]->getSizesOfBBlocks(blockSizes, ind_index);
+				save_line(ofile,index+y,blockSizes);
+			}
 		}
 		if(index != index_last_right){
-			deme_index = space[deme_index]->getNeigbours()[1];
+			index = space[index]->getNeigbours()[1];
 		} else {
 			break;
 		}
@@ -428,6 +422,15 @@ save_blocks(ofstream& ofile){
 }
 
 int Universe::save_line(ofstream& ofile, int index, vector< double >& vec){
+	ofile << index << '\t';
+	for(unsigned int ind = 0; ind < vec.size(); ind++){
+		ofile << vec[ind] << '\t';
+	}
+	ofile << endl;
+	return 0;
+}
+
+int Universe::save_line(ofstream& ofile, int index, vector<int>& vec){
 	ofile << index << '\t';
 	for(unsigned int ind = 0; ind < vec.size(); ind++){
 		ofile << vec[ind] << '\t';

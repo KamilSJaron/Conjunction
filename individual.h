@@ -54,6 +54,9 @@ class Individual
 		map<int, char>::iterator getChromosomeBegining(int set, int chrom);
 		int getNumberOfJunctions(int set, int chrom);
 		int getNumberOfJunctions();
+		void getSizesOfBBlocks(std::vector<int>& sizes);
+		void getSizesOfABlocks(std::vector<int>& sizes);
+
 		
 /* ASCII PLOTTING METHODS */
 		void readGenotype();
@@ -374,6 +377,27 @@ int Individual::getNumberOfJunctions(){
 	return sum;
 }
 
+void Individual::getSizesOfBBlocks(std::vector<int>& sizes){
+	sizes.clear();
+	sizes.reserve(500);
+	for(int set = 0; set < 2; set++){
+		for(int chrom = 0; chrom < NUMBERofCHROMOSOMES; chrom++){
+			genome[set][chrom].getSizesOfBBlocks(sizes);
+		}
+	}
+	return;
+}
+
+void Individual::getSizesOfABlocks(std::vector<int>& sizes){
+	sizes.clear();
+	sizes.reserve(500);
+	for(int set = 0; set < 2; set++){
+		for(int chrom = 0; chrom < NUMBERofCHROMOSOMES; chrom++){
+			genome[set][chrom].getSizesOfABlocks(sizes);
+		}
+	}
+	return;
+}
 
 void Individual::readGenotype(){
 	for(int i=0;i<NUMBERofCHROMOSOMES;i++){

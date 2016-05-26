@@ -44,6 +44,8 @@ class Deme
 		void getBproportions(vector<double>& props) const;
 		void getJunctionNumbers(vector<double>& juncs) const;
 		void getHeterozygoty(vector<double>& heterozs);
+		void getSizesOfBBlocks(vector<int>& sizes, int ind);
+		void getSizesOfABlocks(vector<int>& sizes, int ind);
 		double getMeanBproportion() const;
 		double getProportionOfHomozygotes(char population) const;
 		double getProportionOfHeterozygotes() const;
@@ -233,6 +235,16 @@ void Deme::getHeterozygoty(vector< double >& heterozs){
 	for(int i = 0;i < DEMEsize;i++){
 		heterozs.push_back(deme[i].getHetProp());
 	}
+	return;
+}
+
+void Deme::getSizesOfBBlocks(vector<int>& sizes, int ind){
+	deme[ind].getSizesOfBBlocks(sizes);
+	return;
+}
+
+void Deme::getSizesOfABlocks(vector<int>& sizes, int ind){
+	deme[ind].getSizesOfABlocks(sizes);
 	return;
 }
 
