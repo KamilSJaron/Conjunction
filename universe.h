@@ -943,7 +943,7 @@ int Universe::SaveTheUniverse(string type){
 	}
 
 	cerr << "WARNING: The output was not saved" << endl;
-	cerr << "         unknow saving format" << endl;
+	cerr << "         unknown saving format" << endl;
 	return 1;
 }
 

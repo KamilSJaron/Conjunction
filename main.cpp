@@ -691,6 +691,7 @@ void simulate(Universe* World, int save_pos){
 			} else {
 				NAMEofOUTPUTfile[save_pos] = '0' + char(order);
 			}
+			World->summary();
 			check = World->SaveTheUniverse(TYPEofOUTPUTfile);
 			if(check != 0){
 				cerr << "Error in saving the output." << endl;
