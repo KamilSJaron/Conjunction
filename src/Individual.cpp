@@ -369,6 +369,30 @@ int Individual::getNumberOfJunctions(){
 	return sum;
 }
 
+void Individual::getSizesOfBBlocks(std::vector<int>& sizes){
+	sizes.clear();
+	sizes.reserve(500);
+	for(int set = 0; set < 2; set++){
+		for(int chrom = 0; chrom < number_of_chromosomes; chrom++){
+			genome[set][chrom].getSizesOfBBlocks(sizes);
+		}
+	}
+	return;
+}
+
+void Individual::getSizesOfABlocks(std::vector<int>& sizes){
+	sizes.clear();
+	sizes.reserve(500);
+	for(int set = 0; set < 2; set++){
+		for(int chrom = 0; chrom < number_of_chromosomes; chrom++){
+			genome[set][chrom].getSizesOfABlocks(sizes);
+		}
+	}
+	return;
+}
+
+/* ASCII PLOTTING METHODS */
+
 void Individual::readGenotype(){
 	for(int i=0;i<number_of_chromosomes;i++){
 		cout << "---Chromozome---set-1---number-" << i+1 << "---" << endl;

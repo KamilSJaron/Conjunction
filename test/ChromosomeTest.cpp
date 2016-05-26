@@ -63,7 +63,7 @@ int testChromosome(){
 	ch1.makeRecombinant(ch3, 5);
 
 	if(ch3.getNumberOfJunctions() != 0){
-		cerr << "ERROR: recombination of two pure A chromosome resulted is chromosome with junctions." << endl;
+		cerr << "ERROR: recombination of two pure A chromosome resulted in chromosome with junctions." << endl;
 		return 1;
 	}
 
@@ -71,9 +71,29 @@ int testChromosome(){
 
 	if(ch3.getNumberOfJunctions() < 4){
 		cerr << "WARNING: very unlike scenario in random generation of junctions" << endl;
-		cerr << "Change seed for random number and rerun tests, if this message occurs again"
+		cerr << "Rerun tests (different random seed will be used), if this message occurs again"
 		<< " something is wrong, please do not ignore it and report the issue." << endl;
 		return 2;
+	}
+
+	Chromosome ch4('A',10);
+	ch4.write(2,'B');
+	ch4.write(5,'A');
+	ch4.write(6,'B');
+	vector<int> blocks;
+	ch4.getSizesOfBBlocks(blocks);
+
+	if(blocks[0] != 3 or blocks[1] != 4){
+		cerr << "ERROR in method reporting sizes of B blocks: getSizesOfBBlocks" << endl;
+		return 1;
+	}
+
+	blocks.clear();
+	ch4.getSizesOfABlocks(blocks);
+
+	if(blocks[0] != 2 or blocks[1] != 1){
+		cerr << "ERROR in method reporting sizes of A blocks: getSizesOfABlocks" << endl;
+		return 1;
 	}
 
 /* Writing testing for plotting functions is not worth the energy spend on it, for verification,

@@ -87,6 +87,21 @@ void Chromosome::getSizesOfBBlocks(vector<int>& sizes){
 	}
 }
 
+void Chromosome::getSizesOfABlocks(vector<int>& sizes){
+	char last_seq = 'B';
+	int last_val = 0;
+	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+		if(last_seq == 'A'){
+			sizes.push_back(pos->first - last_val);
+		}
+		last_seq = pos->second;
+		last_val = pos->first;
+	}
+	if(last_seq == 'A'){
+			sizes.push_back(loci - last_val);
+	}
+}
+
 void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 // 	starts_by 0 home, 1 alien
 	int starts_by = tossAcoin();

@@ -72,6 +72,7 @@ double Imigrant::getBprop() const{
 
 void Imigrant::getSizesOfBBlocks(vector< int >& sizes){
 	sizes.clear();
+	sizes.reserve(500);
 	for(int ch = 0;ch < number_of_chromosomes;ch++){
 		genome[ch].getSizesOfBBlocks(sizes);
 	}

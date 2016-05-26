@@ -19,6 +19,7 @@ class Chromosome
 		int countB() const; /*returns number of B loci in chromosome*/
 		int getNumberOfJunctions() const; /*returns number of Junctions in chromosome*/
 		void getSizesOfBBlocks(std::vector<int>& sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
+		void getSizesOfABlocks(std::vector<int>& sizes);
 		void makeRecombinant(Chromosome& chromNew,int numberOfChaisma);
 		int tossAcoin();
 		int recombPosition();

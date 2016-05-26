@@ -25,6 +25,8 @@ class Individual
 		std::map<int, char>::iterator getChromosomeBegining(int set, int chrom);
 		int getNumberOfJunctions(int set, int chrom);
 		int getNumberOfJunctions();
+		void getSizesOfBBlocks(std::vector<int>& sizes);
+		void getSizesOfABlocks(std::vector<int>& sizes);
 		
 /* ASCII PLOTTING METHODS */
 		void readGenotype();

@@ -66,15 +66,22 @@ public:
 //		int save_line(ofstream& ofile, int index, vector<double>& vec);
 
 // 		variables
+//		containers
 		std::map<int, Deme*> world; // container of Demes for non zero dimensional simation
-		int dimension, edges_per_deme; // defines migration and extension of hybrid zone
-		int number_of_demes_l_r, number_of_demes_u_d; // defines the size of the space
-		std::string type_of_l_r_edges, type_of_u_d_edges; // defines the behavior of the l / r and u /d edges of HZ
-		int index_last_left, index_next_left; // variables handling dynamic extension of hybrid zone
-		int index_last_right, index_next_right;
 		std::vector<Imigrant> zeroD_immigrant_pool; // container of individuals for 0 dimensional simualtion
+
+//		world definition
+		int number_of_demes_l_r, number_of_demes_u_d, dimension; // defines the size of the space
+		std::string type_of_l_r_edges, type_of_u_d_edges; // defines the behavior of the l / r and u /d edges of HZ
+
+//		deme, individual, chromosome setting
 		int deme_size, number_of_chromosomes, number_of_loci;
 		double selection, beta, lambda;
+
+//		internal
+		int edges_per_deme; // defines migration and extension of hybrid zone
+		int index_last_left, index_next_left; // variables handling dynamic extension of hybrid zone
+		int index_last_right, index_next_right;
 };
 
 #endif /* INCLUDE_WORLD_H_ */
