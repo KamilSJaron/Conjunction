@@ -2,6 +2,7 @@
 #include <map>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 
 #include "../include/Chromosome.h"
 #include "../include/Individual.h"

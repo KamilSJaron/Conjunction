@@ -2,6 +2,8 @@
 #include <map>
 #include <vector>
 #include <cmath>
+#include <stdio.h>
+#include <string.h>
 
 #include "../include/Chromosome.h"
 #include "../include/Individual.h"

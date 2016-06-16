@@ -159,7 +159,7 @@ void Deme::setDemeSize(int size){
 
 int Deme::getDemeSize(){
 	return deme_size;
-};
+}
 
 // // // // // // // // // // // // // //
 // // // // computing functions / // // /
