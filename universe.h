@@ -403,7 +403,7 @@ int Universe::save_blocks(ofstream& ofile){
 	vector<int> blockSizes;
 	for(unsigned int i = 0; i < space.size(); i++){
 		for(int y = 0; y < number_of_demes_u_d; y++){
-			for(unsigned int ind_index = 0; ind_index < Deme::getDEMEsize(); ind_index++){
+			for(int ind_index = 0; ind_index < Deme::getDEMEsize(); ind_index++){
 				space[index]->getSizesOfABlocks(blockSizes, ind_index);
 				save_line(ofile,index+y,blockSizes);
 				space[index]->getSizesOfBBlocks(blockSizes, ind_index);
