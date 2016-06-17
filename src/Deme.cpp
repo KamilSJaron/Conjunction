@@ -291,6 +291,15 @@ double Deme::getMeanBproportion() const{
 	return (props / deme_size);
 }
 
+void Deme::getSizesOfBBlocks(vector<int>& sizes, int ind){
+	deme[ind].getSizesOfBBlocks(sizes);
+	return;
+}
+
+void Deme::getSizesOfABlocks(vector<int>& sizes, int ind){
+	deme[ind].getSizesOfABlocks(sizes);
+	return;
+}
 
 double Deme::getProportionOfHomozygotes(char population) const{
 	double proportion = 0;

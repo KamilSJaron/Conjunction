@@ -30,6 +30,8 @@ class Deme
 		void getJunctionNumbers(std::vector<double>& juncs) const;
 		void getHeterozygoty(std::vector<double>& heterozs);
 		double getMeanBproportion() const;
+		void getSizesOfBBlocks(std::vector<int>& sizes, int ind);
+		void getSizesOfABlocks(std::vector<int>& sizes, int ind);
 		double getProportionOfHomozygotes(char population) const;
 		double getProportionOfHeterozygotes() const;
 		void getFitnessVector(std::vector<double>& fitnessVector);

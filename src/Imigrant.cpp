@@ -122,16 +122,14 @@ bool Imigrant::Bcheck() const{
 	return 1;
 }
 
-void Imigrant::makeGamete(Imigrant& descendant){
-	vector<Chromosome> gamete;
-	int sp = descendant.getSelectionPressure();
+void Imigrant::makeGamete(std::vector<Chromosome>& gamete){
+//	gamete.clear();
 	gamete.reserve(number_of_chromosomes);
 	Chromosome CHtemp;
 	for(int ch = 0; ch < number_of_chromosomes;ch++){
 		genome[ch].makeRecombinant(CHtemp, getChiasma());
 		gamete.push_back(CHtemp);
 	}
-	descendant = Imigrant(gamete, sp);
 }
 
 int Imigrant::getSelectionPressure() const{

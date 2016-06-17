@@ -17,11 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <vector>
 #include <string>
+//#include <cstring>
 #include <math.h>
 #include <cmath>
+#include <iomanip>
+//#include <time.h>
 
 #include "../include/Chromosome.h"
 #include "../include/Individual.h"
@@ -191,6 +195,456 @@ void World::basicUnitCreator(char type, char init){
 	return;
 }
 
+void World::worldSlave(){
+	if(number_of_demes_l_r == 1){
+		basicUnitCreator('b', 'C');
+		return;
+	}
+	if(number_of_demes_l_r == 2){
+		basicUnitCreator('b', 'A');
+		basicUnitCreator('r', 'B');
+		return;
+	}
+
+	double midpoint = double(number_of_demes_l_r + 1) / 2;
+	basicUnitCreator('b', 'A');
+
+	for(double i = 2; i < number_of_demes_l_r; i++){
+		if(i < midpoint){
+			basicUnitCreator('r', 'A');
+		} else {
+			basicUnitCreator('r', 'B');
+		}
+	}
+	basicUnitCreator('r', 'B');
+
+	return;
+}
+
+  // // // // // // // //
+ // COMPUTING METHODS //
+// // // // // // // //
+
+int World::migration(){
+	const int demesize = deme_size;
+	if(dimension == 0){
+		zeroD_immigrant_pool.reserve(demesize);
+		for(int i = 0; i < demesize;i++){
+			zeroD_immigrant_pool.push_back(Imigrant(number_of_chromosomes, number_of_loci, selection));
+		}
+		return 0;
+	}
+	if(world.empty()){
+		cerr << "ERROR: Missing demes" << endl;
+		return -1;
+	}
+	if(edges_per_deme == 0){
+		return 0;
+	}
+
+	int index_last_left_fix = index_last_left;
+	int index_last_right_fix = index_last_right;
+	map<int, vector<Individual> > ImmigranBuffer;
+
+	vector<int> neigbours;
+	int MigInd = demesize / (2 * edges_per_deme );
+	int deme_index;
+	/*bufferVectorMap is container for all individuals imigrating to all demes*/
+	for (map<int, Deme*>::const_iterator deme=world.begin(); deme!=world.end(); ++deme){
+		neigbours = deme->second->getNeigbours();
+		for(unsigned int j=0;j < neigbours.size();j++){
+			deme_index = neigbours[j];
+			if(deme_index == -8){
+				continue;
+			}
+			for(int k=0;k < MigInd; k++){
+				ImmigranBuffer[deme_index].push_back(deme->second->getIndividual(k));
+			}
+		}
+	}
+
+	for(map<int, vector<Individual> >::iterator buff=ImmigranBuffer.begin(); buff!=ImmigranBuffer.end(); ++buff){
+		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
+			for(int k=0;k < MigInd; k++){
+				ImmigranBuffer[buff->first].push_back(Individual('A'));
+			}
+		}
+		if(buff->first >= index_last_right_fix and buff->first < index_last_right_fix + number_of_demes_u_d){
+			for(int k=0;k < MigInd; k++){
+				ImmigranBuffer[buff->first].push_back(Individual('B'));
+			}
+		}
+		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
+			if(Acheck(buff->second)){
+				continue;
+			}
+			basicUnitCreator('l', 'A');
+		}
+		if(index_next_right <= buff->first and buff->first < index_next_right + number_of_demes_u_d){
+			if(Bcheck(buff->second)){
+				continue;
+			}
+			basicUnitCreator('r', 'B');
+		}
+		world[buff->first]->integrateMigrantVector(buff->second);
+	}
+	return 0;
+}
+
+void World::set(int index,string type){
+	int demesize = deme_size;
+	vector<Individual> migBuffer;
+	if(type == "pureA"){
+		for(int i=0;i<demesize;i++){
+			migBuffer.push_back('A');
+		}
+		world[index]->integrateMigrantVector(migBuffer);
+		return;
+	}
+
+	if(type == "pureB"){
+		for(int i=0;i<demesize;i++){
+			migBuffer.push_back('B');
+		}
+		world[index]->integrateMigrantVector(migBuffer);
+		return;
+	}
+
+	if(type == "hetero"){
+		for(int i=0;i<demesize/4;i++){
+			migBuffer.push_back('A');
+		}
+		for(int i=0;i<demesize/2;i++){
+			migBuffer.push_back('C');
+		}
+		for(int i=0;i<demesize/4;i++){
+			migBuffer.push_back('B');
+		}
+		world[index]->integrateMigrantVector(migBuffer);
+		return;
+	}
+
+	if(type == "halfAhalfhetero"){
+		for(int i=0;i<demesize/2;i++){
+			migBuffer.push_back('A');
+		}
+		for(int i=0;i<demesize/2;i++){
+			migBuffer.push_back('C');
+		}
+		world[index]->integrateMigrantVector(migBuffer);
+		return;
+	}
+
+	cerr << "ERROR: unknown parameter " << type << " of Universe.set()";
+	return;
+}
+
+void World::globalBreeding(){
+	if(dimension == 0){
+		vector<Imigrant> new_generation;
+		vector<Chromosome> gamete;
+		new_generation.reserve(zeroD_immigrant_pool.size());
+		gamete.reserve(number_of_chromosomes);
+		double fitness;
+		int num_of_desc;
+//
+		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
+			fitness = zeroD_immigrant_pool[index].getFitness();
+			num_of_desc = getNumberOfDescendants(fitness);
+			for(int i=0;i<num_of_desc;i++){
+				zeroD_immigrant_pool[index].makeGamete(gamete);
+				if(gameteAcheck(gamete)){
+					continue;
+				}
+				new_generation.push_back( Imigrant(gamete, selection) );
+			}
+//			num_of_desc = getNumberOfDescendants(fitness);
+//			for(int i=0;i<num_of_desc;i++){
+//				zeroD_immigrant_pool[index].makeGamete(gamete);
+//				if(desc.Acheck()){
+//					continue;
+//				}
+//				new_generation.push_back(desc);
+//			}
+		}
+		zeroD_immigrant_pool.clear(); // 1, this is incredibly stupid what I am doing here
+		zeroD_immigrant_pool = new_generation; // 2, I should change pointers instead of copy-pasting
+		double material = 0;
+		int pop_size = zeroD_immigrant_pool.size();
+		for(int i = 0;i < pop_size;i++){
+			material += zeroD_immigrant_pool[i].getBprop();
+		}
+		cout << "Population size: " << pop_size << endl;
+// 		cout << "Amount of material: " << material << endl;
+		new_generation.clear(); // 3, in memory
+		return;
+	}
+
+	vector<int> indexes;
+	for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
+		indexes.push_back(i->first);
+	}
+
+	int index = 0;
+	int i_size = indexes.size();
+
+// 	#pragma omp parallel
+// 	{
+//
+// 		{
+// 		#ifdef _OPENMP
+// 		int tnum = omp_get_num_threads();
+// 		#else
+// 		int tnum = 1;
+// 		#endif
+//
+// 		cout << "Number of threads " << tnum << " "<< i_size << endl;
+// 		}
+//
+// 	#pragma omp parallel for
+		for(int i = 0; i < i_size; i++){
+			index = indexes[i];
+			world[index]->Breed();
+		}
+// 	}
+	return;
+}
+
+
+  // // // // // // //
+ // LOGICAL METHODS//
+// // // // // // //
+
+bool World::Acheck(vector<Individual>& buffer){
+	for(int i = 0; (unsigned)i < buffer.size(); i++){
+		if(buffer[i].Acheck()){
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
+
+bool World::Bcheck(vector<Individual>& buffer){
+	for(int i = 0; (unsigned)i < buffer.size(); i++){
+		if(buffer[i].Bcheck()){
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
+
+bool World::empty(){
+	return (world.size() == 0);
+}
+
+  // // // // // // // //
+ // PLOTTING // STATS //
+// // // // // // // //
+
+void World::listOfParameters(){
+	cerr << "***************" << endl << "Size of World: " << world.size() << " Dim: " << dimension << " edges_per_deme: " << edges_per_deme << endl
+	<< "Number of demes l/r: " << number_of_demes_l_r << " Number of demes u/d: " << number_of_demes_u_d << endl
+	<< "Type of l/r edges: " << type_of_l_r_edges << " Type of u/d edges: " << type_of_u_d_edges << endl
+	<< "Last left index: " << index_last_left << " Last right index: " << index_last_right << endl
+	<< "Next left index: " << index_next_left << " Next right index: " << index_next_right << endl  << "***************" << endl;
+	return;
+}
+
+void World::listOfDemes(){
+	cerr << "of dimension: " << dimension << endl;
+	if(dimension == 0){
+		cerr << "Population of imigrants has " << zeroD_immigrant_pool.size() << endl;
+	} else {
+		cerr << "World of size " << world.size() << endl;
+		cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
+		cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
+		if(type_of_l_r_edges != "extending"){
+			cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
+		}
+		cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
+		cerr << "                 EDGE" << endl;
+		cerr << setw(7) << right << "DEME " << setw(7) << left << " LEFT" << setw(6) << left << "RIGHT" << setw(5) << left << "UP" << setw(6) << left << "DOWN" << endl;
+		for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
+			i->second->showDeme();
+		}
+	}
+}
+
+void World::summary(){
+	if(dimension == 0){
+		cout << "Selection: " << selection << endl;
+		cout << "Recombination rate: " << lambda << endl;
+		cout << "Theta: " << selection / lambda << endl;
+		cout << "Number of Immigrants per generation: " << deme_size << endl;
+	} else {
+		int worlsize = world.size();
+		cerr << "World of size " << worlsize << endl;
+		cerr << "of dimension: " << dimension << endl;
+		cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
+		cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
+		if(type_of_l_r_edges != "extending"){
+			cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
+		}
+		cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
+		cout << "                 EDGE" << endl;
+		cout << setw(7) << right << "DEME "
+		<< setw(7) << left << " LEFT"
+		<< setw(6) << left << "RIGHT";
+		if(dimension == 2){
+			cout << setw(6) << left << "UP"
+			<< setw(6) << left << "DOWN";
+		}
+		cout << setw(12) << left << "meanf"
+		<< setw(12) << left << "f(heter)"
+		<< setw(12) << left << "meanHI"
+		<< setw(12) << left << "var(HI)";
+		if(number_of_loci * number_of_chromosomes > 1){
+			cout << setw(12) << left << "var(p)"
+			<< setw(12) << left << "LD";
+		}
+
+		if(number_of_loci * number_of_chromosomes <= 16){
+			for(int ch = 0;ch < number_of_chromosomes;ch++){
+				for(int l = 0; l < number_of_loci;l++){
+					cout << left << "Ch" << ch+1 << "l" << l+1 << setw(7) << ' ';
+				}
+			}
+		}
+		cout << endl;
+		for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
+	// 		if(i->first == 9){
+			i->second->summary();
+	// 			i->second->readAllGenotypes();
+	// 		}
+		}
+	}
+}
+
+
+double World::getProportionOfHeterozygotes(int index){
+	return world[index]->getProportionOfHeterozygotes();
+}
+
+double World::getProportionOfHomozygotes(int index, char type){
+	return world[index]->getProportionOfHomozygotes(type);
+}
+
+void World::showOneDeme(int index){
+	world[index]->showDeme();
+}
+
+int World::SaveTheUniverse(string type, string filename){
+	ofstream ofile;
+	vector<double> props;
+
+	ofile.open(filename); // Opens file
+	if (ofile.fail()){
+		return 1;
+	}
+
+
+	if(dimension == 0){
+		vector<int> blockSizes;
+		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
+			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
+			for(unsigned int i = 0;i < blockSizes.size(); i++){
+				ofile << blockSizes[i] / double(number_of_loci) << endl;
+			}
+			blockSizes.clear();
+		}
+		ofile.close();
+		return 0;
+	} else {
+		if(type == "complete"){
+			return save_complete(ofile);
+		}
+		if(type == "summary"){
+			return save_summary(ofile);
+		}
+		if(type == "hybridIndices"){
+			return save_hybridIndices(ofile);
+		}
+		if(type == "hybridIndicesJunctions"){
+			return save_hybridIndicesJunctions(ofile);
+		}
+//		if(type == "raspberrypi"){
+//			return save_raspberrypi(ofile);
+//		}
+		if(type == "blocks"){
+			return save_blocks(ofile);
+		}
+	}
+
+	cerr << "WARNING: The output was not saved" << endl;
+	cerr << "         unknown saving format" << endl;
+	return 1;
+}
+
+void World::getLD(){
+	for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
+		cout << i->second->getLD() << '\t';
+	}
+	cout << endl;
+}
+
+  // // // // // // // //
+ // PARAMETER HANDLING//
+// // // // // // // //
+
+void World::setHeight(int heig){
+	if(world.size() == -1){
+		number_of_demes_u_d = heig;
+	} else {
+		cerr << "It is not possible to change parameter height once, you create world";
+	}
+}
+
+void World::setWidth(int width){
+	if(world.size() == -1){
+		number_of_demes_l_r = width;
+	} else {
+		cerr << "It is not possible to change parameter height once, you create world";
+	}
+}
+
+
+void World::setLREdgesType(string ed_type){
+	type_of_l_r_edges = ed_type;
+}
+
+void World::setUDEdgesType(string ed_type){
+	type_of_u_d_edges = ed_type;
+}
+
+void World::setDimension(int dim){
+	dimension = dim;
+}
+
+void World::setNumberOfEdges(int nue){
+	edges_per_deme = nue;
+}
+
+void World::restart(){
+	if(dimension == 0){
+		zeroD_immigrant_pool.clear();
+	} else {
+		clear();
+		worldSlave();
+		cerr << "World is reset." << endl;
+	}
+	return;
+}
+
+void World::clear(){
+	for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
+		delete i->second;
+	}
+	world.clear();
+	return;
+}
+
   // // // // //
  //  PRIVATE //
 // // // // //
@@ -264,4 +718,202 @@ int World::side_border(int reflexive, int extending){
 	}
 	cerr << "Error: The type of left-right edges is not valid." << endl;
 	return -1;
+}
+
+bool World::gameteAcheck(std::vector<Chromosome>& gamete){
+	for(int i=0;i<number_of_chromosomes;i++){
+		if(gamete[i].Acheck()){
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
+
+int World::save_complete(ofstream& ofile){
+	cerr << "WARNING: experimental option save_complete " << endl;
+	int index = index_last_left;
+	vector<double> props;
+	for(unsigned int i = 0; i < world.size(); i++){
+		for(int y = 0; y < number_of_demes_u_d; y++){
+			world[index+y]->getBproportions(props);
+			save_line(ofile,index+y,props);
+			world[index+y]->getJunctionNumbers(props);
+			save_line(ofile,index+y,props);
+			world[index+y]->getHeterozygoty(props);
+			save_line(ofile,index+y,props);
+		}
+		if(index != index_last_right){
+			index = world[index]->getNeigbours()[1];
+		} else {
+			break;
+		}
+	}
+	ofile.close();
+	return 0;
+}
+
+
+int World::save_hybridIndices(ofstream& ofile){
+	int index = index_last_left;
+	vector<double> props;
+	for(unsigned int i = 0; i < world.size(); i++){
+		for(int y = 0; y < number_of_demes_u_d; y++){
+			world[index+y]->getBproportions(props);
+			save_line(ofile,index+y,props);
+		}
+		if(index != index_last_right){
+			index = world[index]->getNeigbours()[1];
+		} else {
+			break;
+		}
+	}
+//	cerr << "The output was successfully saved to: " << NAMEofOUTPUTfile << endl;
+	ofile.close();
+	return 0;
+}
+
+int World::save_hybridIndicesJunctions(ofstream& ofile){
+	int index = index_last_left;
+	vector<double> props;
+	for(unsigned int i = 0; i < world.size(); i++){
+		for(int y = 0; y < number_of_demes_u_d; y++){
+			world[index+y]->getBproportions(props);
+			save_line(ofile,index+y,props);
+			world[index+y]->getJunctionNumbers(props);
+			save_line(ofile,index+y,props);
+		}
+		if(index != index_last_right){
+			index = world[index]->getNeigbours()[1];
+		} else {
+			break;
+		}
+	}
+//	cerr << "The output was successfully saved to: " << NAMEofOUTPUTfile << endl;
+	ofile.close();
+	return 0;
+}
+
+//int World::save_raspberrypi(ofstream& ofile){
+//
+//	if(world.size() != 64){
+//		cerr << "Wrong number of demes (" << world.size() << "), define 64 demes for raspberrypi file output \n";
+//		return 1;
+//	}
+//
+//	usleep(900);
+//	cout << 'c' << endl;
+//	usleep(100);
+//
+//	int index = index_last_left;
+//	double hybridIndex = 0, LD = 0;
+//	int R = 0, G = 0, B = 0;
+//	cout << "m ";
+//	for(unsigned int i = 0; i < world.size(); i++){
+//		for(int y = 0; y < number_of_demes_u_d; y++){
+//			hybridIndex = world[index+y]->getMeanBproportion();
+//			LD = world[index+y]->getLD();
+//			R = (int) (hybridIndex * 255 * 0.5);
+//			G = (int) (abs(LD) * 4 * 255);
+//// 			cerr << LD << ' ';
+//			B = (int) ((1 - hybridIndex) * 255 * 0.5);
+//			cout << R << ' ' << G << ' ' << B << ' ';
+////			R G B 0 255 FF0, 00F
+//		}
+//		if(index != index_last_right){
+//			index = world[index]->getNeigbours()[1];
+//		} else {
+//			break;
+//		}
+//	}
+//	cout << endl;
+//	ofile.close();
+//	return 0;
+//}
+
+int World::save_blocks(ofstream& ofile){
+	int index = index_last_left;
+	vector<int> block_sizes;
+	for(unsigned int i = 0; i < world.size(); i++){
+		for(int y = 0; y < number_of_demes_u_d; y++){
+			for(int ind_index = 0; ind_index < deme_size; ind_index++){
+				world[index]->getSizesOfABlocks(block_sizes, ind_index);
+				save_line(ofile,index+y,block_sizes);
+				world[index]->getSizesOfBBlocks(block_sizes, ind_index);
+				save_line(ofile,index+y,block_sizes);
+			}
+		}
+		if(index != index_last_right){
+			index = world[index]->getNeigbours()[1];
+		} else {
+			break;
+		}
+	}
+//	cerr << "The output was successfully saved to: " << NAMEofOUTPUTfile << endl;
+	ofile.close();
+	return 0;
+}
+
+int World::save_line(ofstream& ofile, int index, vector< double >& vec){
+	ofile << index << '\t';
+	for(unsigned int ind = 0; ind < vec.size(); ind++){
+		ofile << vec[ind] << '\t';
+	}
+	ofile << endl;
+	return 0;
+}
+
+int World::save_line(ofstream& ofile, int index, vector<int>& vec){
+	ofile << index << '\t';
+	for(unsigned int ind = 0; ind < vec.size(); ind++){
+		ofile << vec[ind] << '\t';
+	}
+	ofile << endl;
+	return 0;
+}
+
+
+
+int World::save_summary(ofstream& ofile){
+	int worlsize = world.size();
+	cerr << "World of size " << worlsize << endl;
+	cerr << "of dimension: " << dimension << endl;
+	cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
+	cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
+	if(type_of_l_r_edges != "extending"){
+		cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
+	}
+	cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
+	ofile << "                 EDGE" << endl;
+	ofile << setw(7) << right << "DEME "
+	<< setw(7) << left << " LEFT"
+	<< setw(6) << left << "RIGHT";
+	if(dimension == 2){
+		ofile << setw(6) << left << "UP"
+		<< setw(6) << left << "DOWN";
+	}
+	ofile << setw(12) << left << "mean f"
+	<< setw(12) << left << "f(heter)"
+	<< setw(12) << left << "meanHI"
+	<< setw(12) << left << "var(HI)";
+	if(number_of_loci * number_of_chromosomes > 1){
+		ofile << setw(12) << left << "var(p)"
+		<< setw(12) << left << "LD";
+	}
+
+	if(number_of_loci * number_of_chromosomes <= 16){
+		for(int ch = 0;ch < number_of_chromosomes;ch++){
+			for(int l = 0; l < number_of_loci;l++){
+				ofile << left << "Ch" << ch+1 << "l" << l+1 << setw(7) << ' ';
+			}
+		}
+	}
+	ofile << endl;
+	for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
+		i->second->summary(ofile);
+	}
+
+//	cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
+	ofile.close();
+	return 0;
 }

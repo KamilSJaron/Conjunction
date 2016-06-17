@@ -13,7 +13,7 @@ class Imigrant
 		
 // /* COMPUTIONG METHODS */
 		int getChiasma();
-		void makeGamete(Imigrant& descendant); //
+		void makeGamete(std::vector<Chromosome>& gamete); //this method should be rewriten to accept vector of chromosomes instead of pointer to imigrant
 		double getFitness();
 		double getBprop() const;
 		void getSizesOfBBlocks(std::vector<int>& sizes);
