@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 
 #include "../include/Chromosome.h"
 #include "../include/Individual.h"
