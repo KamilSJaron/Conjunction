@@ -44,7 +44,7 @@ Chromosome::~Chromosome(){
 }
 
 /* PLOTTING METHODS */
-void Chromosome::showCh§romosome() const{
+void Chromosome::showChromosome() const{
 	for(map<int, char>::const_iterator i=chromosome.begin(); i!=chromosome.end(); ++i){
 		cout << i->first << ':' << i->second << '\n';
 	}
