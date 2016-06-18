@@ -1,6 +1,8 @@
 /*
-conjunction: simulator of secondary contact using Fisher's representation of genome admixture
-Copyright (C) 2013-2016  Kamil S. Jaron
+ * core unit of
+ * conjunction: simulator of secondary contact using Fisher's representation of genome admixture
+ * providing API usable by any other wrapper
+Copyright (C) 2016  Kamil S. Jaron
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,49 +19,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <vector>
+#include <string>
+#include <math.h>
 #include <cmath>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
+#include <iomanip>
 
 #include "../include/Chromosome.h"
-#include "../include/Imigrant.h"
 #include "../include/Individual.h"
+#include "../include/Imigrant.h"
 #include "../include/SelectionModel.h"
 #include "../include/Deme.h"
 #include "../include/World.h"
 #include "../include/SimulationSetting.h"
 #include "../include/Core.h"
-#include "../include/Dispatcher.h"
 
 using namespace std;
 
-int main(int argc, char **argv)
-{
-	string setting_file = "setting.txt";
-
-    if(argc > 1){
-    	if(strcmp( argv[1], "--help") == 0){
-    		cerr << "all parameters are read form file setting.txt; details are online at wiki" << endl;
-    		return 0;
-    	}
-    	if(strcmp( argv[1], "--version") == 0){
-    		cerr << "Conjunction v1.2.development" << endl;
-    		cerr << "... on the way to be a nice program" << endl;
-    		return 0;
-    	}
-
-        string setting_file = argv[1];
-
-    }
-
-    Dispatcher Nick(setting_file);
-
-    Nick.printSimulationSetting();
-
-    return 0;
+Core::Core(SimulationSetting simulation) {
+	world = World();
 }
 
-
+Core::~Core() {
+	world.clear();
+}

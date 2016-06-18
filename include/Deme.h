@@ -1,6 +1,9 @@
 // comment demesize in manual, it should be divideable by 2*number_of_edges
 // comment demesize in manual, it should be power of 3 for easy square plotting (64, 216, 512, 1000, 1728, 4096)
 
+#ifndef DEME_H
+#define DEME_H
+
 class Deme  
 {
 	public:
@@ -62,3 +65,4 @@ class Deme
 		SelectionModel selection_model;
 };
 
+#endif

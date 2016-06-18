@@ -15,10 +15,10 @@
 # Numerical parameters
 
 LOCI = 2                     # integer in {1;10000}
-NUMBERofCHROMOSOMES = 1      # integer in {1;21}
+NUMBERofCHROMOSOMES = [1, 2, 5]      # integer in {1;21}
 LAMBDA = 0.5        # real in {0;5}
-SELECTIONpressure = 0      # real in {0;1}
-BETA = 1                     # real in {0.0625;16}
+SELECTIONpressure = [0, 0.2, 0.5]      # real in {0;1}
+BETA = [0.2, 1, 4]                     # real in {0.0625;16}
 DEMEsize = 1024               # integer in {4;8192}, only powers of 4
 SEED = 151018                # integer
 NUMBERofGENERATIONS = 250   # integer in {1,10000}

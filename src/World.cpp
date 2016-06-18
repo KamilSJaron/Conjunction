@@ -21,11 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <vector>
 #include <string>
-//#include <cstring>
 #include <math.h>
 #include <cmath>
 #include <iomanip>
-//#include <time.h>
 
 #include "../include/Chromosome.h"
 #include "../include/Individual.h"
