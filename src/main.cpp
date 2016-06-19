@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../include/World.h"
 #include "../include/SimulationSetting.h"
 #include "../include/Core.h"
-#include "../include/Dispatcher.h"
+#include "../include/SettingHandler.h"
 
 using namespace std;
 
@@ -40,26 +40,40 @@ int main(int argc, char **argv)
 {
 	string setting_file = "setting.txt";
 
-    if(argc > 1){
-    	if(strcmp( argv[1], "--help") == 0){
-    		cerr << "all parameters are read form file setting.txt; details are online at wiki" << endl;
-    		return 0;
-    	}
-    	if(strcmp( argv[1], "--version") == 0){
-    		cerr << "Conjunction v1.2.development" << endl;
-    		cerr << "... on the way to be a nice program" << endl;
-    		return 0;
-    	}
+	if(argc > 1){
+		if(strcmp( argv[1], "--help") == 0){
+			cerr << "all parameters are read form file setting.txt; details are online at wiki" << endl;
+			return 0;
+		}
+		if(strcmp( argv[1], "--version") == 0){
+			cerr << "Conjunction v1.2.development" << endl;
+			cerr << "... on the way to be a nice program" << endl;
+			return 0;
+		}
 
-        string setting_file = argv[1];
+		setting_file = argv[1];
 
-    }
+	}
 
-    Dispatcher Nick(setting_file);
+	cerr << "Loading ... " << setting_file << endl;
 
-    Nick.printSimulationSetting();
+	SettingHandler all_setting(setting_file);
+	SimulationSetting one_sim_setting;
+	Core* sim;
 
-    return 0;
+	cout << "Performing: "<< all_setting.getNumberOfSimulations() << " simulations\n";
+	all_setting.printParameters();
+	all_setting.printParameterCounts();
+
+	for(int sim_index = 0; sim_index < all_setting.getNumberOfSimulations(); sim_index++){
+		one_sim_setting = all_setting.getSimualtionSetting(sim_index);
+		sim = new Core(one_sim_setting);
+//		sim.simulate();
+		delete[] sim;
+	}
+
+
+	return 0;
 }
 
 
