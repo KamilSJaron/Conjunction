@@ -5,13 +5,12 @@
  *      Author: kjaron
  */
 
-#ifndef SRC_SETTINGHANDLER_H_
-#define SRC_SETTINGHANDLER_H_
+#ifndef SRC_DISPATCHER_H_
+#define SRC_DISPATCHER_H_
 
-class SettingHandler {
+class SettingHandler{
 	public:
 		SettingHandler(std::string filename);
-	//	 ~Dispatcher(){ delete simulations; };
 
 		SimulationSetting getSimualtionSetting(int index);
 		int getNumberOfSimulations() const;
@@ -52,5 +51,5 @@ class SettingHandler {
 		std::vector<int> parameters_numbers;
 };
 
-#endif /* SRC_SETTINGHANDLER_H_ */
+#endif /* SRC_DISPATCHER_H_ */
 

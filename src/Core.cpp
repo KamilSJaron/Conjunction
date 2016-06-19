@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-Core::Core(SimulationSetting simulation) {
+Core::Core(SimulationSetting simulation_setting) {
 	world = World();
 }
 

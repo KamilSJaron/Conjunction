@@ -1,11 +1,20 @@
 /*
- * Dispatcher.cpp
- *
- *  Created on: Jun 17, 2016
- *      Author: kjaron
- */
+Class Setting Handler is reading setting file as it is described in master thesis of KamilSJaron
+Copyright (C) 2016  Kamil S. Jaron
 
-#include "../include/SettingHandler.h"
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <iostream>
 #include <fstream>
@@ -14,6 +23,7 @@
 #include <iomanip>
 
 #include "../include/SimulationSetting.h"
+#include "../include/SettingHandler.h"
 
 using namespace std;
 
@@ -35,11 +45,24 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index){
 		refactorised_index = simulation_index % (number_of_parsed_simulations * parameters_numbers[parameter_index]);
 		refactorised_index = (refactorised_index - (refactorised_index % number_of_parsed_simulations)) / number_of_parsed_simulations;
 
-		cout << parameters_in_order[parameter_index] << " : " << refactorised_index << endl;
+//		cout << parameters_in_order[parameter_index] << " : " << refactorised_index << endl;
 		setPatameterOfSetting(mySetting, parameters_in_order[parameter_index], refactorised_index);
 
 		number_of_parsed_simulations = number_of_parsed_simulations * parameters_numbers[parameter_index];
 	}
+
+	mySetting.file_to_save = "kobylaMaMalyBok";
+	mySetting.type_of_save = "simple";
+
+	mySetting.dimension = dimension;
+	mySetting.up_down_demes = up_down_demes;
+	mySetting.left_right_demes = left_right_demes;
+	mySetting.edges_per_deme = edges_per_deme;
+
+	mySetting.type_of_updown_edges = type_of_updown_edges;
+	mySetting.type_of_leftright_edges = type_of_leftright_edges;
+
+
 	return mySetting;
 };
 
@@ -469,34 +492,34 @@ int SettingHandler::printVectorValue(int index, vector<T> val_vec) const{
 
 void SettingHandler::setPatameterOfSetting(SimulationSetting& mySetting, std::string parameter, int index){
 	if(parameter == "LOCI"){
-//		loci.push_back(int(value));
+		mySetting.loci = loci[index];
 	}
 	if(parameter == "NUMBERofCHROMOSOMES"){
-//		chrom.push_back(int(value));
+		mySetting.chromosomes = chrom[index];
 	}
 	if(parameter == "LAMBDA"){
-//		lambda.push_back(value);
+		mySetting.lambda = lambda[index];
 	}
 	if(parameter == "SELECTIONpressure"){
-//		sel.push_back(value);
+		mySetting.selection = sel[index];
 	}
 	if(parameter == "BETA"){
-///		beta.push_back(value);
+		mySetting.beta = beta[index];
 	}
 	if(parameter == "DEMEsize"){
-//		deme.push_back(int(value));
+		mySetting.deme_size = deme[index];
 	}
 	if(parameter == "SEED"){
-//		seed.push_back(int(value));
+		mySetting.seed = seed[index];
 	}
 	if(parameter == "NUMBERofGENERATIONS"){
-//		gen.push_back(int(value));
+		mySetting.generations = gen[index];
 	}
 	if(parameter == "NUMBERofSAVES"){
-//		saves.push_back(int(value));
+		mySetting.saves = saves[index];
 	}
 	if(parameter == "DELAY"){
-//		delay.push_back(int(value));
+		mySetting.delay = delay[index];
 	}
 	return;
 }

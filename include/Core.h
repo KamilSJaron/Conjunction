@@ -10,7 +10,7 @@
 
 class Core {
 	public:
-		Core(SimulationSetting simulation);
+		Core(SimulationSetting simulation_setting);
 		virtual ~Core();
 
 	private:

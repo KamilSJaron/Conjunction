@@ -10,12 +10,12 @@
 
 struct SimulationSetting{
 	int loci, chromosomes, deme_size, generations;
-	double lamda, selection, beta;
+	double lambda, selection, beta;
 
 	int saves, delay, seed;
 	std::string file_to_save, type_of_save;
 
-	int up_down_demes, left_right_demes, dimension;
+	int up_down_demes, left_right_demes, dimension, edges_per_deme;
 	std::string type_of_updown_edges, type_of_leftright_edges;
 };
 
