@@ -28,7 +28,7 @@ NUMBERofGENERATIONS = 250   # integer in {1,10000}
 
 NUMBERofSAVES = 2                # integer smaller than number of generations
 NAMEofOUTPUTfile = 151018_out    # the sulfix will be added
-TYPEofOUTPUTfile = summary       # {complete, summary, hybridIndices, hybridIndicesJunctions, } 
+TYPEofOUTPUTfile = hybridIndices       # {complete, summary, hybridIndices, hybridIndicesJunctions, } 
 DELAY = 0
 
 # World definition

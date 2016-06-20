@@ -40,19 +40,23 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index){
 	SimulationSetting mySetting;
 	int number_of_parsed_simulations = 1;
 	int refactorised_index = 0;
+	char parsed_parameter;
 
 	for(unsigned int parameter_index = 0; parameter_index < parameters_in_order.size(); parameter_index++){
 		refactorised_index = simulation_index % (number_of_parsed_simulations * parameters_numbers[parameter_index]);
 		refactorised_index = (refactorised_index - (refactorised_index % number_of_parsed_simulations)) / number_of_parsed_simulations;
 
-//		cout << parameters_in_order[parameter_index] << " : " << refactorised_index << endl;
-		setPatameterOfSetting(mySetting, parameters_in_order[parameter_index], refactorised_index);
+		parsed_parameter = setPatameterOfSetting(mySetting, parameters_in_order[parameter_index], refactorised_index);
+
+		if(parameters_numbers[parameter_index] > 1){
+			file_name_patten = file_name_patten + parsed_parameter + char(parameter_index);
+		}
 
 		number_of_parsed_simulations = number_of_parsed_simulations * parameters_numbers[parameter_index];
 	}
 
-	mySetting.file_to_save = "kobylaMaMalyBok";
-	mySetting.type_of_save = "simple";
+	mySetting.file_to_save = file_name_patten;
+	mySetting.type_of_save = type_of_save;
 
 	mySetting.dimension = dimension;
 	mySetting.up_down_demes = up_down_demes;
@@ -490,36 +494,46 @@ int SettingHandler::printVectorValue(int index, vector<T> val_vec) const{
 	}
 }
 
-void SettingHandler::setPatameterOfSetting(SimulationSetting& mySetting, std::string parameter, int index){
+char SettingHandler::setPatameterOfSetting(SimulationSetting& mySetting, std::string parameter, int index){
 	if(parameter == "LOCI"){
 		mySetting.loci = loci[index];
+		return 'l';
 	}
 	if(parameter == "NUMBERofCHROMOSOMES"){
 		mySetting.chromosomes = chrom[index];
+		return 'c';
 	}
 	if(parameter == "LAMBDA"){
 		mySetting.lambda = lambda[index];
+		return 'r';
 	}
 	if(parameter == "SELECTIONpressure"){
 		mySetting.selection = sel[index];
+		return 's';
 	}
 	if(parameter == "BETA"){
 		mySetting.beta = beta[index];
+		return 'b';
 	}
 	if(parameter == "DEMEsize"){
 		mySetting.deme_size = deme[index];
+		return 'd';
 	}
 	if(parameter == "SEED"){
 		mySetting.seed = seed[index];
+		return 'n';
 	}
 	if(parameter == "NUMBERofGENERATIONS"){
 		mySetting.generations = gen[index];
+		return 'G';
 	}
 	if(parameter == "NUMBERofSAVES"){
 		mySetting.saves = saves[index];
+		return 'S';
 	}
 	if(parameter == "DELAY"){
 		mySetting.delay = delay[index];
+		return 'D';
 	}
-	return;
+	return '?';
 }
