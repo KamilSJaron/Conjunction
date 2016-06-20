@@ -4,7 +4,7 @@ CXXFLAGS = -std=c++11 -O3 -Wall -pedantic
 
 PRG = conjunction
 TEST = conjunction_test
-CLASSES = ./src/Chromosome.o ./src/Individual.o ./src/Imigrant.o ./src/Deme.o ./src/SelectionModel.o ./src/World.o ./src/SimulationSetting.o ./src/Core.o ./src/SettingHandler.o
+CLASSES = ./src/Chromosome.o ./src/Individual.o ./src/Imigrant.o ./src/Deme.o ./src/SelectionModel.o ./src/World.o ./src/SimulationSetting.o ./src/Simulation.o ./src/SettingHandler.o
 OBJ = ./src/main.o $(CLASSES)
 
 all: $(PRG)

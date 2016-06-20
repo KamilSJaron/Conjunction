@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../include/World.h"
 #include "../include/SimulationSetting.h"
 #include "../include/SettingHandler.h"
-#include "../include/Core.h"
+#include "../include/Simulation.h"
 
 
 using namespace std;
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 
 	SettingHandler all_setting(setting_file);
 	SimulationSetting one_sim_setting;
-	Core sim(one_sim_setting);
+	Simulation sim(one_sim_setting);
 
 	cout << "Performing: "<< all_setting.getNumberOfSimulations() << " simulations\n";
 	all_setting.printParameters();
@@ -68,8 +68,8 @@ int main(int argc, char **argv)
 
 	for(int sim_index = 0; sim_index < all_setting.getNumberOfSimulations(); sim_index++){
 		one_sim_setting = all_setting.getSimualtionSetting(sim_index);
-		sim = Core(one_sim_setting);
-//		sim.simulate();
+		sim = Simulation(one_sim_setting);
+		sim.simulate();
 	}
 
 

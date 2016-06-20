@@ -43,7 +43,9 @@ class World {
 		void setUDEdgesType(std::string ed_type);
 		void setDimension(int dim);
 		void setNumberOfEdges(int nue);
-		void restart(); // crear the space, creates a new one (2 columns, rows defined by user)
+		void setSlectionBetaLambda(double s, double b, double l);
+		void setLociChromDeme(int l, int ch, int d);
+		void restart(); // clear the space, creates a new one (2 columns, rows defined by user)
 		void clear();	// deletes all demes
 
 	private:

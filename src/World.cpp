@@ -624,6 +624,18 @@ void World::setNumberOfEdges(int nue){
 	edges_per_deme = nue;
 }
 
+void World::setSlectionBetaLambda(double s, double b, double l){
+	selection = s;
+	beta = b;
+	lambda = l;
+}
+
+void World::setLociChromDeme(int l, int ch, int d){
+	number_of_loci = l;
+	number_of_chromosomes = ch;
+	deme_size = d;
+}
+
 void World::restart(){
 	if(dimension == 0){
 		zeroD_immigrant_pool.clear();
