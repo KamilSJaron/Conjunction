@@ -7,19 +7,24 @@ int testDeme(){
     std::vector<int> neigb (myints, myints + sizeof(myints) / sizeof(int) );
 
     Deme Hell(0, neigb, 'C', 4, 0.8, 1, 1, 100, 1);
-	Deme Heaven(1, 'C', 4, 0.8, 1);
 
+    cout << "*****SD*****" << endl;
     Hell.showDeme();
+    cout << "*****S*****" << endl;
     Hell.summary();
 
     Hell.Breed();
 
+    cout << "*****SD*****" << endl;
     Hell.showDeme();
+    cout << "*****S*****" << endl;
     Hell.summary();
 
     Hell.Breed();
 
+    cout << "*****SD*****" << endl;
     Hell.showDeme();
+    cout << "*****S*****" << endl;
     Hell.summary();
 
 

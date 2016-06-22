@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 
 Simulation::Simulation(SimulationSetting& simulation_setting) {
-	world = World();
+	World world;
 
 	setWorld(simulation_setting);
 }

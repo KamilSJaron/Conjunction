@@ -592,19 +592,11 @@ void World::getLD(){
 // // // // // // // //
 
 void World::setHeight(int heig){
-	if(world.size() == -1){
-		number_of_demes_u_d = heig;
-	} else {
-		cerr << "It is not possible to change parameter height once, you create world";
-	}
+	number_of_demes_u_d = heig;
 }
 
 void World::setWidth(int width){
-	if(world.size() == -1){
-		number_of_demes_l_r = width;
-	} else {
-		cerr << "It is not possible to change parameter height once, you create world";
-	}
+	number_of_demes_l_r = width;
 }
 
 

@@ -6,13 +6,16 @@
 using namespace std;
 
 #include "../include/Chromosome.h"
+#include "../include/Imigrant.h"
 #include "../include/Individual.h"
 #include "../include/SelectionModel.h"
 #include "../include/Deme.h"
+#include "../include/World.h"
 
 #include "ChromosomeTest.cpp"
 #include "IndividualTest.cpp"
 #include "DemeTest.cpp"
+#include "WorldTest.cpp"
 
 int main(int argc, char* argv[]){
 
@@ -30,12 +33,16 @@ int main(int argc, char* argv[]){
 	} else {
 		cerr << "Individual: not passed" << endl;
 	}
-	if(testIndividual() == 0){
+	if(testDeme() == 0){
 		cerr << "Deme: passed" << endl;
 	} else {
 		cerr << "Deme: not passed" << endl;
 	}
-	cerr << "World: not implemented" << endl;
-	cerr << "Wrapper: not implemented" << endl;
+	if(testWorld() == 0){
+		cerr << "World: passed" << endl;
+	} else {
+		cerr << "World: not passed" << endl;
+	}
+
 	return 0;
 }

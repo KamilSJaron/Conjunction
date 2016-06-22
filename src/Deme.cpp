@@ -42,97 +42,16 @@ double selectionRand(){
 // constructor/destructors functions / //
 // // // // // // // // // // // // // //
 
-Deme::Deme(int ind, double sel, double beta){
-	index = ind;
-	deme_size = 0;
-	deme = new Individual[deme_size];
-
-	selection_model.setSelectionPressure(sel);
-	selection_model.setBeta(beta);
-}
-
-
-Deme::Deme(std::vector<int> neigb, double sel, double beta){
-	neigbours = neigb;
-	index = 0;
-	deme_size = 0;
-	deme = new Individual[deme_size];
-	selection_model.setSelectionPressure(sel);
-	selection_model.setBeta(beta);
-}
-
-
-Deme::Deme(int ind, vector<int> neigb, int size, double sel, double beta){
-	index = ind;
-	neigbours = neigb;
-	deme_size = size;
-	deme = new Individual[deme_size];
-	selection_model.setSelectionPressure(sel);
-	selection_model.setBeta(beta);
-}
-
-Deme::Deme(int ind, vector<int> neigb, char init, int size, double sel, double beta){
+Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, double in_lambda){
 	deme_size = size;
 	deme = new Individual[deme_size];
 	index = ind;
 	neigbours = neigb;
 	if(init == 'A' or init == 'B'){
-		Individual temp(init);
-		for(int i=0;i<deme_size;i++){
-			deme[i] = temp;
-		}
-	} else {
-		Individual tempA('A');
-		Individual tempB('B');
-		int i = 0;
-		while(i< (deme_size / 2)){
-			deme[i] = tempA;
-			i++;
-		}
-		while(i< deme_size){
-			deme[i] = tempB;
-			i++;
-		}
-	}
-	selection_model.setSelectionPressure(sel);
-	selection_model.setBeta(beta);
-}
-
-Deme::Deme(int ind, char init, int size, double sel, double beta){
-	deme_size = size;
-	deme = new Individual[deme_size];
-	index = ind;
-		if(init == 'A' or init == 'B'){
-			Individual temp(init);
-			for(int i=0;i<deme_size;i++){
-				deme[i] = temp;
-		}
-	} else {
-		Individual tempA('A');
-		Individual tempB('B');
-		int i = 0;
-		while(i< (deme_size / 2)){
-			deme[i] = tempA;
-			i++;
-		}
-		while(i< deme_size){
-			deme[i] = tempB;
-			i++;
-		}
-	}
-	selection_model.setSelectionPressure(sel);
-	selection_model.setBeta(beta);
-}
-
-Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, double in_lambda){
-	deme_size = size;
-	deme = new Individual[deme_size];
-	index = ind;
-		if(init == 'A' or init == 'B'){
 			Individual temp(init, in_ch, in_loc, in_lambda);
 			for(int i=0;i<deme_size;i++){
 				deme[i] = temp;
-		}
+			}
 	} else {
 		Individual tempA('A', in_ch, in_loc, in_lambda);
 		Individual tempB('B', in_ch, in_loc, in_lambda);

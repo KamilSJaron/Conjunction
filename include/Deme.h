@@ -8,14 +8,8 @@ class Deme
 {
 	public:
 // constructor / destructors
-// 		Deme(){};
- 		Deme(int ind, double sel, double beta);
- 		Deme(std::vector<int> neigb, double sel, double beta);
-		Deme(int ind, char init, int size, double sel, double beta);
-		Deme(int ind, std::vector<int> neigb, int size, double sel, double beta);
-		Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta);
 		Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, double in_lambda);
-		~Deme(); // ????
+		~Deme();
 		
 // communication functions
 		std::vector<int> getNeigbours();
