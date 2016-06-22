@@ -10,7 +10,7 @@ int testWorld(){
 
 	World world;
 
-	world.listOfParameters();
+//	world.listOfParameters();
 
 	world.setHeight(2);
 	world.setWidth(2);
@@ -22,16 +22,16 @@ int testWorld(){
 	world.setSlectionBetaLambda(0.1, 1, 1.5);
 	world.setLociChromDeme(16, 4, 64);
 
-	world.listOfParameters();
+//	world.listOfParameters();
 
-	world.listOfDemes();
+//	world.listOfDemes();
 
 	world.basicUnitCreator('b', 'A');
 	world.basicUnitCreator('l', 'B');
 
 //	world.worldSlave();
 
-	world.listOfDemes();
+//	world.listOfDemes();
 
 	return 0;
 }

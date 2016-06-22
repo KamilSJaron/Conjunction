@@ -17,14 +17,14 @@
 # Numerical parameters
 
 LOCI = [2, 4]                        # integer in {1;10000}
-NUMBERofCHROMOSOMES = 1              # integer in {1;21}
-LAMBDA = 1.53                        # real in {0;5}, recombination
+NUMBERofCHROMOSOMES = [1; 5, 3,]
+LAMBDA = [1.53 1.35]                        # real in {0;5}
 SELECTIONpressure = 0.42             # real in {0;1}
-BETA = 0                             # real in {0.0625;16}, epistatic function
-DEMEsize = 1024                      # integer in {8;8192}, only multiplies of 4
-SEED = 910401                        # 6 digit integer
+BETA = 0;                             # real in {0.0625;16}
+DEMEsize = 1024
+SEED = 910401,                        # 6 digit integer
 
-NUMBERofGENERATIONS = 50             # integer in {1,10000}
+NUMBERofGENERATIONS = 5 0             # integer in {1,10000}
 
 #output parameters defining the output
 

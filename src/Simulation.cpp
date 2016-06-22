@@ -84,6 +84,7 @@ void Simulation::simulate(){
 				file_name[save_pos] = '0' + char(order);
 			}
 			world.summary();
+			cerr << "Output: " << file_name << endl;
 			check = world.SaveTheUniverse(file_type, file_name);
 			if(check != 0){
 				cerr << "Error in saving the output." << endl;

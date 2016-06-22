@@ -18,11 +18,9 @@
 
 LOCI = [2, 4]                        # integer in {1;10000}
 NUMBERofCHROMOSOMES = 1              # integer in {1;21}
-LAMBDA = 1.53                        # real in {0;5}, recombination
 SELECTIONpressure = 0.42             # real in {0;1}
-BETA = 0                             # real in {0.0625;16}, epistatic function
+BETA =
 DEMEsize = 1024                      # integer in {8;8192}, only multiplies of 4
-SEED = 910401                        # 6 digit integer
 
 NUMBERofGENERATIONS = 50             # integer in {1,10000}
 

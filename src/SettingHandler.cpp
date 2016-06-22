@@ -41,6 +41,7 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index){
 	int number_of_parsed_simulations = 1;
 	int refactorised_index = 0;
 	char parsed_parameter;
+	string file_to_save = file_name_patten;
 
 	for(unsigned int parameter_index = 0; parameter_index < parameters_in_order.size(); parameter_index++){
 		refactorised_index = simulation_index % (number_of_parsed_simulations * parameters_numbers[parameter_index]);
@@ -49,13 +50,14 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index){
 		parsed_parameter = setPatameterOfSetting(mySetting, parameters_in_order[parameter_index], refactorised_index);
 
 		if(parameters_numbers[parameter_index] > 1){
-			file_name_patten = file_name_patten + parsed_parameter + char(parameter_index);
+			file_to_save = file_to_save + '_' + parsed_parameter + '!';
+			file_to_save[file_to_save.find('!')] = '0' + char(parameter_index);
 		}
 
 		number_of_parsed_simulations = number_of_parsed_simulations * parameters_numbers[parameter_index];
 	}
 
-	mySetting.file_to_save = file_name_patten;
+	mySetting.file_to_save = file_to_save;
 	mySetting.type_of_save = type_of_save;
 
 	mySetting.dimension = dimension;

@@ -537,11 +537,11 @@ int World::SaveTheUniverse(string type, string filename){
 	ofstream ofile;
 	vector<double> props;
 
+	cout << "OPENING: " << filename << endl;
 	ofile.open(filename); // Opens file
 	if (ofile.fail()){
 		return 1;
 	}
-
 
 	if(dimension == 0){
 		vector<int> blockSizes;

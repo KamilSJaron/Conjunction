@@ -8,24 +8,24 @@ int testDeme(){
 
     Deme Hell(0, neigb, 'C', 4, 0.8, 1, 1, 100, 1);
 
-    cout << "*****SD*****" << endl;
-    Hell.showDeme();
-    cout << "*****S*****" << endl;
-    Hell.summary();
+//    cout << "*****SD*****" << endl;
+//    Hell.showDeme();
+//    cout << "*****S*****" << endl;
+//    Hell.summary();
 
     Hell.Breed();
 
-    cout << "*****SD*****" << endl;
-    Hell.showDeme();
-    cout << "*****S*****" << endl;
-    Hell.summary();
+//    cout << "*****SD*****" << endl;
+//    Hell.showDeme();
+//    cout << "*****S*****" << endl;
+//    Hell.summary();
 
     Hell.Breed();
 
-    cout << "*****SD*****" << endl;
-    Hell.showDeme();
-    cout << "*****S*****" << endl;
-    Hell.summary();
+//    cout << "*****SD*****" << endl;
+//    Hell.showDeme();
+//    cout << "*****S*****" << endl;
+//    Hell.summary();
 
 
 //		std::vector<int> getNeigbours();
