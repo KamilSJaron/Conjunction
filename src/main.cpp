@@ -63,8 +63,6 @@ int main(int argc, char **argv)
 	Simulation sim(one_sim_setting);
 
 	cout << "Performing: "<< all_setting.getNumberOfSimulations() << " simulations\n";
-	all_setting.printParameters();
-	all_setting.printParameterCounts();
 
 	for(int sim_index = 0; sim_index < all_setting.getNumberOfSimulations(); sim_index++){
 		one_sim_setting = all_setting.getSimualtionSetting(sim_index);

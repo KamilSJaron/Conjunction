@@ -35,5 +35,9 @@ DELAY = 10                           # integer smaller than number of generation
 
 # World definition
 	
-WORLDdefinition -quick = 'HybridZone' 1 
-# {'HybridZone','LowMigrationBazykin','InfInf','Arena'}
+WORLDdefinition -quick = 'HybridZone' 1
+# Predefined worlds: {'HybridZone','LowMigrationBazykin','InfInf','Arena'}
+
+# WORLDdefinition -standard = 2 'infinite' 8 'wrapping' 8
+# Border types: {'extending','wrapping','infinite','reflexive'}
+

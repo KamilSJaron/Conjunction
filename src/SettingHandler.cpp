@@ -236,7 +236,6 @@ int SettingHandler::parseSetting(ifstream& myfile){
 
 int SettingHandler::parseWorldDefinition(string& line){
 	int switcher = 0, n = 0;
-// 	double arenan = 0;
 	string type, number;
 	int stdHeight = 0, stdWidth = -1, stdDim = 0;
 	string stdLR, stdUD;
@@ -289,12 +288,15 @@ int SettingHandler::parseWorldDefinition(string& line){
 			if(isdigit(line[i])){
 				switcher = 5;
 				number.push_back((line[i]));
-				continue;
+				if(i+1 < line.size()){
+					continue;
+				}
 			}
 		}
 		if(switcher == 5){
-			if(isdigit(line[i])){
+			if(isdigit(line[i]) and i+1 < line.size()){
 				number.push_back((line[i]));
+				continue;
 			} else {
 				if(type == "HybridZone"){
 					n = stoi( number );
@@ -345,8 +347,9 @@ int SettingHandler::parseWorldDefinition(string& line){
 				}
 				cerr << "Error: Unknown pre-defined world " << type << endl;
 				return 1;
+				}
 			}
-		}
+
 		if(switcher == 12){
 			if(isdigit(line[i])){
 				switcher = 13;
@@ -379,30 +382,31 @@ int SettingHandler::parseWorldDefinition(string& line){
 		if(switcher == 15){
 			if(isdigit(line[i])){
 				number.push_back((line[i]));
+				if(i+1 < line.size()){
+					continue;
+				}
+			}
+			if(number.empty()){
 				continue;
 			} else {
-				if(number.empty()){
-					continue;
+				if(stdWidth == -1){
+					stdWidth = stoi(number);
+					number.clear();
 				} else {
-					if(stdWidth == -1){
-						stdWidth = stoi(number);
-						number.clear();
+					stdHeight = stoi(number);
+					dimension = stdDim;
+					if(stdDim == 1){
+						edges_per_deme = 2;
 					} else {
-						stdHeight = stoi(number);
-						dimension = stdDim;
-						if(stdDim == 1){
-							edges_per_deme = 2;
-						} else {
-							edges_per_deme = 4;
-						}
-						up_down_demes = stdHeight;
-						left_right_demes = stdWidth;
-						type_of_updown_edges = stdUD;
-						type_of_leftright_edges = stdLR;
-						return 0;
+						edges_per_deme = 4;
 					}
-					switcher = 13;
+					up_down_demes = stdHeight;
+					left_right_demes = stdWidth;
+					type_of_updown_edges = stdUD;
+					type_of_leftright_edges = stdLR;
+					return 0;
 				}
+				switcher = 13;
 			}
 		}
 	}
