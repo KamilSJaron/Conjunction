@@ -264,12 +264,12 @@ int World::migration(){
 	for(map<int, vector<Individual> >::iterator buff=ImmigranBuffer.begin(); buff!=ImmigranBuffer.end(); ++buff){
 		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
 			for(int k=0;k < MigInd; k++){
-				ImmigranBuffer[buff->first].push_back(Individual('A'));
+				ImmigranBuffer[buff->first].push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda));
 			}
 		}
 		if(buff->first >= index_last_right_fix and buff->first < index_last_right_fix + number_of_demes_u_d){
 			for(int k=0;k < MigInd; k++){
-				ImmigranBuffer[buff->first].push_back(Individual('B'));
+				ImmigranBuffer[buff->first].push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda));
 			}
 		}
 		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
@@ -294,7 +294,7 @@ void World::set(int index,string type){
 	vector<Individual> migBuffer;
 	if(type == "pureA"){
 		for(int i=0;i<demesize;i++){
-			migBuffer.push_back('A');
+			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda));
 		}
 		world[index]->integrateMigrantVector(migBuffer);
 		return;
@@ -302,7 +302,7 @@ void World::set(int index,string type){
 
 	if(type == "pureB"){
 		for(int i=0;i<demesize;i++){
-			migBuffer.push_back('B');
+			migBuffer.push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda));
 		}
 		world[index]->integrateMigrantVector(migBuffer);
 		return;
@@ -310,13 +310,13 @@ void World::set(int index,string type){
 
 	if(type == "hetero"){
 		for(int i=0;i<demesize/4;i++){
-			migBuffer.push_back('A');
+			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda));
 		}
 		for(int i=0;i<demesize/2;i++){
-			migBuffer.push_back('C');
+			migBuffer.push_back(Individual('C', number_of_chromosomes, number_of_loci, lambda));
 		}
 		for(int i=0;i<demesize/4;i++){
-			migBuffer.push_back('B');
+			migBuffer.push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda));
 		}
 		world[index]->integrateMigrantVector(migBuffer);
 		return;
@@ -324,10 +324,10 @@ void World::set(int index,string type){
 
 	if(type == "halfAhalfhetero"){
 		for(int i=0;i<demesize/2;i++){
-			migBuffer.push_back('A');
+			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda));
 		}
 		for(int i=0;i<demesize/2;i++){
-			migBuffer.push_back('C');
+			migBuffer.push_back(Individual('C', number_of_chromosomes, number_of_loci, lambda));
 		}
 		world[index]->integrateMigrantVector(migBuffer);
 		return;
@@ -542,7 +542,6 @@ int World::SaveTheUniverse(string type, string filename){
 	ofstream ofile;
 	vector<double> props;
 
-	cout << "OPENING: " << filename << endl;
 	ofile.open(filename); // Opens file
 	if (ofile.fail()){
 		return 1;

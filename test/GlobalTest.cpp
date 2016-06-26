@@ -30,7 +30,7 @@ int testParameterLoading(){
 		cerr << " Rejecting correct setting.\n";
 		return 1;
 	}
-//	SettingHandler missing_setting("./test/data/missing_parameters");
+//	tests for correct reading
 
 	return 0;
 }

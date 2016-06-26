@@ -43,10 +43,10 @@ double selectionRand(){
 // // // // // // // // // // // // // //
 
 Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, double in_lambda){
-	deme_size = size;
-	deme = new Individual[deme_size];
 	index = ind;
 	neigbours = neigb;
+	deme_size = size;
+	deme = new Individual[deme_size];
 	if(init == 'A' or init == 'B'){
 			Individual temp(init, in_ch, in_loc, in_lambda);
 			for(int i=0;i<deme_size;i++){
@@ -154,15 +154,6 @@ void Deme::Breed(){
 	delete[] metademe;
 }
 
-void Deme::permutation(){
-	int j = 0;
-for(int i = 0;i<deme_size;i++){
-		j = rand() % (deme_size - i);
-		j += i;
-		swap(i, j);
-	}
-}
-
 void Deme::integrateMigrantVector(vector<Individual>& migBuffer){
 	unsigned int i = 0;
 	while(i < migBuffer.size()){
@@ -207,6 +198,7 @@ double Deme::getMeanBproportion() const{
 	for(int i = 0;i < deme_size;i++){
 		props += deme[i].getBprop();
 	}
+//	cout << props / deme_size << props << " / " << deme_size << endl;
 	return (props / deme_size);
 }
 
@@ -345,6 +337,8 @@ void Deme::getps(vector<double>& ps, int ch){
 			}
 		}
 		p = sum(states) / (double)(deme_size * 2);
+//		cout << "\n " << index << "-ch: " << i << " \n";
+//		cout << p << " = " << sum(states) << " / " << (double)(deme_size * 2) << endl;
 		ps.push_back(p);
 	}
 }
@@ -392,13 +386,13 @@ void Deme::summary(){
 	for(int i = 0; i < neigbsize; i++){
 		cout << setw(5) << left << neigbours[i] << " ";
 	}
-	cout << setw(12) << left << ((round(getMeanFitness() * 1000000)) / 1000000)
-	<< setw(12) << left << ((round(getProportionOfHeterozygotes() * 1000000)) / 1000000)
-	<< setw(12) << left << ((round(z * 1000000)) / 1000000)
-	<< setw(12) << left << ((round(varz * 1000000)) / 1000000);
+	cout << setw(12) << left << ((round(getMeanFitness() * 1000000)) / 1000000);
+	cout << setw(12) << left << ((round(getProportionOfHeterozygotes() * 1000000)) / 1000000);
+	cout << setw(12) << left << ((round(z * 1000000)) / 1000000);
+	cout << setw(12) << left << ((round(varz * 1000000)) / 1000000);
 	if(number_loci * number_chromosomes > 1){
-		cout	<< setw(12) << left << ((round(varp * 1000000)) / 1000000)
-		<< setw(12) << left << ((round(getLD(z,varz,varp) * 1000000)) / 1000000);
+		cout << setw(12) << left << ((round(varp * 1000000)) / 1000000);
+		cout << setw(12) << left << ((round(getLD(z,varz,varp) * 1000000)) / 1000000);
 	}
 	if((number_loci * number_chromosomes) <= 16){
 		vector<double> ps;
@@ -471,13 +465,6 @@ void Deme::readGenotypeFrequencies(){
  // // // // //
 //  PRIVATE //
 // // // // //
-
-void Deme::swap(int ind1, int ind2){
-	Individual tempInd;
-	tempInd = deme[ind2];
-	deme[ind2] = deme[ind1];
-	deme[ind1] = tempInd;
-}
 
 int Deme::pickAnIndividual(){
 		return rand() % deme_size;

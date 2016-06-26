@@ -6,7 +6,6 @@ class Individual
 	public:
 /* DECLARATION */
 		Individual();
-		Individual(char origin); /* init Individual as 'A', 'B' or pure "AB" heterozygot*/
 		Individual(char origin, int input_ch, int input_loci, double input_lamda);
 		Individual(	std::vector<Chromosome>& gamete1,
 					std::vector<Chromosome>& gamete2,
@@ -37,7 +36,8 @@ class Individual
 		int getNumberOfChromosomes() const;
 		double getLambda() const;
 		int getNumberOfLoci(int ch) const;
-			
+		void getNumberOfLoci(std::vector<int>& ch) const;
+
 	private:
 	/*data*/
 		std::vector<Chromosome> genome[2];

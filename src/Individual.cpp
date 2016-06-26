@@ -43,34 +43,8 @@ double uniform(){
 /* DECLARATION */
 
 Individual::Individual(){
-	number_of_chromosomes = 1;
-	lambda = 0;
-
-	genome[0].reserve(number_of_chromosomes);
-	genome[1].reserve(number_of_chromosomes);
-	for(int i=0;i<number_of_chromosomes;i++){
-		genome[0].push_back(Chromosome('A',1));
-		genome[1].push_back(Chromosome('B',1));
-	}
-}
-
-Individual::Individual(char origin){
-	number_of_chromosomes = 1;
-	lambda = 0;
-
-	genome[0].reserve(number_of_chromosomes);
-	genome[1].reserve(number_of_chromosomes);
-	if(origin == 'A' or origin == 'B'){
-		for(int i=0;i<number_of_chromosomes;i++){
-			genome[0].push_back(Chromosome(origin, 1));
-			genome[1].push_back(Chromosome(origin, 1));
-		}
-	} else {
-		for(int i=0;i<number_of_chromosomes;i++){
-			genome[0].push_back(Chromosome('A', 1));
-			genome[1].push_back(Chromosome('B', 1));
-		}
-	}
+	number_of_chromosomes = -1;
+	lambda = -1;
 }
 
 Individual::Individual(	char origin, int input_ch, int input_loci, 
@@ -142,6 +116,11 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 /* for every chromosome... */
 	for(int i=0;i<number_of_chromosomes;i++){
 /* syntax genome[set][chromosome] */
+//		cout << genome[0][i].getResolution() << ' ';
+//		if(genome[0][i].getResolution() == 1){
+//			genome[3][i].getResolution();
+//		}
+		int loci = genome[0][i].getResolution();
 		numberOfChaisma = getChiasma();
 		starts_by = tossAcoin();
 		
@@ -157,7 +136,6 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		last_material_s1 = genome[0][i].read(0);
 		last_material_s2 = genome[1][i].read(0);
 		int last_roll = -1;
-		int loci = genome[0][i].getResolution();
 		
 		chiasmas.clear();
 		recombinant_ch.clear();
@@ -273,7 +251,9 @@ double Individual::getBprop() const{
 		prop += genome[0][i].countB();
 		prop += genome[1][i].countB();
 	}
+//	cout << prop << " / (" << loci << " * 2 * " << number_of_chromosomes << " = ";
 	prop = prop / (loci*2*number_of_chromosomes);
+//	cout << prop << endl;
 	return prop;
 }
 
@@ -441,6 +421,14 @@ double Individual::getLambda() const{
 
 int Individual::getNumberOfLoci(int ch) const{
 	return genome[0][ch].getResolution();
+}
+
+void Individual::getNumberOfLoci(vector<int>& ch) const{
+	ch.clear();
+	ch.reserve(number_of_chromosomes);
+	for(int i = 0; i < number_of_chromosomes; i++){
+		ch.push_back(genome[0][i].getResolution());
+	}
 }
 
 /* PRIVATE */

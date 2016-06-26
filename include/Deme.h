@@ -20,7 +20,6 @@ class Deme
 
 // computing functions
 		void Breed();
-		void permutation(); // permutation function
 		void integrateMigrantVector(std::vector<Individual>& migBuffer);
 // 		vector<double> getBproportions() const; // not used
 		void getBproportions(std::vector<double>& props) const;
@@ -47,7 +46,6 @@ class Deme
 		void readGenotypeFrequencies();
 	
 	private:
-		void swap(int ind1, int ind2);
 		int pickAnIndividual();
 		static int sum(std::vector<bool>& ve);
 

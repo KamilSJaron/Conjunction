@@ -21,8 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../include/SelectionModel.h"
 
 SelectionModel::SelectionModel() {
-	selection_pressure = 0.5;
-	beta = 1;
+	selection_pressure = -1;
+	beta = -1;
 }
 
 SelectionModel::SelectionModel(double in_selection, double in_beta) {

@@ -69,6 +69,7 @@ int Simulation::simulate(){
 	clock_t t1, t2;
 
 	int order = 0, check = 0, modulo = ceil((double)(generations-delay-1) / saves);
+	cout << modulo << endl;
 	world.restart();
 
 	for(int i=0; i < generations;i++){
@@ -77,37 +78,23 @@ int Simulation::simulate(){
 		world.globalBreeding();
 		t2=clock();
 		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-		if(((i % modulo)+1) == modulo and i != generations - 1 and i >= delay){
+		if((((i - delay) % modulo)+1) == modulo and (i < generations - modulo or i+1 == generations)){
 			order++;
-			if(order >= 10){
-				file_name[save_pos-1] = '0' + char(order / 10 % 10);
-				file_name[save_pos] = '0' + char(order % 10);
-			} else {
-				file_name[save_pos] = '0' + char(order);
+			if(saves > 1){
+				if(order >= 10){
+					file_name[save_pos-1] = '0' + char(order / 10 % 10);
+					file_name[save_pos] = '0' + char(order % 10);
+				} else {
+					file_name[save_pos] = '0' + char(order);
+				}
 			}
 			world.summary();
-			cerr << "Output: " << file_name << endl;
+			cerr << "Saving output to: " << file_name << endl;
 			check = world.SaveTheUniverse(file_type, file_name);
 			if(check != 0){
 				cerr << "Error in saving the output." << endl;
 				return 1;
 			}
-		}
-	}
-	if(saves > 1){
-		order++;
-		if(order >= 10){
-			file_name[save_pos-1] = '0' + char(order / 10 % 10);
-			file_name[save_pos] = '0' + char(order % 10);
-		} else {
-			file_name[save_pos] = '0' + char(order);
-		}
-	}
-	if(saves > 0){
-		check = world.SaveTheUniverse(file_type, file_name);
-		if(check != 0){
-			cerr << "Error in saving the output." << endl;
-			return 1;
 		}
 	}
 
