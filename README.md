@@ -1,5 +1,5 @@
-# forsim
-C++ software for forward simualtion
+# Conjunction
+the simulator of secondaty CONtact using Fisher's JUNCTION model of genome admixture.
 
 ## Build
 
@@ -7,11 +7,11 @@ The software was developed on OS X (Yossemite) and Linux (Kubuntu) and it has no
 
 ### Quick
 
-Open a terminal promt, go to folder <path>/forsim/ and just write
+Open a terminal promt, go to folder <path>/Conjunction/ and just write
 
 $make
 
-The fully operational exectutible "forsim" should be created and prepared for use.
+The fully operational exectutible "conjunction" should be created and prepared for use.
 
 ### Safe / developer build
 
@@ -19,15 +19,7 @@ First of all, built a testing program by
 
 $make test
 
-and execture test
-
-$./forsim_test
-
-if program report, that all tests passed, clean this built without optimization
-
-$make clean
-
-and make optimized executible
+if program report, that all tests passed, build a simulator
 
 $make
 
@@ -35,5 +27,6 @@ executible is ready to use.
 
 ## Usage
 
-The software does not take any arguments, it reads the 'setting.txt' file, where all parameters are expected to be found. So, after compilation, user needs only change options in setting file before simulation.
+The software reads a setting file ('setting.txt' if it is not specified by argument), where all parameters are expected to be found. The template is delivered with the software, therefore simple `conjunction` should perform a set of sumulations. For details of check setting file or wiki.
 
+  conjunction [--version] [--help] [setting_file.txt]

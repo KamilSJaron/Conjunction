@@ -42,13 +42,14 @@ int main(int argc, char **argv)
 	string setting_file = "setting.txt";
 
 	if(argc > 1){
-		if(strcmp( argv[1], "--help") == 0){
-			cerr << "all parameters are read form file setting.txt; details are online at wiki" << endl;
+		if(strcmp( argv[1], "--help") == 0 or strcmp( argv[1], "-h") == 0){
+			cerr << "all parameters are read form setting file (specified by argument or file setting.txt by default); details are online at wiki" << endl;
+			cerr << "\t conjunction [--version] [--help] [setting_file.txt]" << endl;
 			return 0;
 		}
-		if(strcmp( argv[1], "--version") == 0){
+		if(strcmp( argv[1], "--version") == 0 or strcmp( argv[1], "-v") == 0){
 			cerr << "Conjunction v1.2.development" << endl;
-			cerr << "... on the way to be a nice program" << endl;
+			cerr << "\t ... on the way to be a nice program" << endl;
 			return 0;
 		}
 
@@ -62,7 +63,7 @@ int main(int argc, char **argv)
 	SimulationSetting one_sim_setting;
 	Simulation sim(one_sim_setting);
 
-	cout << "Performing: "<< all_setting.getNumberOfSimulations() << " simulations\n";
+	cerr << "Performing: "<< all_setting.getNumberOfSimulations() << " simulations\n";
 
 	for(int sim_index = 0; sim_index < all_setting.getNumberOfSimulations(); sim_index++){
 		one_sim_setting = all_setting.getSimualtionSetting(sim_index);
