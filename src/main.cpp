@@ -67,7 +67,10 @@ int main(int argc, char **argv)
 	for(int sim_index = 0; sim_index < all_setting.getNumberOfSimulations(); sim_index++){
 		one_sim_setting = all_setting.getSimualtionSetting(sim_index);
 		sim = Simulation(one_sim_setting);
-		sim.simulate();
+		if(sim.simulate() != 0){
+			cerr << " A problem during simulation has occurred \n";
+			return 1;
+		}
 	}
 
 

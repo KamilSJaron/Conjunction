@@ -27,7 +27,7 @@ class World {
 		bool empty();
 
 	// 	plotting functions
-		void listOfParameters();
+		void listOfParameters() const;
 		void listOfDemes();
 		void summary();
 		double getProportionOfHeterozygotes(int index);

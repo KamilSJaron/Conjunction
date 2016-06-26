@@ -11,7 +11,7 @@
 class Simulation {
 	public:
 		Simulation(SimulationSetting& simulation_setting);
-		void simulate();
+		int simulate();
 
 	private:
 		void setWorld(SimulationSetting& simulation_setting);

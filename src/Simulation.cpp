@@ -1,7 +1,7 @@
 /*
- * core unit of
+ * a unit of
  * conjunction: simulator of secondary contact using Fisher's representation of genome admixture
- * providing API usable by any other wrapper
+ * handling simulation itself and providing API usable by any other wrapper
 Copyright (C) 2016  Kamil S. Jaron
 
 This program is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ Simulation::Simulation(SimulationSetting& simulation_setting) {
 	setWorld(simulation_setting);
 }
 
-void Simulation::simulate(){
+int Simulation::simulate(){
 
 	if(saves > 10){
 		file_name = file_name + "_0*.tsv";
@@ -56,11 +56,13 @@ void Simulation::simulate(){
 	}
 	int save_pos = file_name.find('*');
 
-	cerr << "*** OUTPUT INFO ***" << endl;
-	cerr << "Name of the file: " << file_name << endl;
-	cerr << "Type of the file: " << file_type << endl;
-	cerr << "Number of files: " << saves << endl;
-	cerr << "*******************" << endl;
+	if(saves > 0){
+		cerr << "*** OUTPUT INFO ***" << endl;
+		cerr << "Name of the file: " << file_name << endl;
+		cerr << "Type of the file: " << file_type << endl;
+		cerr << "Number of files: " << saves << endl;
+		cerr << "*******************" << endl;
+	}
 
 	clock_t t_total1, t_total2;
 	t_total1 = clock();
@@ -88,7 +90,7 @@ void Simulation::simulate(){
 			check = world.SaveTheUniverse(file_type, file_name);
 			if(check != 0){
 				cerr << "Error in saving the output." << endl;
-				return;
+				return 1;
 			}
 		}
 	}
@@ -105,7 +107,7 @@ void Simulation::simulate(){
 		check = world.SaveTheUniverse(file_type, file_name);
 		if(check != 0){
 			cerr << "Error in saving the output." << endl;
-			return;
+			return 1;
 		}
 	}
 
@@ -115,7 +117,7 @@ void Simulation::simulate(){
 	cerr << "Total time of simulation: " << ((float)t_total2 - (float)t_total1) / CLOCKS_PER_SEC << endl;
 	world.clear();
 
-	return;
+	return 0;
 }
 
 void Simulation::setWorld(SimulationSetting& simulation_setting){
@@ -140,5 +142,3 @@ void Simulation::setWorld(SimulationSetting& simulation_setting){
 
 	return;
 }
-
-

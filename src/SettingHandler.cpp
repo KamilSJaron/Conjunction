@@ -146,7 +146,7 @@ int SettingHandler::parseSetting(ifstream& myfile){
 
 	if (myfile.is_open()){
 		while ( getline (myfile,line) ){
-
+			// cout << "reading: " << line << endl;
 			// extract parameter name and its value from line
 
 			if(line.empty()){
@@ -183,6 +183,9 @@ int SettingHandler::parseSetting(ifstream& myfile){
 						number += line[i];
 					}
 					if((line[i] == ']' or line[i] == ',' or line[i] == ';')){
+						if(number.empty()){
+							continue;
+						}
 						paravec.push_back(stod(number));
 						number.clear();
 					}
@@ -207,9 +210,18 @@ int SettingHandler::parseSetting(ifstream& myfile){
 						continue;
 					}
 					if(parameter.substr(0,5) == "WORLD"){
+
 						return parseWorldDefinition(line);
 					} else {
 // 					if single value was read
+						if(number.empty()){
+							//cerr << "Warning, failed to read value of parameter " << parameter << endl;
+							number.clear();
+							parameter.clear();
+							paravec.clear();
+							continue;
+						}
+
 						parameters_in_order.push_back(parameter);
 						parameters_numbers.push_back(1);
 
@@ -311,7 +323,6 @@ int SettingHandler::parseWorldDefinition(string& line){
 						type_of_updown_edges = "wrapping";
 					}
 					type_of_leftright_edges = "extending";
-					cerr << "World is quick defined as " << n << " demes long hybrid zone." << endl;
 					return 0;
 				}
 				if(type == "Arena"){
@@ -327,11 +338,9 @@ int SettingHandler::parseWorldDefinition(string& line){
 						dimension = 1;
 						edges_per_deme = 0;
 					}
-					cerr << "World is quick-defined as " << n << 'x' << n << " demes arena." << endl;
 					return 0;
 				}
 				if(type == "InfInf"){
-					cerr << "World is quick-defined as zero dimensional border of infinite popualtions" << endl;
 					dimension = 0;
 					return 0;
 				}
@@ -342,7 +351,6 @@ int SettingHandler::parseWorldDefinition(string& line){
 					edges_per_deme = 4;
 					type_of_updown_edges = "reflexive";
 					type_of_leftright_edges = "extending";
-					cerr << "World is quick defined as " << n << " demes long hybrid zone." << endl;
 					return 0;
 				}
 				cerr << "Error: Unknown pre-defined world " << type << endl;
@@ -542,4 +550,178 @@ char SettingHandler::setPatameterOfSetting(SimulationSetting& mySetting, std::st
 		return 'D';
 	}
 	return '?';
+}
+
+bool SettingHandler::checkParameters(){
+
+//	if(parameters_in_order.size() < 9){
+//		cerr << " Error: non specified parameters. \n Expected: \n Found: ";
+//
+//		for(unsigned int i = 0; i < parameters_in_order.size(); i++){
+//			cerr << parameters_in_order[i] << " ";
+//		}
+//		cerr << endl;
+//	}
+
+	// Number of generations / saves / delay
+
+	for(unsigned int i = 0; i < gen.size(); i++){
+		if(gen[i] < 0){
+			cerr << "Error: Negative NUMBERofGENERATIONS. \n";
+			return 1;
+		}
+		for(unsigned int j = 0; j < saves.size(); j++){
+			if(saves[j] == 0){
+				continue;
+			}
+			for(unsigned int k = 0; k < delay.size(); k++){
+				if(saves[j] > (gen[i] - delay[k])){
+					cerr << "The number of saves is greater than number of generations after delay.\n";
+					cerr << "SAVES: "<< saves[j] << " GENRATIONS: " << gen[i] << " DELAY: " << delay[k] << endl;
+					return 1;
+				}
+			}
+		}
+	}
+
+	// saving type
+
+	bool correct_type = 1;
+	vector<string> types{"complete", "summary","hybridIndices", "hybridIndicesJunctions"};
+	for(unsigned int i = 0; i < types.size(); i++){
+		if(type_of_save == types[i]){
+			correct_type = !correct_type;
+			break;
+		}
+	}
+
+	if(correct_type){
+		cerr << "Type of save is invalid: " << type_of_save << endl;
+		return 1;
+	}
+
+	for(unsigned int i = 0; i < saves.size(); i++){
+		if(saves[i] > 0){
+			if(file_name_patten.empty()){
+				cerr << "you have to specify a name of output file using parameter NAMEofOUTPUTfile in setting file.\n";
+				return 1;
+			}
+		}
+	}
+
+	// basic parameters
+
+	if(deme.size() == 0){
+		cerr << "The DEMEsize was not set.\n";
+		return 1;
+	}
+//	for(unsigned int i = 0; i < deme.size(); i++){
+//		if(deme[i] < 4){
+//			cerr << "Strange deme size \n"
+//		}
+//	}
+
+	if(lambda.size() == 0){
+		cerr << "The LAMBDA ( mean number of crossovers per chromosome per generation) was not set.\n";
+		return 1;
+	}
+//	for(unsigned int i = 0; i < lambda.size(); i++){
+//		if(lambda[i] == -1){
+//
+//			return 1;
+//		}
+//	}
+
+	if(loci.size() == 0){
+		cerr << "The number of loci per chromosome was not set.\n";
+		return 1;
+	}
+//	for(unsigned int i = 0; i < loci.size(); i++){
+//		if(loci[i] == -1){
+//
+//			return 1;
+//		}
+//	}
+
+	if(sel.size() == 0){
+		cerr << "The selection pressure was not set.\n";
+		return 1;
+	}
+//	for(unsigned int i = 0; i < sel.size(); i++){
+//		if(sel[i] == -1){
+//			return 1;
+//		}
+//	}
+
+	if(beta.size() == 0){
+		cerr << "The BETA (epistatic interaction between loci) was not set.\n";
+		return 1;
+	}
+	for(unsigned int i = 0; i < beta.size(); i++){
+		if(beta[i] < 0.0001 or beta[i] > 32){
+			cerr << "Warning: BETA is out of range of reasonable values: " << beta[i] << endl;
+		}
+	}
+
+	// World definition
+	if(dimension == -1){
+		cerr << "Dimension was not set.\n";
+		return 1;
+	}
+
+	if(dimension >= 3){
+		cerr << "Dimension was not set correctly.\n";
+		return 1;
+	}
+
+	if(left_right_demes < 1 and dimension > 0){
+		cerr << "The width of world was not set.\n";
+		return 1;
+	}
+
+	if(up_down_demes < 1 and dimension > 0){
+		cerr << "The height of world was not set.\n";
+		return 1;
+	}
+
+	vector<string> edges {"extending","wrapping","infinite","reflexive"};
+	if(type_of_leftright_edges.empty()){
+		if(dimension > 0){
+			cerr << "The type of left right edges of world was not set.\n";
+			return 1;
+		}
+	} else {
+		correct_type = 1;
+		for(unsigned int i = 0; i < edges.size(); i++){
+			if(type_of_leftright_edges == edges[i] and dimension > 0){
+				correct_type = !correct_type;
+				break;
+			}
+		}
+		if(correct_type){
+			cerr << "Type of left-right edges is invalid: " << type_of_leftright_edges << endl;
+			return 1;
+		}
+	}
+
+	if(type_of_updown_edges.empty()){
+		if(dimension == 2){
+			cerr << "The type of up-down edges of 2D world was not set.\n";
+			return 1;
+		}
+	} else {
+		correct_type = 1;
+		for(unsigned int i = 1; i < edges.size(); i++){
+			if(type_of_updown_edges == edges[i]){
+				correct_type = !correct_type;
+				break;
+			}
+		}
+		if(correct_type){
+			cerr << "Type of UpDown edges is invalid: " << type_of_updown_edges << endl;
+			return 1;
+		}
+	}
+
+	return 0;
 }

@@ -20,7 +20,7 @@ LOCI = [2, 4]                        # integer in {1;10000}
 NUMBERofCHROMOSOMES = [1; 5, 3,]
 LAMBDA = [1.53 1.35]                        # real in {0;5}
 SELECTIONpressure = 0.42             # real in {0;1}
-BETA = 0;                             # real in {0.0625;16}
+BETA = 1;                             # real in {0.0625;16}
 DEMEsize = 1024
 SEED = 910401,                        # 6 digit integer
 

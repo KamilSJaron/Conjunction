@@ -356,14 +356,14 @@ void World::globalBreeding(){
 				}
 				new_generation.push_back( Imigrant(gamete, selection) );
 			}
-//			num_of_desc = getNumberOfDescendants(fitness);
-//			for(int i=0;i<num_of_desc;i++){
-//				zeroD_immigrant_pool[index].makeGamete(gamete);
-//				if(desc.Acheck()){
-//					continue;
-//				}
-//				new_generation.push_back(desc);
-//			}
+			num_of_desc = getNumberOfDescendants(fitness);
+			for(int i=0;i<num_of_desc;i++){
+				zeroD_immigrant_pool[index].makeGamete(gamete);
+				if(gameteAcheck(gamete)){
+					continue;
+				}
+				new_generation.push_back( Imigrant(gamete, selection) );
+			}
 		}
 		zeroD_immigrant_pool.clear(); // 1, this is incredibly stupid what I am doing here
 		zeroD_immigrant_pool = new_generation; // 2, I should change pointers instead of copy-pasting
@@ -441,12 +441,17 @@ bool World::empty(){
  // PLOTTING // STATS //
 // // // // // // // //
 
-void World::listOfParameters(){
-	cerr << "***************" << endl << "Size of World: " << world.size() << " Dim: " << dimension << " edges_per_deme: " << edges_per_deme << endl
+void World::listOfParameters() const{
+	cerr << "***************" << endl
+	<< "Size of World: " << world.size() << " Dim: " << dimension << " edges_per_deme: " << edges_per_deme << endl
 	<< "Number of demes l/r: " << number_of_demes_l_r << " Number of demes u/d: " << number_of_demes_u_d << endl
 	<< "Type of l/r edges: " << type_of_l_r_edges << " Type of u/d edges: " << type_of_u_d_edges << endl
 	<< "Last left index: " << index_last_left << " Last right index: " << index_last_right << endl
-	<< "Next left index: " << index_next_left << " Next right index: " << index_next_right << endl  << "***************" << endl;
+	<< "Next left index: " << index_next_left << " Next right index: " << index_next_right << endl
+	<< "***************" << endl
+	<< "Selection: " << selection << " Lambda: " << lambda << " Beta: " << beta << endl
+	<< "Loci: " << number_of_loci << " Chromosomes: " << number_of_chromosomes << " Deme size: " << deme_size << endl
+	<< "***************" << endl;
 	return;
 }
 

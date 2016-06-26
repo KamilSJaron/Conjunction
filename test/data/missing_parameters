@@ -22,11 +22,11 @@ SELECTIONpressure = 0.42             # real in {0;1}
 BETA =
 DEMEsize = 1024                      # integer in {8;8192}, only multiplies of 4
 
-NUMBERofGENERATIONS = 50             # integer in {1,10000}
+NUMBERofGENERATIONS = 10             # integer in {1,10000}
 
 #output parameters defining the output
 
-NUMBERofSAVES = 2                    # integer smaller than number of generations
+NUMBERofSAVES = 0                    # integer smaller than number of generations
 NAMEofOUTPUTfile = HI_multi_locus    # the sulfix will be added
 TYPEofOUTPUTfile = hybridIndices     # {complete, summary, hybridIndices, hybridIndicesJunctions, } 
 DELAY = 10                           # integer smaller than number of generations

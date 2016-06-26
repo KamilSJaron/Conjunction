@@ -15,8 +15,10 @@ class SettingHandler{
 		SimulationSetting getSimualtionSetting(int index);
 		int getNumberOfSimulations() const;
 
-		// printing functions
+		// testing
+		bool checkParameters();
 
+		// printing functions
 		void printParameters() const;
 		void printParameterCounts() const;
 		//	void plotAsciiWorld();
