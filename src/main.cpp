@@ -66,6 +66,9 @@ int main(int argc, char **argv)
 	cerr << "Performing: "<< all_setting.getNumberOfSimulations() << " simulations\n";
 
 	for(int sim_index = 0; sim_index < all_setting.getNumberOfSimulations(); sim_index++){
+		cerr << "************************" << endl;
+		cerr << "***** SIMULATION " << sim_index << " *****" << endl;
+		cerr << "************************" << endl;
 		one_sim_setting = all_setting.getSimualtionSetting(sim_index);
 		sim = Simulation(one_sim_setting);
 		if(sim.simulate() != 0){
@@ -77,5 +80,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-
-

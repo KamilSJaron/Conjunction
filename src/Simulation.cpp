@@ -48,15 +48,16 @@ int Simulation::simulate(){
 
 	if(saves > 10){
 		file_name = file_name + "_0*.tsv";
-	}
-	if(saves > 1 and saves < 10){
-		file_name = file_name + "_*.tsv";
 	} else {
-		file_name = file_name + ".tsv";
+		if(saves > 1 and saves < 10){
+			file_name = file_name + "_*.tsv";
+		} else {
+			file_name = file_name + ".tsv";
+		}
 	}
 	int save_pos = file_name.find('*');
 
-	if(saves > 0){
+	if((saves > 0) & (file_name[0] != '_')){
 		cerr << "*** OUTPUT INFO ***" << endl;
 		cerr << "Name of the file: " << file_name << endl;
 		cerr << "Type of the file: " << file_type << endl;
@@ -69,7 +70,8 @@ int Simulation::simulate(){
 	clock_t t1, t2;
 
 	int order = 0, check = 0, modulo = ceil((double)(generations-delay-1) / saves);
-	cout << modulo << endl;
+	// modulo only for non-zero saves
+	// cout << modulo << endl;
 	world.restart();
 
 	for(int i=0; i < generations;i++){
@@ -79,21 +81,21 @@ int Simulation::simulate(){
 		t2=clock();
 		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 		if((((i - delay) % modulo)+1) == modulo and (i < generations - modulo or i+1 == generations)){
+			world.summary();
 			order++;
-			if(saves > 1){
+			if(saves > 1){ // add non-zero lengyth of file_name
 				if(order >= 10){
 					file_name[save_pos-1] = '0' + char(order / 10 % 10);
 					file_name[save_pos] = '0' + char(order % 10);
 				} else {
 					file_name[save_pos] = '0' + char(order);
 				}
-			}
-			world.summary();
-			cerr << "Saving output to: " << file_name << endl;
-			check = world.SaveTheUniverse(file_type, file_name);
-			if(check != 0){
-				cerr << "Error in saving the output." << endl;
-				return 1;
+				cerr << "Saving output to: " << file_name << endl;
+				check = world.SaveTheUniverse(file_type, file_name);
+				if(check != 0){
+					cerr << "Error in saving the output." << endl;
+					return 1;
+				}
 			}
 		}
 	}

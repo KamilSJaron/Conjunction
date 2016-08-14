@@ -36,26 +36,32 @@ SettingHandler::SettingHandler(string filename) {
 	setting_file.close();
 }
 
-SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index){
+SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) const{
 	SimulationSetting mySetting;
-	int number_of_parsed_simulations = 1;
-	int refactorised_index = 0;
-	char parsed_parameter;
-	string file_to_save = file_name_patten;
+	int number_of_parsed_simulations = 1; // 1 * parameters_numbers[i] for all i
+	int refactorised_index = 0; // is an index of parameter order given a simulation index
+	char parsed_parameter; // is a label of parameter used for extension of an output file name
+	string file_to_save = file_name_patten; // not to overwrite pattern
+//	cerr << "file_name_patten " << file_name_patten << endl;
 
 	for(unsigned int parameter_index = 0; parameter_index < parameters_in_order.size(); parameter_index++){
+//		cerr << "parameters_in_order " << parameters_in_order[parameter_index] << endl;
 		refactorised_index = simulation_index % (number_of_parsed_simulations * parameters_numbers[parameter_index]);
 		refactorised_index = (refactorised_index - (refactorised_index % number_of_parsed_simulations)) / number_of_parsed_simulations;
 
-		parsed_parameter = setPatameterOfSetting(mySetting, parameters_in_order[parameter_index], refactorised_index);
+		parsed_parameter = setParameterOfSetting(mySetting, parameters_in_order[parameter_index], refactorised_index);
 
+//		cerr << "parameters_numbers " << parameters_numbers[parameter_index] << endl;
 		if(parameters_numbers[parameter_index] > 1){
 			file_to_save = file_to_save + '_' + parsed_parameter + '!';
-			file_to_save[file_to_save.find('!')] = '0' + char(parameter_index);
+//			cerr << "parameter_index " << parameter_index << endl;
+			file_to_save[file_to_save.find('!')] = '0' + char(refactorised_index);
 		}
 
 		number_of_parsed_simulations = number_of_parsed_simulations * parameters_numbers[parameter_index];
 	}
+
+	cerr << file_to_save << endl;
 
 	mySetting.file_to_save = file_to_save;
 	mySetting.type_of_save = type_of_save;
@@ -508,7 +514,7 @@ int SettingHandler::printVectorValue(unsigned int index, vector<T> val_vec) cons
 	}
 }
 
-char SettingHandler::setPatameterOfSetting(SimulationSetting& mySetting, std::string parameter, int index){
+char SettingHandler::setParameterOfSetting(SimulationSetting& mySetting, std::string parameter, int index) const{
 	if(parameter == "LOCI"){
 		mySetting.loci = loci[index];
 		return 'l';
@@ -595,7 +601,7 @@ bool SettingHandler::checkParameters(){
 		}
 	}
 
-	if(correct_type){
+	if(correct_type > 0){
 		cerr << "Type of save is invalid: " << type_of_save << endl;
 		return 1;
 	}

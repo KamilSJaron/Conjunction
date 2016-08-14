@@ -12,7 +12,7 @@ class SettingHandler{
 	public:
 		SettingHandler(std::string filename);
 
-		SimulationSetting getSimualtionSetting(int index);
+		SimulationSetting getSimualtionSetting(int index) const;
 		int getNumberOfSimulations() const;
 
 		// testing
@@ -31,7 +31,7 @@ class SettingHandler{
 		void updateNumberOfSimulations();
 		template<typename T>
 		int printVectorValue(unsigned int index, std::vector<T> val_vec) const;
-		char setPatameterOfSetting(SimulationSetting& mySetting, std::string parameter, int index);
+		char setParameterOfSetting(SimulationSetting& mySetting, std::string parameter, int index) const;
 
 		// simulation parameters
 
@@ -54,4 +54,3 @@ class SettingHandler{
 };
 
 #endif /* SRC_DISPATCHER_H_ */
-
