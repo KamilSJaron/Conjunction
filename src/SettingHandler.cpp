@@ -70,7 +70,7 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index){
 
 
 	return mySetting;
-};
+}
 
 int SettingHandler::getNumberOfSimulations() const{
 	return number_of_simulations;
@@ -123,11 +123,11 @@ void SettingHandler::printParameters() const{
 }
 
 void SettingHandler::printParameterCounts() const{
-	for(int i = 0; i < parameters_in_order.size(); i++){
+	for(unsigned int i = 0; i < parameters_in_order.size(); i++){
 		cerr << setw(15) << parameters_in_order[i] << ' ';
 	}
 	cerr << endl;
-	for(int i = 0; i < parameters_numbers.size(); i++){
+	for(unsigned int i = 0; i < parameters_numbers.size(); i++){
 		cerr << setw(15) << parameters_numbers[i] << ' ';
 	}
 	cerr << endl;
@@ -494,7 +494,7 @@ void SettingHandler::updateNumberOfSimulations(){
 }
 
 template<typename T>
-int SettingHandler::printVectorValue(int index, vector<T> val_vec) const{
+int SettingHandler::printVectorValue(unsigned int index, vector<T> val_vec) const{
 	if(index < val_vec.size()){
 		cerr << val_vec[index];
 		if(index + 1 < val_vec.size()){

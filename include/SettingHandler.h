@@ -30,7 +30,7 @@ class SettingHandler{
 		void parameterSave(std::string& parameter, std::vector<double>& value);
 		void updateNumberOfSimulations();
 		template<typename T>
-		int printVectorValue(int index, std::vector<T> val_vec) const;
+		int printVectorValue(unsigned int index, std::vector<T> val_vec) const;
 		char setPatameterOfSetting(SimulationSetting& mySetting, std::string parameter, int index);
 
 		// simulation parameters

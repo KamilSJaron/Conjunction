@@ -36,5 +36,5 @@ executible is ready to use.
 The software reads a setting file (`setting.txt` if it is not specified by argument), where all parameters are expected to be found. The template is delivered with the software, therefore simple `conjunction` should perform a set of sumulations. For details of check setting file or wiki.
 
 ```{bash}
-conjunction [--version] [--help] [setting_file.txt]
+conjunction [--version] [--help] [setting_file.txt] > summary.out
 ```
