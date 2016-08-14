@@ -346,7 +346,8 @@ void Deme::getps(vector<double>& ps, int ch){
 
 
 double Deme::getLD(){
-	double LD = 0, varz = getVARhi(), z = getMeanBproportion(), varp = getVARp(), n = deme[0].getNumberOfLoci(0); //LOCI
+	double LD = 0, varz = getVARhi(), z = getMeanBproportion(), varp = getVARp();
+	double n = deme[0].getNumberOfLoci(0) * deme[0].getNumberOfChromosomes(); //LOCI
 
 	LD = (varz - ((1 / (2 * n)) * ((z * (1 - z)) - varp))) / (0.5 * (1 - (1 / n))) ;
 
@@ -354,7 +355,7 @@ double Deme::getLD(){
 }
 
 double Deme::getLD(double z,double varz,double varp){
-	double LD = 0, n = deme[0].getNumberOfLoci(0);
+	double LD = 0, n = deme[0].getNumberOfLoci(0) * deme[0].getNumberOfChromosomes();
 
 	LD = (varz - ((1 / (2 * n)) * ((z * (1 - z)) - varp))) / (0.5 * (1 - (1 / n))) ;
 
