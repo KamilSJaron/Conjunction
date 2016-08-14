@@ -57,12 +57,14 @@ int Simulation::simulate(){
 	}
 	int save_pos = file_name.find('*');
 
-	if((saves > 0) & (file_name[0] != '_')){
-		cerr << "*** OUTPUT INFO ***" << endl;
-		cerr << "Name of the file: " << file_name << endl;
-		cerr << "Type of the file: " << file_type << endl;
-		cerr << "Number of files: " << saves << endl;
-		cerr << "*******************" << endl;
+	if(saves > 0){ // no saves means no saves
+		if(file_name[0] != '_' and file_name[0] != '.'){ // non specified name means no saves
+			cerr << "*** OUTPUT INFO ***" << endl;
+			cerr << "Name of the file: " << file_name << endl;
+			cerr << "Type of the file: " << file_type << endl;
+			cerr << "Number of files: " << saves << endl;
+			cerr << "*******************" << endl;
+		}
 	}
 
 	clock_t t_total1, t_total2;
@@ -90,11 +92,13 @@ int Simulation::simulate(){
 				} else {
 					file_name[save_pos] = '0' + char(order);
 				}
-				cerr << "Saving output to: " << file_name << endl;
-				check = world.SaveTheUniverse(file_type, file_name);
-				if(check != 0){
-					cerr << "Error in saving the output." << endl;
-					return 1;
+				if(file_name[0] != '_' and file_name[0] != '.'){ // save just in case that filename was specified
+					cerr << "Saving output to: " << file_name << endl;
+					check = world.SaveTheUniverse(file_type, file_name);
+					if(check != 0){
+						cerr << "Error in saving the output." << endl;
+						return 1;
+					}
 				}
 			}
 		}

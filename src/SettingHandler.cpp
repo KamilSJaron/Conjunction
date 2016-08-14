@@ -61,7 +61,7 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) con
 		number_of_parsed_simulations = number_of_parsed_simulations * parameters_numbers[parameter_index];
 	}
 
-	cerr << file_to_save << endl;
+//	cerr << file_to_save << endl;
 
 	mySetting.file_to_save = file_to_save;
 	mySetting.type_of_save = type_of_save;
