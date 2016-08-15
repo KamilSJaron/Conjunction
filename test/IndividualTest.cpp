@@ -1,8 +1,7 @@
 
 int testIndividual(){
 	Individual Lili;
-	Individual Hugo('C');
-    Individual Igor('C', 3, 50, 2.3);
+  Individual Igor('C', 3, 50, 2.3);
 
 	double sumCh = 0.0;
 	for(int i = 0; i < 10000; i++){
@@ -82,6 +81,3 @@ int testIndividual(){
 
 	return 0;
 }
-
-
-
