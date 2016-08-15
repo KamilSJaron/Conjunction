@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../include/SimulationSetting.h"
 #include "../include/SettingHandler.h"
 #include "../include/Simulation.h"
-
+#include "../include/gitversion.h"
 
 using namespace std;
 
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 		}
 		if(strcmp( argv[1], "--version") == 0 or strcmp( argv[1], "-v") == 0){
 			cerr << "Conjunction v1.2.development" << endl;
-			cerr << "\t ... on the way to be a nice program" << endl;
+			cerr << "\tcommit: " << GITVERSION << endl;
 			return 0;
 		}
 
@@ -64,11 +64,12 @@ int main(int argc, char **argv)
 	Simulation sim(one_sim_setting);
 
 	cerr << "Performing: "<< all_setting.getNumberOfSimulations() << " simulations\n";
+	cerr << "Commit of Conjunction: " << GITVERSION << endl;
 
 	for(int sim_index = 0; sim_index < all_setting.getNumberOfSimulations(); sim_index++){
-		cerr << "************************" << endl;
-		cerr << "***** SIMULATION " << sim_index << " *****" << endl;
-		cerr << "************************" << endl;
+		cerr << "########################" << endl;
+		cerr << "##### SIMULATION " << sim_index << " #####" << endl;
+		cerr << "########################" << endl;
 		one_sim_setting = all_setting.getSimualtionSetting(sim_index);
 		sim = Simulation(one_sim_setting);
 		if(sim.simulate() != 0){

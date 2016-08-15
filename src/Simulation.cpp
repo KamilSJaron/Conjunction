@@ -59,11 +59,11 @@ int Simulation::simulate(){
 
 	if(saves > 0){ // no saves means no saves
 		if(file_name[0] != '_' and file_name[0] != '.'){ // non specified name means no saves
-			cerr << "*** OUTPUT INFO ***" << endl;
-			cerr << "Name of the file: " << file_name << endl;
-			cerr << "Type of the file: " << file_type << endl;
-			cerr << "Number of files: " << saves << endl;
-			cerr << "*******************" << endl;
+			cerr << "##### OUTPUT  INFO #####" << endl;
+			cerr << "# Name of the file: " << file_name << endl;
+			cerr << "# Type of the file: " << file_type << endl;
+			cerr << "#  Number of files: " << saves << endl;
+			cerr << "########################" << endl;
 		}
 	}
 
@@ -104,7 +104,9 @@ int Simulation::simulate(){
 		}
 	}
 
-	world.summary();
+	if((((generations - 1 - delay) % modulo)+1) != modulo){ // if this statement wont be true, the save after simulation was performed already
+				world.summary();
+	}
 
 	t_total2 = clock();
 	cerr << "Total time of simulation: " << ((float)t_total2 - (float)t_total1) / CLOCKS_PER_SEC << endl;

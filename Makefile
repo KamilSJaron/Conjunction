@@ -9,11 +9,14 @@ OBJ = ./src/main.o $(CLASSES)
 
 all: $(PRG)
 
-$(PRG): $(OBJ)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+$(PRG): $(OBJ) ./include/gitversion.h
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJ)
 
 .cpp.o:
 	$(CXX) -o $@ -c $< $(CXXFLAGS)
+
+./include/gitversion.h:
+	echo "#define GITVERSION \"$(shell git rev-parse HEAD)\"" > ./include/gitversion.h
 
 test: $(TEST)
 	./$(TEST)
