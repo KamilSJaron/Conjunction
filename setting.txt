@@ -16,28 +16,29 @@
 
 # Numerical parameters
 
-LOCI = [2, 4]                        # integer in {1;10000}
-NUMBERofCHROMOSOMES = 1              # integer in {1;21}
-LAMBDA = 1.53                        # real in {0;5}, recombination
-SELECTIONpressure = 0.42             # real in {0;1}
-BETA = 1                             # real in {0.0625;16}, epistatic function
-DEMEsize = 1024                      # integer in {8;8192}, only multiplies of 4
-SEED = 910401                        # 6 digit integer
-
+LOCI = [2, 4]                        # integer in {1,10000}
+NUMBERofCHROMOSOMES = 1              # integer in {1,21}
+LAMBDA = 1.53                        # real in {0,5}, recombination
+SELECTIONpressure = 0.42             # real in {0,1}
+BETA = 1                             # real in {0.0625,16}, epistatic function
+DEMEsize = 1024                      # integer in {8,8192}, only multiplies of 4
 NUMBERofGENERATIONS = 60             # integer in {1,10000}
+
+SEED = 910401                        # integer
+REPLICATES = 2                       # int {1,10}
 
 #output parameters defining the output
 
 NUMBERofSAVES = 3                    # integer smaller than number of generations
 NAMEofOUTPUTfile = HI_multi_locus    # the sulfix will be added
-TYPEofOUTPUTfile = hybridIndices     # {complete, summary, hybridIndices, hybridIndicesJunctions, } 
+TYPEofOUTPUTfile = hybridIndices     # {complete, summary, hybridIndices, hybridIndicesJunctions, }
 DELAY = 30                           # integer smaller than number of generations
 
 # World definition
-	
-WORLDdefinition -quick = 'HybridZone' 1
-# Predefined worlds: {'HybridZone','LowMigrationBazykin','InfInf','Arena'}
 
+WORLDdefinition -quick = 'HybridZone' 1
+# Predefined worlds: {'HybridZone';LowMigrationBazykin';'InfInf';'Arena'}
+
+# WORLDdefinition -standard = <dimension> <left_right_border> <columns> <up_down_border> <rows>
 # WORLDdefinition -standard = 2 'infinite' 8 'wrapping' 8
 # Border types: {'extending','wrapping','infinite','reflexive'}
-

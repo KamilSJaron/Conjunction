@@ -33,7 +33,32 @@ SettingHandler::SettingHandler(string filename) {
 	parseSetting(setting_file);
 	updateNumberOfSimulations();
 
+	//cerr << number_of_simulations << endl;
+
+	if(seed.empty()){
+		// add number of simulations seeds
+		//	cerr << "empty seed" << endl;
+		srand ( time(NULL) );
+		for(unsigned int i=0; i < number_of_simulations; i++){
+			seed.push_back(rand() % 1000000);
+		}
+	} else {
+			//cerr << "non-empty seed" << endl;
+			if(seed.size() == 1){
+				// add number of simulations - 1 new seeds (the first one was defined already)
+				for(int i=0; i < (number_of_simulations-1); i++){
+					seed.push_back(rand() % 1000000);
+					//cerr << "added one seed to have " << seed.size() << endl;
+				}
+			}
+	}
+
 	setting_file.close();
+
+	if(checkParameters() != 0){
+		cerr << "Setting file: " << filename << " is not valid\n";
+		exit (EXIT_FAILURE);
+	}
 }
 
 SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) const{
@@ -45,11 +70,15 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) con
 //	cerr << "file_name_patten " << file_name_patten << endl;
 
 	for(unsigned int parameter_index = 0; parameter_index < parameters_in_order.size(); parameter_index++){
-//		cerr << "parameters_in_order " << parameters_in_order[parameter_index] << endl;
+		//cerr << "parameters_in_order " << parameters_in_order[parameter_index] << endl;
 		refactorised_index = simulation_index % (number_of_parsed_simulations * parameters_numbers[parameter_index]);
 		refactorised_index = (refactorised_index - (refactorised_index % number_of_parsed_simulations)) / number_of_parsed_simulations;
 
-		parsed_parameter = setParameterOfSetting(mySetting, parameters_in_order[parameter_index], refactorised_index);
+		if(parameters_in_order[parameter_index] == "SEED"){
+			continue;
+		} else {
+			parsed_parameter = setParameterOfSetting(mySetting, parameters_in_order[parameter_index], refactorised_index);
+		}
 
 //		cerr << "parameters_numbers " << parameters_numbers[parameter_index] << endl;
 		if(parameters_numbers[parameter_index] > 1){
@@ -60,6 +89,18 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) con
 
 		number_of_parsed_simulations = number_of_parsed_simulations * parameters_numbers[parameter_index];
 	}
+
+// simulation will have defined seed even if it was not defined by user
+//	cerr << " Seed of simulation " << simulation_index << " is set to " << seed[simulation_index] << "\n";
+	mySetting.seed = seed[simulation_index];
+
+	if(replicates > 1){
+		refactorised_index = (simulation_index % replicates);
+		file_to_save = file_to_save + "_n!";
+		file_to_save[file_to_save.find('!')] = '0' + char(refactorised_index);
+	}
+
+
 
 //	cerr << file_to_save << endl;
 
@@ -93,6 +134,7 @@ void SettingHandler::printParameters() const{
 			<< setw(15) << "beta"
 			<< setw(15) << "seed"
 			<< setw(15) << "delay"
+			<< setw(15) << "replicates"
 			<< setw(15) << "saves"
 			<< endl;
 
@@ -116,6 +158,8 @@ void SettingHandler::printParameters() const{
 		cerr << setw(15);
 		checker += printVectorValue(val_index, delay);
 		cerr << setw(15);
+		if(val_index == 0){ cerr << replicates;}
+		cerr << setw(15);
 		checker += printVectorValue(val_index, saves);
 		cerr << endl;
 		if(checker == 0){
@@ -125,6 +169,16 @@ void SettingHandler::printParameters() const{
 		}
 	}
 
+	return;
+}
+
+void SettingHandler::printWorld() const{
+	cerr << "##### WORLD SETTING #####\n"
+	<< "Dimension: " << dimension << endl
+	<< "COLUMNS: " << left_right_demes << endl
+	<< "ROWS: " << up_down_demes << endl
+	<< "UD DOWN BORDER: " << type_of_updown_edges << endl
+	<< "LEFT RIGHT BORDER: " << type_of_leftright_edges << endl;
 	return;
 }
 
@@ -149,6 +203,7 @@ int SettingHandler::parseSetting(ifstream& myfile){
 	vector<double> paravec;
 	string switcher;
 	string line, parameter, number;
+	replicates = 1;
 
 	if (myfile.is_open()){
 		while ( getline (myfile,line) ){
@@ -469,6 +524,10 @@ void SettingHandler::parameterSave(std::string& parameter, double value){
 		delay.push_back(int(value));
 		return;
 	}
+	if(parameter == "REPLICATES"){
+		replicates = int(value);
+		return;
+	}
 
 	cerr << "Warning: unknown parameter: " << parameter << endl;
 	return;
@@ -493,9 +552,9 @@ void SettingHandler::updateNumberOfSimulations(){
 			sel.size() *
 			beta.size() *
 			lambda.size() *
-			seed.size() *
 			delay.size() *
-			saves.size();
+			saves.size() *
+			replicates;
 	return;
 }
 
@@ -538,10 +597,6 @@ char SettingHandler::setParameterOfSetting(SimulationSetting& mySetting, std::st
 	if(parameter == "DEMEsize"){
 		mySetting.deme_size = deme[index];
 		return 'd';
-	}
-	if(parameter == "SEED"){
-		mySetting.seed = seed[index];
-		return 'n';
 	}
 	if(parameter == "NUMBERofGENERATIONS"){
 		mySetting.generations = gen[index];
@@ -669,7 +724,18 @@ bool SettingHandler::checkParameters(){
 		}
 	}
 
-	// World definition
+	//cerr << "parameter SEED has to be one intiger, or a vector of the length"
+	//		 << "equal to total number of simulations." <<
+
+	if((unsigned)number_of_simulations != seed.size()){
+		cerr << "Error: The number of seeds is not equal to number of simulation\n";
+		cerr << "Possible SEED: none (seeds will be random generated using time)\n";
+		cerr << "               one value (other seeds will be generated using defined seed)\n";
+		cerr << "               vector of values (has to have length equal to total number of simulations)\n";
+		return 1;
+	}
+
+	//cerr << "Checking World definition\n";
 	if(dimension == -1){
 		cerr << "Dimension was not set.\n";
 		return 1;

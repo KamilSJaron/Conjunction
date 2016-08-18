@@ -60,9 +60,9 @@ int Simulation::simulate(){
 	if(saves > 0){ // no saves means no saves
 		if(file_name[0] != '_' and file_name[0] != '.'){ // non specified name means no saves
 			cerr << "##### OUTPUT  INFO #####" << endl;
-			cerr << "# Name of the file: " << file_name << endl;
-			cerr << "# Type of the file: " << file_type << endl;
-			cerr << "#  Number of files: " << saves << endl;
+			cerr << "# Name of the file(s): " << file_name << endl;
+			cerr << "# Type of the file(s): " << file_type << endl;
+			cerr << "#       Files to save: " << saves << endl;
 			cerr << "########################" << endl;
 		}
 	}
@@ -123,7 +123,9 @@ void Simulation::setWorld(SimulationSetting& simulation_setting){
 	file_name = simulation_setting.file_to_save;
 	file_type = simulation_setting.type_of_save;
 
-	srand (simulation_setting.seed);
+	srand(simulation_setting.seed);
+	cout << "  SEED: " << simulation_setting.seed << ';';
+	cerr << "Random SEED is set to: " << simulation_setting.seed << endl;
 
 	world.setSlectionBetaLambda(simulation_setting.selection, simulation_setting.beta, simulation_setting.lambda);
 	world.setLociChromDeme(simulation_setting.loci, simulation_setting.chromosomes, simulation_setting.deme_size);

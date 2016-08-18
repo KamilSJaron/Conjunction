@@ -484,14 +484,7 @@ void World::summary(){
 	} else {
 		int worlsize = world.size();
 		cerr << "World of size " << worlsize << endl;
-		cerr << "of dimension: " << dimension << endl;
-		cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
-		cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
-		if(type_of_l_r_edges != "extending"){
-			cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
-		}
-		cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
-		cout << "                 EDGE" << endl;
+		cout << "\tEDGE" << endl;
 		cout << setw(7) << right << "DEME "
 		<< setw(7) << left << " LEFT"
 		<< setw(6) << left << "RIGHT";

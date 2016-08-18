@@ -20,6 +20,7 @@ class SettingHandler{
 
 		// printing functions
 		void printParameters() const;
+		void printWorld() const;
 		void printParameterCounts() const;
 		//	void plotAsciiWorld();
 
@@ -48,7 +49,7 @@ class SettingHandler{
 		std::string type_of_updown_edges, type_of_leftright_edges;
 
 		// internals
-		int number_of_simulations;
+		int number_of_simulations, replicates;
 		std::vector<std::string> parameters_in_order;
 		std::vector<int> parameters_numbers;
 };

@@ -57,25 +57,28 @@ int main(int argc, char **argv)
 
 	}
 
+	cerr << "Running Conjunction" << endl;
+	cerr << "Commit: " << GITVERSION << endl;
 	cerr << "Loading ... " << setting_file << endl;
 
 	SettingHandler all_setting(setting_file);
 	SimulationSetting one_sim_setting;
-	Simulation sim(one_sim_setting);
+	Simulation *sim;
 
 	cerr << "Performing: "<< all_setting.getNumberOfSimulations() << " simulations\n";
-	cerr << "Commit of Conjunction: " << GITVERSION << endl;
+	all_setting.printWorld();
 
 	for(int sim_index = 0; sim_index < all_setting.getNumberOfSimulations(); sim_index++){
 		cerr << "########################" << endl;
 		cerr << "##### SIMULATION " << sim_index << " #####" << endl;
 		cerr << "########################" << endl;
 		one_sim_setting = all_setting.getSimualtionSetting(sim_index);
-		sim = Simulation(one_sim_setting);
-		if(sim.simulate() != 0){
-			cerr << " A problem during simulation has occurred \n";
+		sim = new Simulation(one_sim_setting);
+		if(sim->simulate() != 0){
+			cerr << " A problem during simulation " << sim_index << " has occurred \n";
 			return 1;
 		}
+		delete sim;
 	}
 
 

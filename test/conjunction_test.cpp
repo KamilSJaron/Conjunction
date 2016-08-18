@@ -52,12 +52,6 @@ int main(int argc, char* argv[]){
 		test_result++;
 		cerr << "World: HAD A PROBLEM!" << endl;
 	}
-	if(testWorld() == 0){
-		cerr << "World ... passed" << endl;
-	} else {
-		test_result++;
-		cerr << "World: HAD A PROBLEM!" << endl;
-	}
 	if(testParameterLoading() == 0){
 		cerr << "Parameter loading ... passed" << endl;
 	} else {
