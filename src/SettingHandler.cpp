@@ -31,27 +31,7 @@ SettingHandler::SettingHandler(string filename) {
 	ifstream setting_file(filename);
 
 	parseSetting(setting_file);
-	updateNumberOfSimulations();
-
-	//cerr << number_of_simulations << endl;
-
-	if(seed.empty()){
-		// add number of simulations seeds
-		//	cerr << "empty seed" << endl;
-		srand ( time(NULL) );
-		for(unsigned int i=0; i < number_of_simulations; i++){
-			seed.push_back(rand() % 1000000);
-		}
-	} else {
-			//cerr << "non-empty seed" << endl;
-			if(seed.size() == 1){
-				// add number of simulations - 1 new seeds (the first one was defined already)
-				for(int i=0; i < (number_of_simulations-1); i++){
-					seed.push_back(rand() % 1000000);
-					//cerr << "added one seed to have " << seed.size() << endl;
-				}
-			}
-	}
+	fillDefault();
 
 	setting_file.close();
 
@@ -544,6 +524,7 @@ void SettingHandler::parameterSave(string& parameter, vector<double>& value){
 }
 
 void SettingHandler::updateNumberOfSimulations(){
+//	cerr << "REPLICATES: " << replicates << endl;
 	number_of_simulations =
 			loci.size() *
 			chrom.size() *
@@ -646,26 +627,27 @@ bool SettingHandler::checkParameters(){
 	}
 
 	// saving type
-
 	bool correct_type = 1;
-	vector<string> types{"complete", "summary","hybridIndices", "hybridIndicesJunctions"};
-	for(unsigned int i = 0; i < types.size(); i++){
-		if(type_of_save == types[i]){
-			correct_type = !correct_type;
-			break;
-		}
-	}
 
-	if(correct_type > 0){
-		cerr << "Type of save is invalid: " << type_of_save << endl;
-		return 1;
+	if(!file_name_patten.empty()){
+		vector<string> types{"complete", "summary","hybridIndices", "hybridIndicesJunctions"};
+		for(unsigned int i = 0; i < types.size(); i++){
+			if(type_of_save == types[i]){
+				correct_type = !correct_type;
+				break;
+			}
+		}
+
+		if(correct_type > 0){
+			cerr << "Type of save is invalid: " << type_of_save << endl;
+			return 1;
+		}
 	}
 
 	for(unsigned int i = 0; i < saves.size(); i++){
 		if(saves[i] > 0){
 			if(file_name_patten.empty()){
-				cerr << "you have to specify a name of output file using parameter NAMEofOUTPUTfile in setting file.\n";
-				return 1;
+				cerr << "The name of output file was not specified. The only output will be printed strandard stream.\n";
 			}
 		}
 	}
@@ -723,9 +705,6 @@ bool SettingHandler::checkParameters(){
 			cerr << "Warning: BETA is out of range of reasonable values: " << beta[i] << endl;
 		}
 	}
-
-	//cerr << "parameter SEED has to be one intiger, or a vector of the length"
-	//		 << "equal to total number of simulations." <<
 
 	if((unsigned)number_of_simulations != seed.size()){
 		cerr << "Error: The number of seeds is not equal to number of simulation\n";
@@ -796,4 +775,36 @@ bool SettingHandler::checkParameters(){
 	}
 
 	return 0;
+}
+
+void SettingHandler::fillDefault(){
+
+	if(delay.empty()){
+		delay.push_back(0);
+	}
+
+	updateNumberOfSimulations();
+//	cerr << "Numbe of sims: " << number_of_simulations << endl;
+
+	// seeds are computed for every simulations,
+	// so all parameters has to be set before seed will.
+	if(seed.empty()){
+		// add number of simulations seeds
+		//	cerr << "empty seed" << endl;
+		srand ( time(NULL) );
+		for(unsigned int i=0; i < number_of_simulations; i++){
+			seed.push_back(rand() % 1000000);
+		}
+	} else {
+			//cerr << "non-empty seed" << endl;
+			if(seed.size() == 1){
+				// add number of simulations - 1 new seeds (the first one was defined already)
+				for(int i=0; i < (number_of_simulations-1); i++){
+					seed.push_back(rand() % 1000000);
+					//cerr << "added one seed to have " << seed.size() << endl;
+				}
+			}
+	}
+
+	return;
 }

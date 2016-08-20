@@ -484,7 +484,7 @@ void World::summary(){
 	} else {
 		int worlsize = world.size();
 		cerr << "World of size " << worlsize << endl;
-		cout << "\tEDGE" << endl;
+		cout << "       EDGE" << endl;
 		cout << setw(7) << right << "DEME "
 		<< setw(7) << left << " LEFT"
 		<< setw(6) << left << "RIGHT";

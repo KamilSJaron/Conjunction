@@ -17,6 +17,7 @@ class SettingHandler{
 
 		// testing
 		bool checkParameters();
+		void fillDefault();
 
 		// printing functions
 		void printParameters() const;

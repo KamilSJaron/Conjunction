@@ -11,6 +11,7 @@ all: $(PRG)
 
 $(PRG): $(OBJ) ./include/gitversion.h
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJ)
+	rm ./include/gitversion.h 
 
 .cpp.o:
 	$(CXX) -o $@ -c $< $(CXXFLAGS)

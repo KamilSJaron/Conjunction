@@ -125,7 +125,7 @@ void Simulation::setWorld(SimulationSetting& simulation_setting){
 
 	srand(simulation_setting.seed);
 	cout << "  SEED: " << simulation_setting.seed << ';';
-	cerr << "Random SEED is set to: " << simulation_setting.seed << endl;
+	cerr << "The SEED for random numbers is set to: " << simulation_setting.seed << endl;
 
 	world.setSlectionBetaLambda(simulation_setting.selection, simulation_setting.beta, simulation_setting.lambda);
 	world.setLociChromDeme(simulation_setting.loci, simulation_setting.chromosomes, simulation_setting.deme_size);
