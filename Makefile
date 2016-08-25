@@ -9,7 +9,7 @@ OBJ = ./src/main.o $(CLASSES)
 
 all: $(PRG)
 
-$(PRG): $(OBJ) ./include/gitversion.h
+$(PRG): ./include/gitversion.h $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJ)
 	rm ./include/gitversion.h 
 
