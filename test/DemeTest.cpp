@@ -6,27 +6,56 @@ int testDeme(){
     int myints[] = {1,2};
     std::vector<int> neigb (myints, myints + sizeof(myints) / sizeof(int) );
 
-    Deme Hell(0, neigb, 'C', 4, 0.8, 1, 1, 100, 1);
+// index, neigb, init, size, selection, beta, in_ch, in_loc, in_lambda
+    Deme Hell(0, neigb, 'C', 10000, 0.8, 1, 1, 16, 10);
 
-//    cout << "*****SD*****" << endl;
-//    Hell.showDeme();
-//    cout << "*****S*****" << endl;
-//    Hell.summary();
+  //  cout << "*****S*****" << endl;
+  //  Hell.summary();
+  //  cout << "*****FG*****" << endl;
+  //  Hell.readGenotypeFrequencies();
+  //  cout << endl;
+
+  //  vector<double> fv;
+  //  Hell.getFitnessVector(fv);
+   //
+  //  for(unsigned int i = 0; i < fv.size(); i++){
+  //    cout << " D " << fv[i] << " D ";
+  //  }
+  //  cout << " Mean fitness: " << Hell.getMeanFitness() << endl;
+
+   Hell.Breed();
+
+  //  cout << "*****S*****" << endl;
+  //  Hell.summary();
+  //  cout << "*****FG*****" << endl;
+  //  Hell.readGenotypeFrequencies();
+  //  cout << endl;
+
+  //  Hell.getFitnessVector(fv);
+  //  for(unsigned int i = 0; i < fv.size(); i++){
+  //    cout << " C " << fv[i] << " C ";
+  //  }
+
+  //  cout << " Mean fitness: " << Hell.getMeanFitness() << endl;
 
     Hell.Breed();
 
-//    cout << "*****SD*****" << endl;
-//    Hell.showDeme();
-//    cout << "*****S*****" << endl;
-//    Hell.summary();
+  //  cout << "*****S*****" << endl;
+  //  Hell.summary();
+  //  cout << "*****FG*****" << endl;
+  //  Hell.readGenotypeFrequencies();
+  //  cout << endl;
 
-    Hell.Breed();
+  if(Hell.getProportionOfHomozygotes('A') > 0.2 or Hell.getProportionOfHomozygotes('A') < 0.15 ){
+    cerr << "Warnig: Selection has unexpected behavior" << endl;
+  }
 
-//    cout << "*****SD*****" << endl;
-//    Hell.showDeme();
-//    cout << "*****S*****" << endl;
-//    Hell.summary();
+  //  Hell.getFitnessVector(fv);
+  //  for(unsigned int i = 0; i < fv.size(); i++){
+  //    cout << " X " << fv[i] << " X ";
+  //  }
 
+//   cout << " Mean fitness: " << Hell.getMeanFitness() << endl;
 
 //		std::vector<int> getNeigbours();
 //		Individual getIndividual(int index);
@@ -62,4 +91,3 @@ int testDeme(){
 
     return 0;
 }
-

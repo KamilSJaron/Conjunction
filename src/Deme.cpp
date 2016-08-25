@@ -107,7 +107,13 @@ void Deme::Breed(){
 	vector<double> fitnessVector;
 	vector<Chromosome> gamete1, gamete2;
 	getFitnessVector(fitnessVector);
+
+	// for(unsigned int i = 0; i < fitnessVector.size(); i++){
+	// 	cout << " " << fitnessVector[i] << " ";
+	// }
+
 	double RandMax = fitnessVector[deme_size-1];
+	// cout << " RAND MAX: " << RandMax << endl;
 	double roll;
 	map<double, int> parentPick;
 	map<double, int>::iterator it;
@@ -247,7 +253,9 @@ void Deme::getFitnessVector(vector<double> &fitnessVector){
 	double sum = 0, read_fitness = 0;
 	fitnessVector.reserve(deme_size);
 	for(int i = 0;i < deme_size;i++){
-		read_fitness = selection_model.getFitness(deme[i].getHetProp());
+		// getBprop > getHetProp ??
+		read_fitness = selection_model.getFitness(deme[i].getBprop());
+//		cout << " B prop: " << deme[i].getBprop() << " - fitness: " << read_fitness << endl;
 		sum += read_fitness;
 		fitnessVector.push_back(sum);
 	}
@@ -258,7 +266,7 @@ void Deme::getFitnessVector(vector<double> &fitnessVector){
 double Deme::getMeanFitness(){
 	double sum = 0, read_fitness = 0, read_heterozygocity = 0;
 	for(int i = 0;i < deme_size;i++){
-		read_heterozygocity = deme[i].getHetProp();
+		read_heterozygocity = deme[i].getBprop();
 		read_fitness = selection_model.getFitness(read_heterozygocity);
 		sum += read_fitness;
 	}

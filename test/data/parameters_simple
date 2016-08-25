@@ -1,9 +1,0 @@
-LOCI = 2
-NUMBERofCHROMOSOMES = 1
-LAMBDA = 1.53
-SELECTIONpressure = 0.42  
-BETA = 0                 
-DEMEsize = 1024         
-SEED = 910401          
-
-NUMBERofGENERATIONS = 50  
