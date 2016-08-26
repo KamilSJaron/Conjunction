@@ -386,8 +386,8 @@ int SettingHandler::parseWorldDefinition(string& line){
 					return 0;
 				}
 				if(type == "LowMigrationBazykin"){
-					type_of_updown_edges = 1;
-					type_of_leftright_edges = 2;
+					up_down_demes = 1;
+					left_right_demes = 2;
 					dimension = 2;
 					edges_per_deme = 4;
 					type_of_updown_edges = "reflexive";

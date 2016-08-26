@@ -226,10 +226,12 @@ void World::worldSlave(){
 int World::migration(){
 	const int demesize = deme_size;
 	if(dimension == 0){
-		zeroD_immigrant_pool.reserve(demesize);
+//		cerr << "Premigration Population size: " << zeroD_immigrant_pool.size() << endl;
+		zeroD_immigrant_pool.reserve(zeroD_immigrant_pool.size() + demesize);
 		for(int i = 0; i < demesize;i++){
 			zeroD_immigrant_pool.push_back(Imigrant(number_of_chromosomes, number_of_loci, selection));
 		}
+//		cerr << "Postmigration Population size: " << zeroD_immigrant_pool.size() << endl;
 		return 0;
 	}
 	if(world.empty()){
@@ -345,10 +347,13 @@ void World::globalBreeding(){
 		gamete.reserve(number_of_chromosomes);
 		double fitness;
 		int num_of_desc;
-//
+
+//	cerr << "Breeding " << zeroD_immigrant_pool.size() << " immigrants" << endl;
 		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
 			fitness = zeroD_immigrant_pool[index].getFitness();
+//			cerr << "Fitness: " << fitness << endl;
 			num_of_desc = getNumberOfDescendants(fitness);
+//			cerr << "Number of descendants: " << num_of_desc << endl;
 			for(int i=0;i<num_of_desc;i++){
 				zeroD_immigrant_pool[index].makeGamete(gamete);
 				if(gameteAcheck(gamete)){
@@ -365,6 +370,7 @@ void World::globalBreeding(){
 				new_generation.push_back( Imigrant(gamete, selection) );
 			}
 		}
+//		cerr << " New generation baby: " << new_generation.size() << endl;
 		zeroD_immigrant_pool.clear(); // 1, this is incredibly stupid what I am doing here
 		zeroD_immigrant_pool = new_generation; // 2, I should change pointers instead of copy-pasting
 		double material = 0;
@@ -631,8 +637,8 @@ void World::restart(){
 	} else {
 		clear();
 		worldSlave();
-		cerr << "World is reset." << endl;
 	}
+	cerr << "World is reset." << endl;
 	return;
 }
 

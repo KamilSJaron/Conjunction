@@ -38,7 +38,7 @@ double uniform_imig(){
 	return double(x % detailness) / (detailness-1);
 }
 
-Imigrant::Imigrant(int input_ch, int size, int input_sp){
+Imigrant::Imigrant(int input_ch, int size, double input_sp){
 	selection_pressure = input_sp;
 	number_of_chromosomes = input_ch;
 	genome.reserve(number_of_chromosomes);
@@ -47,7 +47,7 @@ Imigrant::Imigrant(int input_ch, int size, int input_sp){
 	}
 }
 
-Imigrant::Imigrant(char origin, int input_ch, int size, int input_sp){
+Imigrant::Imigrant(char origin, int input_ch, int size, double input_sp){
 	selection_pressure = input_sp;
 	number_of_chromosomes = input_ch;
 	genome.reserve(number_of_chromosomes);
@@ -56,7 +56,7 @@ Imigrant::Imigrant(char origin, int input_ch, int size, int input_sp){
 	}
 }
 
-Imigrant::Imigrant(vector<Chromosome>& gamete, int input_sp){
+Imigrant::Imigrant(vector<Chromosome>& gamete, double input_sp){
 	selection_pressure = input_sp;
 	number_of_chromosomes = gamete.size();
 	genome.reserve(number_of_chromosomes);
@@ -99,6 +99,8 @@ void Imigrant::getSizesOfBBlocks(vector< int >& sizes){
 
 
 double Imigrant::getFitness(){
+	// cerr << "Selection presure: " << selection_pressure << endl;
+	// cerr << "B prop: " << getBprop() << endl;
 	return 1 - (selection_pressure * getBprop());
 }
 
