@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
 	for(int sim_index = 0; sim_index < all_setting.getNumberOfSimulations(); sim_index++){
 		cerr << "########################" << endl;
-		cerr << "##### SIMULATION " << sim_index << " #####" << endl;
+		cerr << "##### SIMULATION " << sim_index+1 << " #####" << endl;
 		cerr << "########################" << endl;
 		one_sim_setting = all_setting.getSimualtionSetting(sim_index);
 		sim = new Simulation(one_sim_setting);

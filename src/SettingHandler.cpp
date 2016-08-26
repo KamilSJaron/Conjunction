@@ -64,7 +64,7 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) con
 		if(parameters_numbers[parameter_index] > 1){
 			file_to_save = file_to_save + '_' + parsed_parameter + '!';
 //			cerr << "parameter_index " << parameter_index << endl;
-			file_to_save[file_to_save.find('!')] = '0' + char(refactorised_index);
+			file_to_save[file_to_save.find('!')] = '1' + char(refactorised_index);
 		}
 
 		number_of_parsed_simulations = number_of_parsed_simulations * parameters_numbers[parameter_index];
@@ -77,7 +77,7 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) con
 	if(replicates > 1){
 		refactorised_index = (simulation_index % replicates);
 		file_to_save = file_to_save + "_n!";
-		file_to_save[file_to_save.find('!')] = '0' + char(refactorised_index);
+		file_to_save[file_to_save.find('!')] = '1' + char(refactorised_index);
 	}
 
 
@@ -630,7 +630,7 @@ bool SettingHandler::checkParameters(){
 	bool correct_type = 1;
 
 	if(!file_name_patten.empty()){
-		vector<string> types{"complete", "summary","hybridIndices", "hybridIndicesJunctions"};
+		vector<string> types{"complete", "summary","hybridIndices", "hybridIndicesJunctions","blocks"};
 		for(unsigned int i = 0; i < types.size(); i++){
 			if(type_of_save == types[i]){
 				correct_type = !correct_type;
