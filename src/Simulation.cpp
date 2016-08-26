@@ -70,11 +70,13 @@ int Simulation::simulate(){
 	clock_t t_total1, t_total2;
 	t_total1 = clock();
 	clock_t t1, t2;
-	std::ofstream stream("file");
 
 	int order = 0, check = 0, modulo = ceil((double)(generations-delay-1) / saves);
 	// modulo only for non-zero saves
 	// cout << modulo << endl;
+	cerr << "###### PARAMETERS ######" << endl;
+	world.listOfNumericalParameters(std::cerr);
+	cerr << "########################" << endl;
 	world.restart();
 
 	for(int i=0; i < generations;i++){

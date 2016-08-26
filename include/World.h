@@ -28,6 +28,7 @@ class World {
 
 	// 	plotting functions
 		void listOfParameters() const;
+		void listOfNumericalParameters(std::ostream& stream) const;
 		void listOfDemes();
 		int summary(std::ostream& stream);
 		double getProportionOfHeterozygotes(int index);

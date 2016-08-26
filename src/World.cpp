@@ -454,10 +454,19 @@ void World::listOfParameters() const{
 	<< "Type of l/r edges: " << type_of_l_r_edges << " Type of u/d edges: " << type_of_u_d_edges << endl
 	<< "Last left index: " << index_last_left << " Last right index: " << index_last_right << endl
 	<< "Next left index: " << index_next_left << " Next right index: " << index_next_right << endl
-	<< "***************" << endl
-	<< "Selection: " << selection << " Lambda: " << lambda << " Beta: " << beta << endl
-	<< "Loci: " << number_of_loci << " Chromosomes: " << number_of_chromosomes << " Deme size: " << deme_size << endl
 	<< "***************" << endl;
+	listOfNumericalParameters(std::cerr);
+	cerr << "***************" << endl;
+	return;
+}
+
+void World::listOfNumericalParameters(std::ostream& stream) const{
+	stream << "# Selection: " << selection << endl
+	<< "# Lambda: " << lambda << endl
+	<< "# Beta: " << beta << endl
+	<< "# Loci: " << number_of_loci << endl
+	<< "# Chromosomes: " << number_of_chromosomes << endl
+	<< "# Deme size: " << deme_size << endl;
 	return;
 }
 
