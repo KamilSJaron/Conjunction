@@ -484,9 +484,13 @@ void World::listOfDemes(){
 		cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
 		cerr << "                 EDGE" << endl;
 		cerr << setw(7) << right << "DEME " << setw(7) << left << " LEFT" << setw(6) << left << "RIGHT" << setw(5) << left << "UP" << setw(6) << left << "DOWN" << endl;
-		for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
-			i->second->showDeme();
+
+		int deme_to_print = index_last_left;
+		while(deme_to_print != index_next_right){
+			world[deme_to_print]->showDeme();
+			deme_to_print = world[deme_to_print]->getNeigbours()[1];
 		}
+
 	}
 }
 
@@ -524,12 +528,19 @@ int World::summary(ostream& stream){
 			}
 		}
 		stream << endl;
-		for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
-	// 		if(i->first == 9){
-			i->second->summary();
-	// 			i->second->readAllGenotypes();
-	// 		}
+
+		int deme_to_print = index_last_left;
+		while(deme_to_print != index_next_right){
+			world[deme_to_print]->summary();
+			deme_to_print = world[deme_to_print]->getNeigbours()[1];
 		}
+
+	// 	for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
+	// // 		if(i->first == 9){
+	// 		i->second->summary();
+	// // 			i->second->readAllGenotypes();
+	// // 		}
+	// 	}
 	}
 	return 0;
 }
