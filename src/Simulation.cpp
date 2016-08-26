@@ -70,6 +70,7 @@ int Simulation::simulate(){
 	clock_t t_total1, t_total2;
 	t_total1 = clock();
 	clock_t t1, t2;
+	std::ofstream stream("file");
 
 	int order = 0, check = 0, modulo = ceil((double)(generations-delay-1) / saves);
 	// modulo only for non-zero saves
@@ -83,7 +84,7 @@ int Simulation::simulate(){
 		t2=clock();
 		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 		if((((i - delay) % modulo)+1) == modulo and (i < generations - modulo or i+1 == generations)){
-			world.summary();
+			world.summary(std::cout);
 			order++;
 			if(saves > 1){ // add non-zero lengyth of file_name
 				if(order >= 10){
@@ -105,7 +106,7 @@ int Simulation::simulate(){
 	}
 
 	if((((generations - 1 - delay) % modulo)+1) != modulo){ // if this statement wont be true, the save after simulation was performed already
-				world.summary();
+		world.summary(std::cout);
 	}
 
 	t_total2 = clock();

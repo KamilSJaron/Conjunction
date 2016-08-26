@@ -417,7 +417,7 @@ void Deme::summary(){
 }
 
 
-void Deme::summary(ofstream& ofile){
+void Deme::summary(ostream& ofile){
 	int number_chromosomes = deme[0].getNumberOfChromosomes(), number_loci = deme[0].getNumberOfLoci(0);
 	double z = getMeanBproportion();
 	double varz = getVARhi();

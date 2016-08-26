@@ -29,7 +29,7 @@ class World {
 	// 	plotting functions
 		void listOfParameters() const;
 		void listOfDemes();
-		void summary();
+		int summary(std::ostream& stream);
 		double getProportionOfHeterozygotes(int index);
 		double getProportionOfHomozygotes(int index, char type);
 		void showOneDeme(int index);
@@ -57,7 +57,6 @@ class World {
 		int save_complete(std::ofstream& ofile);
 		int save_hybridIndices(std::ofstream& ofile);
 		int save_hybridIndicesJunctions(std::ofstream& ofile);
-		int save_summary(std::ofstream& ofile);
 		int save_blocks(std::ofstream& ofile);
 		int save_line(std::ofstream& ofile, int index, std::vector<double>& vec);
 		int save_line(std::ofstream& ofile, int index, std::vector<int>& vec);

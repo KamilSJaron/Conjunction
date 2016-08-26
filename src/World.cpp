@@ -348,7 +348,7 @@ void World::globalBreeding(){
 		double fitness;
 		int num_of_desc;
 
-//	cerr << "Breeding " << zeroD_immigrant_pool.size() << " immigrants" << endl;
+//		cerr << "Breeding " << zeroD_immigrant_pool.size() << " immigrants" << endl;
 		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
 			fitness = zeroD_immigrant_pool[index].getFitness();
 //			cerr << "Fitness: " << fitness << endl;
@@ -481,40 +481,40 @@ void World::listOfDemes(){
 	}
 }
 
-void World::summary(){
+int World::summary(ostream& stream){
 	if(dimension == 0){
-		cout << "Selection: " << selection << endl;
-		cout << "Recombination rate: " << lambda << endl;
-		cout << "Theta: " << selection / lambda << endl;
-		cout << "Number of Immigrants per generation: " << deme_size << endl;
+		stream << "Selection: " << selection << endl;
+		stream << "Recombination rate: " << lambda << endl;
+		stream << "Theta: " << selection / lambda << endl;
+		stream << "Number of Immigrants per generation: " << deme_size << endl;
 	} else {
 		int worlsize = world.size();
 		cerr << "World of size " << worlsize << endl;
-		cout << "       EDGE" << endl;
-		cout << setw(7) << right << "DEME "
+		stream << "       EDGE" << endl;
+		stream << setw(7) << right << "DEME "
 		<< setw(7) << left << " LEFT"
 		<< setw(6) << left << "RIGHT";
 		if(dimension == 2){
-			cout << setw(6) << left << "UP"
+			stream << setw(6) << left << "UP"
 			<< setw(6) << left << "DOWN";
 		}
-		cout << setw(12) << left << "meanf"
+		stream << setw(12) << left << "meanf"
 		<< setw(12) << left << "f(heter)"
 		<< setw(12) << left << "meanHI"
 		<< setw(12) << left << "var(HI)";
 		if(number_of_loci * number_of_chromosomes > 1){
-			cout << setw(12) << left << "var(p)"
+			stream << setw(12) << left << "var(p)"
 			<< setw(12) << left << "LD";
 		}
 
 		if(number_of_loci * number_of_chromosomes <= 16){
 			for(int ch = 0;ch < number_of_chromosomes;ch++){
 				for(int l = 0; l < number_of_loci;l++){
-					cout << left << "Ch" << ch+1 << "l" << l+1 << setw(7) << ' ';
+					stream << left << "Ch" << ch+1 << "l" << l+1 << setw(7) << ' ';
 				}
 			}
 		}
-		cout << endl;
+		stream << endl;
 		for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
 	// 		if(i->first == 9){
 			i->second->summary();
@@ -522,8 +522,8 @@ void World::summary(){
 	// 		}
 		}
 	}
+	return 0;
 }
-
 
 double World::getProportionOfHeterozygotes(int index){
 	return world[index]->getProportionOfHeterozygotes();
@@ -558,24 +558,28 @@ int World::SaveTheUniverse(string type, string filename){
 		ofile.close();
 		return 0;
 	} else {
+		int return_value = 0;
 		if(type == "complete"){
-			return save_complete(ofile);
+			return_value = save_complete(ofile);
 		}
 		if(type == "summary"){
-			return save_summary(ofile);
+			return_value = summary(ofile);
 		}
 		if(type == "hybridIndices"){
-			return save_hybridIndices(ofile);
+			return_value = save_hybridIndices(ofile);
 		}
 		if(type == "hybridIndicesJunctions"){
-			return save_hybridIndicesJunctions(ofile);
+			return_value = save_hybridIndicesJunctions(ofile);
 		}
 //		if(type == "raspberrypi"){
 //			return save_raspberrypi(ofile);
 //		}
 		if(type == "blocks"){
-			return save_blocks(ofile);
+			return_value = save_blocks(ofile);
 		}
+
+		ofile.close();
+		return return_value;
 	}
 
 	cerr << "WARNING: The output was not saved" << endl;
@@ -874,51 +878,5 @@ int World::save_line(ofstream& ofile, int index, vector<int>& vec){
 		ofile << vec[ind] << '\t';
 	}
 	ofile << endl;
-	return 0;
-}
-
-
-
-int World::save_summary(ofstream& ofile){
-	int worlsize = world.size();
-	cerr << "World of size " << worlsize << endl;
-	cerr << "of dimension: " << dimension << endl;
-	cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
-	cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
-	if(type_of_l_r_edges != "extending"){
-		cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
-	}
-	cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
-	ofile << "                 EDGE" << endl;
-	ofile << setw(7) << right << "DEME "
-	<< setw(7) << left << " LEFT"
-	<< setw(6) << left << "RIGHT";
-	if(dimension == 2){
-		ofile << setw(6) << left << "UP"
-		<< setw(6) << left << "DOWN";
-	}
-	ofile << setw(12) << left << "mean f"
-	<< setw(12) << left << "f(heter)"
-	<< setw(12) << left << "meanHI"
-	<< setw(12) << left << "var(HI)";
-	if(number_of_loci * number_of_chromosomes > 1){
-		ofile << setw(12) << left << "var(p)"
-		<< setw(12) << left << "LD";
-	}
-
-	if(number_of_loci * number_of_chromosomes <= 16){
-		for(int ch = 0;ch < number_of_chromosomes;ch++){
-			for(int l = 0; l < number_of_loci;l++){
-				ofile << left << "Ch" << ch+1 << "l" << l+1 << setw(7) << ' ';
-			}
-		}
-	}
-	ofile << endl;
-	for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
-		i->second->summary(ofile);
-	}
-
-//	cerr << "The output was sucesfully saved to: " << NAMEofOUTPUTfile << endl;
-	ofile.close();
 	return 0;
 }

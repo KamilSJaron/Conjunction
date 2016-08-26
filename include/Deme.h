@@ -4,13 +4,13 @@
 #ifndef DEME_H
 #define DEME_H
 
-class Deme  
+class Deme
 {
 	public:
 // constructor / destructors
 		Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, double in_lambda);
 		~Deme();
-		
+
 // communication functions
 		std::vector<int> getNeigbours();
 		Individual getIndividual(int index);
@@ -41,15 +41,15 @@ class Deme
 // plotting functions
 		void showDeme();
 		void summary();
-		void summary(std::ofstream& ofile);
+		void summary(std::ostream& ofile);
 		void readAllGenotypes();
 		void readGenotypeFrequencies();
-	
+
 	private:
 		int pickAnIndividual();
 		static int sum(std::vector<bool>& ve);
 
-		
+
 		Individual *deme; // farme of individuals
 		int index; // index of deme in universe
 		int deme_size; // size of deme
