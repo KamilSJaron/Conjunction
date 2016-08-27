@@ -109,6 +109,14 @@ int Simulation::simulate(){
 
 	if((((generations - 1 - delay) % modulo)+1) != modulo){ // if this statement wont be true, the save after simulation was performed already
 		world.summary(std::cout);
+		if(file_name[0] != '_' and file_name[0] != '.'){ // save just in case that filename was specified
+			cerr << "Saving output to: " << file_name << endl;
+			check = world.SaveTheUniverse(file_type, file_name);
+			if(check != 0){
+				cerr << "Error in saving the output." << endl;
+				return 1;
+			}
+		}
 	}
 
 	t_total2 = clock();
