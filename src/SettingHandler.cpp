@@ -792,7 +792,7 @@ void SettingHandler::fillDefault(){
 		// add number of simulations seeds
 		//	cerr << "empty seed" << endl;
 		srand ( time(NULL) );
-		for(unsigned int i=0; i < number_of_simulations; i++){
+		for(int i=0; i < number_of_simulations; i++){
 			seed.push_back(rand() % 1000000);
 		}
 	} else {

@@ -46,7 +46,7 @@ Simulation::Simulation(SimulationSetting& simulation_setting) {
 
 int Simulation::simulate(){
 
-	if(saves > 10){
+	if(saves >= 10){
 		file_name = file_name + "_0*.tsv";
 	} else {
 		if(saves > 1 and saves < 10){
@@ -88,20 +88,18 @@ int Simulation::simulate(){
 		if((((i - delay) % modulo)+1) == modulo and (i < generations - modulo or i+1 == generations)){
 			world.summary(std::cout);
 			order++;
-			if(saves > 1){ // add non-zero lengyth of file_name
+			if(saves > 1 and file_name[0] != '.' and file_name[0] != '_'){
 				if(order >= 10){
 					file_name[save_pos-1] = '0' + char(order / 10 % 10);
 					file_name[save_pos] = '0' + char(order % 10);
 				} else {
 					file_name[save_pos] = '0' + char(order);
 				}
-				if(file_name[0] != '_' and file_name[0] != '.'){ // save just in case that filename was specified
-					cerr << "Saving output to: " << file_name << endl;
-					check = world.SaveTheUniverse(file_type, file_name);
-					if(check != 0){
-						cerr << "Error in saving the output." << endl;
-						return 1;
-					}
+				cerr << "Saving output to: " << file_name << endl;
+				check = world.SaveTheUniverse(file_type, file_name);
+				if(check != 0){
+					cerr << "Error in saving the output." << endl;
+					return 1;
 				}
 			}
 		}
