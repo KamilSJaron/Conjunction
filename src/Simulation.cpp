@@ -71,7 +71,11 @@ int Simulation::simulate(){
 	t_total1 = clock();
 	clock_t t1, t2;
 
-	int order = 0, check = 0, modulo = ceil((double)(generations-delay-1) / saves);
+	int order = 0, check = 0;
+	int modulo = ceil((double)(generations-delay-1) / saves);
+	if(modulo == 0){
+		modulo = 1;
+	}
 	// modulo only for non-zero saves
 	// cout << modulo << endl;
 	cerr << "###### PARAMETERS ######" << endl;

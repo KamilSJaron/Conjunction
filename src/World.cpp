@@ -530,17 +530,20 @@ int World::summary(ostream& stream){
 		stream << endl;
 
 		int deme_to_print = index_last_left;
+		int next_deme = -1;
+		// iterates through columns
 		while(deme_to_print != index_next_right){
-			world[deme_to_print]->summary();
-			deme_to_print = world[deme_to_print]->getNeigbours()[1];
+			// iterate thought rows
+			for(int row = 0; row < number_of_demes_u_d; row++){
+				world[deme_to_print+row]->summary();
+			}
+			next_deme = world[deme_to_print]->getNeigbours()[1];
+			// block for reflexive border
+			if(next_deme == deme_to_print){
+				break;
+			}
+			deme_to_print = next_deme;
 		}
-
-	// 	for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
-	// // 		if(i->first == 9){
-	// 		i->second->summary();
-	// // 			i->second->readAllGenotypes();
-	// // 		}
-	// 	}
 	}
 	return 0;
 }
