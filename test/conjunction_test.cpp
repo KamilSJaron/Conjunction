@@ -17,6 +17,7 @@ using namespace std;
 
 
 #include "ChromosomeTest.cpp"
+#include "ImigrantTest.cpp"
 #include "IndividualTest.cpp"
 #include "DemeTest.cpp"
 #include "WorldTest.cpp"
@@ -33,6 +34,12 @@ int main(int argc, char* argv[]){
 	} else {
 		test_result++;
 		cerr << "Chromosome: HAD A PROBLEM!" << endl;
+	}
+	if(testImigrant() == 0){
+		cerr << "Imigrant ... passed" << endl;
+	} else {
+		test_result++;
+		cerr << "Imigrant: HAD A PROBLEM!" << endl;
 	}
 	if(testIndividual() == 0){
 		cerr << "Individual ... passed" << endl;

@@ -47,7 +47,7 @@ Individual::Individual(){
 	lambda = -1;
 }
 
-Individual::Individual(	char origin, int input_ch, int input_loci, 
+Individual::Individual(	char origin, int input_ch, int input_loci,
 						double input_lamda){
 	number_of_chromosomes = input_ch;
 	lambda = input_lamda;
@@ -67,15 +67,15 @@ Individual::Individual(	char origin, int input_ch, int input_loci,
 	}
 }
 
-Individual::Individual(	vector<Chromosome>& gamete1, 
-						vector<Chromosome>& gamete2, 
+Individual::Individual(	vector<Chromosome>& gamete1,
+						vector<Chromosome>& gamete2,
 						double input_lamda){
 	number_of_chromosomes = gamete1.size();
 	lambda = input_lamda;
-	
+
 	genome[0].reserve(number_of_chromosomes);
 	genome[1].reserve(number_of_chromosomes);
-	int i; 
+	int i;
 	for(i=0;i<number_of_chromosomes;i++){
 		genome[0].push_back(gamete1[i]);
 		genome[1].push_back(gamete2[i]);
@@ -123,20 +123,20 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		int loci = genome[0][i].getResolution();
 		numberOfChaisma = getChiasma();
 		starts_by = tossAcoin();
-		
+
 /* no chiasma mean inheritance of whole one parent chromosome */
 		if(numberOfChaisma == 0){
 			gamete.push_back(genome[starts_by][i]);
 			continue;
 		}
-		
+
 /* inicialization / restart of variables */
 		map<int, char>::const_iterator pos1=genome[0][i].begin();
 		map<int, char>::const_iterator pos2=genome[1][i].begin();
 		last_material_s1 = genome[0][i].read(0);
 		last_material_s2 = genome[1][i].read(0);
 		int last_roll = -1;
-		
+
 		chiasmas.clear();
 		recombinant_ch.clear();
 		recombinant_ch.setResolution(loci);
@@ -146,7 +146,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 			chiasmas.push_back(rec_pos);
 		}
 		sort(chiasmas.begin(), chiasmas.end());
-		
+
 		for(int index=0;index<numberOfChaisma;index++){
 			if(last_roll == chiasmas[index]){
 				chiasmas.erase (chiasmas.begin()+index,chiasmas.begin()+index+1);
@@ -164,7 +164,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		}
 		pos1++;
 		pos2++;
-		
+
 		for(int index=0;index<numberOfChaisma;index++){
 			rec_pos = chiasmas[index];
 			if(rec_pos == 0){
@@ -174,7 +174,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 			if(rec_pos == loci){
 				continue;
 			}
-			
+
 			if(starts_by==0){
 				while(pos1->first < rec_pos and pos1->first != genome[0][i].end()->first){
 					recombinant_ch.write(pos1->first,pos1->second);
@@ -262,9 +262,9 @@ double Individual::getHetProp(){
 	long number_of_het_loci = 0;
 	int last_pos = 0;
 	int loci = genome[0][0].getResolution();
-	
+
 	map<int, char>::const_iterator pos1, pos2;
-	
+
 	for(int i=0;i<number_of_chromosomes;i++){
 		pos1=genome[0][i].begin(); pos2=genome[1][i].begin();
 		last_pos = 0;
@@ -274,17 +274,17 @@ double Individual::getHetProp(){
 			number_of_het_loci += loci * write;
 			continue;
 		}
-		
+
 		if(pos1 == genome[0][i].end()){
 			number_of_het_loci += getOneChromeHetero(write, pos2, i, 0);
 			continue;
 		}
-		
+
 		if(pos2 == genome[1][i].end()){
 			number_of_het_loci += getOneChromeHetero(write, pos1, i, 0);
 			continue;
 		}
-		
+
 		while(pos1 != genome[0][i].end() and pos2 != genome[1][i].end()){
 			if(pos1->first < pos2->first){
 				last_pos = pos1->first;
@@ -292,7 +292,7 @@ double Individual::getHetProp(){
 				write = !write;
 				continue;
 			}
-			
+
 			if(pos1->first > pos2->first){
 				number_of_het_loci += (pos2->first - last_pos) * write;
 				last_pos = pos2->first;
@@ -300,27 +300,27 @@ double Individual::getHetProp(){
 				write = !write;
 				continue;
 			}
-			
+
 			if(pos1->first == pos2->first){
 				number_of_het_loci += (pos1->first - last_pos) * write;
 				last_pos = pos2->first;
 				pos1++; pos2++;
 				continue;
 			}
-			
+
 			cerr << "WARNING: Heterozygotisity counting problem (junc level)!";
 		}
-		
+
 		if((pos1 == genome[0][i].end()) & (pos2 == genome[1][i].end())){
 			number_of_het_loci += (loci - last_pos) * write;
 			continue;
 		}
-		
+
 		if(pos1 == genome[0][i].end()){
 			number_of_het_loci += getOneChromeHetero(write, pos2, i, last_pos);
 			continue;
 		}
-		
+
 		if(pos2 == genome[1][i].end()){
 			number_of_het_loci += getOneChromeHetero(write, pos1, i, last_pos);
 			continue;
@@ -436,7 +436,7 @@ void Individual::getNumberOfLoci(vector<int>& ch) const{
 int Individual::getOneChromeHetero(bool write, map<int, char>::const_iterator& pos, int chromosome, int last_pos){
 	int number_of_het_loci = 0;
 	int loci = genome[0][0].getResolution();
-	
+
 	while((pos != genome[0][chromosome].end()) and (pos != genome[1][chromosome].end())){
 		number_of_het_loci += (pos->first - last_pos) * write;
 		last_pos = pos->first;
@@ -444,22 +444,6 @@ int Individual::getOneChromeHetero(bool write, map<int, char>::const_iterator& p
 		write = !write;
 	}
 	number_of_het_loci += (loci - last_pos) * write;
-	
+
 	return number_of_het_loci;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

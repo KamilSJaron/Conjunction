@@ -224,12 +224,12 @@ void World::worldSlave(){
 // // // // // // // //
 
 int World::migration(){
-	const int demesize = deme_size;
+//	const int demesize = deme_size;
 	if(dimension == 0){
 //		cerr << "Premigration Population size: " << zeroD_immigrant_pool.size() << endl;
-		zeroD_immigrant_pool.reserve(zeroD_immigrant_pool.size() + demesize);
-		for(int i = 0; i < demesize;i++){
-			zeroD_immigrant_pool.push_back(Imigrant(number_of_chromosomes, number_of_loci, selection));
+		zeroD_immigrant_pool.reserve(zeroD_immigrant_pool.size() + deme_size);
+		for(int i = 0; i < deme_size;i++){
+			zeroD_immigrant_pool.push_back(Imigrant(number_of_chromosomes, number_of_loci, selection, lambda));
 		}
 //		cerr << "Postmigration Population size: " << zeroD_immigrant_pool.size() << endl;
 		return 0;
@@ -247,7 +247,7 @@ int World::migration(){
 	map<int, vector<Individual> > ImmigranBuffer;
 
 	vector<int> neigbours;
-	int MigInd = demesize / (2 * edges_per_deme );
+	int MigInd = deme_size / (2 * edges_per_deme );
 	int deme_index;
 	/*bufferVectorMap is container for all individuals imigrating to all demes*/
 	for (map<int, Deme*>::const_iterator deme=world.begin(); deme!=world.end(); ++deme){
@@ -359,7 +359,7 @@ void World::globalBreeding(){
 				if(gameteAcheck(gamete)){
 					continue;
 				}
-				new_generation.push_back( Imigrant(gamete, selection) );
+				new_generation.push_back( Imigrant(gamete, selection, lambda) );
 			}
 			num_of_desc = getNumberOfDescendants(fitness);
 			for(int i=0;i<num_of_desc;i++){
@@ -367,7 +367,7 @@ void World::globalBreeding(){
 				if(gameteAcheck(gamete)){
 					continue;
 				}
-				new_generation.push_back( Imigrant(gamete, selection) );
+				new_generation.push_back( Imigrant(gamete, selection, lambda) );
 			}
 		}
 //		cerr << " New generation baby: " << new_generation.size() << endl;
