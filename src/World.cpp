@@ -37,7 +37,7 @@ using namespace std;
 int getNumberOfDescendants(double fitness){
 	int x = RAND_MAX;
 	int detailness = 100000;
-	while(x >= RAND_MAX - (RAND_MAX % detailness)){
+	while(x > RAND_MAX - (RAND_MAX % detailness)){
 		x = rand();
 	}
 	double uniform = double(x % detailness) / (detailness-1);
@@ -341,12 +341,19 @@ void World::set(int index,string type){
 
 void World::globalBreeding(){
 	if(dimension == 0){
+		double material = 0;
+		for(int i = 0;i < zeroD_immigrant_pool.size();i++){
+			material += zeroD_immigrant_pool[i].getBprop();
+		}
+		cout << "Starting population size: " << zeroD_immigrant_pool.size() << endl;
+		cout << "Amount of material: " << material << endl;
+
 		vector<Imigrant> new_generation;
 		vector<Chromosome> gamete;
-		new_generation.reserve(zeroD_immigrant_pool.size());
-		gamete.reserve(number_of_chromosomes);
-		double fitness;
-		int num_of_desc;
+//		new_generation.reserve(zeroD_immigrant_pool.size());
+//		gamete.reserve(number_of_chromosomes);
+		double fitness = 0;
+		int num_of_desc = 0;
 
 //		cerr << "Breeding " << zeroD_immigrant_pool.size() << " immigrants" << endl;
 		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
@@ -370,16 +377,15 @@ void World::globalBreeding(){
 				new_generation.push_back( Imigrant(gamete, selection, lambda) );
 			}
 		}
-//		cerr << " New generation baby: " << new_generation.size() << endl;
+		//cerr << " New generation baby: " << new_generation.size() << endl;
 		zeroD_immigrant_pool.clear(); // 1, this is incredibly stupid what I am doing here
-		zeroD_immigrant_pool = new_generation; // 2, I should change pointers instead of copy-pasting
-		double material = 0;
+		zeroD_immigrant_pool.swap(new_generation); // 2, I should change pointers instead of copy-pasting
 		int pop_size = zeroD_immigrant_pool.size();
 		for(int i = 0;i < pop_size;i++){
 			material += zeroD_immigrant_pool[i].getBprop();
 		}
 		cout << "Population size: " << pop_size << endl;
-// 		cout << "Amount of material: " << material << endl;
+		cout << "Amount of material: " << material << endl;
 		new_generation.clear(); // 3, in memory
 		return;
 	}

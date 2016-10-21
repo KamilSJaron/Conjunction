@@ -29,7 +29,7 @@ class Imigrant
 		int getLambda() const;
 
 		/* ASCII PLOTTING METHODS */
-				void readGenotype();
+		void readGenotype();
 
 	private:
 		std::vector<Chromosome> genome;

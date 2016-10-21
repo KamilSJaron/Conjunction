@@ -37,6 +37,7 @@ double uniform_imig(){
 }
 
 Imigrant::Imigrant(int input_ch, int size, double input_sp, double input_lambda){
+	lambda = input_lambda;
 	selection_pressure = input_sp;
 	number_of_chromosomes = input_ch;
 	genome.reserve(number_of_chromosomes);
@@ -46,6 +47,7 @@ Imigrant::Imigrant(int input_ch, int size, double input_sp, double input_lambda)
 }
 
 Imigrant::Imigrant(char origin, int input_ch, int size, double input_sp, double input_lambda){
+	lambda = input_lambda;
 	selection_pressure = input_sp;
 	number_of_chromosomes = input_ch;
 	genome.reserve(number_of_chromosomes);
@@ -55,6 +57,7 @@ Imigrant::Imigrant(char origin, int input_ch, int size, double input_sp, double 
 }
 
 Imigrant::Imigrant(vector<Chromosome>& gamete, double input_sp, double input_lambda){
+	lambda = input_lambda;
 	selection_pressure = input_sp;
 	number_of_chromosomes = gamete.size();
 	genome.reserve(number_of_chromosomes);
@@ -84,8 +87,11 @@ void Imigrant::makeGamete(std::vector<Chromosome>& gamete){
 //	gamete.clear();
 	gamete.reserve(number_of_chromosomes);
 	Chromosome CHtemp;
+	int chiasmata = 0;
 	for(int ch = 0; ch < number_of_chromosomes;ch++){
-		genome[ch].makeRecombinant(CHtemp, getChiasma());
+		chiasmata = getChiasma();
+//		cerr << " CH: " << ch+1 << " will get " << chiasmata << " chiasmata.\n";
+		genome[ch].makeRecombinant(CHtemp, chiasmata);
 		gamete.push_back(CHtemp);
 	}
 }
@@ -100,7 +106,7 @@ double Imigrant::getBprop() const{
 	return prop;
 }
 
-void Imigrant::getSizesOfBBlocks(vector< int >& sizes){
+void Imigrant::getSizesOfBBlocks(vector<int>& sizes){
 	sizes.clear();
 	sizes.reserve(500);
 	for(int ch = 0;ch < number_of_chromosomes;ch++){
@@ -142,4 +148,12 @@ int Imigrant::getSelectionPressure() const{
 
 int Imigrant::getLambda() const{
 	return lambda;
+}
+
+void Imigrant::readGenotype(){
+	for(int i=0;i<number_of_chromosomes;i++){
+		cerr << "---Chromozome---number-" << i+1 << "---" << endl;
+		genome[i].showChromosome();
+	}
+	cout << endl;
 }
