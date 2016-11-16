@@ -13,7 +13,7 @@ Open a terminal promt, go to folder `<path>/Conjunction/` and just write
 make
 ```
 
-The fully operational exectutible `conjunction` should be created and prepared for use.
+The fasdully operational exectutible `conjunction` should be created and prepared for use.
 
 ### Safe / developer build
 
@@ -22,7 +22,7 @@ First of all, built a testing program by
 ```{bash}
 make test
 ```
-
+das;kdnaslsxlaskmx;
 if program report, that all tests passed, build a simulator
 
 ```{bash}
