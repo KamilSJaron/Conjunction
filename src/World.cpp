@@ -34,26 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-int getNumberOfDescendants(double fitness){
-	int x = RAND_MAX;
-	int detailness = 100000;
-	while(x > RAND_MAX - (RAND_MAX % detailness)){
-		x = rand();
-	}
-	double uniform = double(x % detailness) / (detailness-1);
-
-	int result = 0;
-	double q = exp(-fitness);
-	double p = q;
-	double roll = uniform;
-	while(roll > q){
-		result++;
-		p = p * fitness / result;
-		q = q + p;
-	}
-	return result;
-}
-
 World::World() {
 	// USER
 	// space
@@ -345,8 +325,8 @@ void World::globalBreeding(){
 		for(int i = 0;i < zeroD_immigrant_pool.size();i++){
 			material += zeroD_immigrant_pool[i].getBprop();
 		}
-		cout << "Starting population size: " << zeroD_immigrant_pool.size() << endl;
-		cout << "Amount of material: " << material << endl;
+		// cout << "Starting population size: " << zeroD_immigrant_pool.size() << endl;
+		// cout << "Amount of material: " << material << endl;
 
 		vector<Imigrant> new_generation;
 		vector<Chromosome> gamete;
@@ -384,8 +364,8 @@ void World::globalBreeding(){
 		for(int i = 0;i < pop_size;i++){
 			material += zeroD_immigrant_pool[i].getBprop();
 		}
-		cout << "Population size: " << pop_size << endl;
-		cout << "Amount of material: " << material << endl;
+		// cout << "Population size: " << pop_size << endl;
+		// cout << "Amount of material: " << material << endl;
 		new_generation.clear(); // 3, in memory
 		return;
 	}
@@ -501,11 +481,13 @@ void World::listOfDemes(){
 }
 
 int World::summary(ostream& stream){
+	stream << "Printing summary\n";
 	if(dimension == 0){
 		stream << "Selection: " << selection << endl;
 		stream << "Recombination rate: " << lambda << endl;
 		stream << "Theta: " << selection / lambda << endl;
 		stream << "Number of Immigrants per generation: " << deme_size << endl;
+		stream << "Population size: " << zeroD_immigrant_pool.size() << endl;
 	} else {
 		int worlsize = world.size();
 		cerr << "World of size " << worlsize << endl;
@@ -676,10 +658,14 @@ void World::restart(){
 }
 
 void World::clear(){
-	for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
-		delete i->second;
+	if(dimension == 0){
+		zeroD_immigrant_pool.clear();
+	} else {
+		for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
+			delete i->second;
+		}
+		world.clear();
 	}
-	world.clear();
 	return;
 }
 
@@ -766,6 +752,26 @@ bool World::gameteAcheck(std::vector<Chromosome>& gamete){
 		return 0;
 	}
 	return 1;
+}
+
+int World::getNumberOfDescendants(double fitness){
+	int x = RAND_MAX;
+	int detailness = 100000;
+	while(x > RAND_MAX - (RAND_MAX % detailness)){
+		x = rand();
+	}
+	double uniform = double(x % detailness) / (detailness-1);
+
+	int result = 0;
+	double q = exp(-fitness);
+	double p = q;
+	double roll = uniform;
+	while(roll > q){
+		result++;
+		p = p * fitness / result;
+		q = q + p;
+	}
+	return result;
 }
 
 int World::save_complete(ofstream& ofile){

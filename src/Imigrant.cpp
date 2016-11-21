@@ -84,7 +84,7 @@ int Imigrant::getChiasma(){
 }
 
 void Imigrant::makeGamete(std::vector<Chromosome>& gamete){
-//	gamete.clear();
+	gamete.clear();
 	gamete.reserve(number_of_chromosomes);
 	Chromosome CHtemp;
 	int chiasmata = 0;
