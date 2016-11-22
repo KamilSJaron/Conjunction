@@ -360,7 +360,7 @@ void World::globalBreeding(){
 		//cerr << " New generation baby: " << new_generation.size() << endl;
 		zeroD_immigrant_pool.clear(); // 1, this is incredibly stupid what I am doing here
 		zeroD_immigrant_pool.swap(new_generation); // 2, I should change pointers instead of copy-pasting
-		int pop_size = zeroD_immigrant_pool.size();
+		int pop_size = int(zeroD_immigrant_pool.size());
 		for(int i = 0;i < pop_size;i++){
 			material += zeroD_immigrant_pool[i].getBprop();
 		}
@@ -760,7 +760,7 @@ int World::getNumberOfDescendants(double fitness){
 	while(x > RAND_MAX - (RAND_MAX % detailness)){
 		x = rand();
 	}
-	double uniform = double(x % detailness) / (detailness-1);
+	double uniform = double(x % detailness) / (detailness);
 
 	int result = 0;
 	double q = exp(-fitness);
