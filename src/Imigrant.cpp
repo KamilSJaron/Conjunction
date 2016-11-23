@@ -33,7 +33,7 @@ double uniform_imig(){
 	while(x >= RAND_MAX - (RAND_MAX % detailness)){
 		x = rand();
 	}
-	return double(x % detailness) / detailness - 1;
+	return double(x % detailness) / (detailness - 1);
 }
 
 Imigrant::Imigrant(int input_ch, int size, double input_sp, double input_lambda){

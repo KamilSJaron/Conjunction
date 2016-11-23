@@ -592,10 +592,6 @@ int World::SaveTheUniverse(string type, string filename){
 		ofile.close();
 		return return_value;
 	}
-
-	cerr << "WARNING: The output was not saved" << endl;
-	cerr << "         unknown saving format" << endl;
-	return 1;
 }
 
 void World::getLD(){
