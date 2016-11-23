@@ -16,10 +16,11 @@ class Imigrant
 		/* COMPUTIONG METHODS */
 		int getChiasma();
 		void makeGamete(std::vector<Chromosome>& gamete);
-		double getFitness();
+		double getFitness() const;
 		void getSizesOfBBlocks(std::vector<int>& sizes);
 
 		/* STATS */
+		int getNumberOfJunctions() const;
 		double getBprop() const;
 		bool Acheck() const;
 		bool Bcheck() const;

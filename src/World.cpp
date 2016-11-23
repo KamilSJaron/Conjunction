@@ -488,10 +488,16 @@ void World::listOfDemes(){
 }
 
 int World::summary(ostream& stream){
-	stream << "Printing summary\n";
+	stream << " 0D summary\n";
 	if(dimension == 0){
-		stream << "Population\tTotalAlleles\tTotalJunctions\tMeanFitness\n";
-		stream << "Population size: " << zeroD_immigrant_pool.size() << endl;
+		stream << setw(12) << left <<  "Population"
+		<< setw(12) << left << "Material"
+		<< setw(16) << left << "TotalJunctions"
+		<< setw(12) << left << "MeanFitness" << endl;
+		stream << setw(12) << left <<  zeroD_immigrant_pool.size()
+		<< setw(12) << left <<  getMaterial()
+		<< setw(16) << left <<  getTotalJunctions()
+		<< setw(12) << left <<  getMeanFitness() << endl;
 	} else {
 		int worlsize = world.size();
 		cerr << "World of size " << worlsize << endl;
@@ -539,6 +545,46 @@ int World::summary(ostream& stream){
 	}
 	return 0;
 }
+
+double World::getMaterial() const{
+	double material = 0;
+	if(dimension == 0){
+		int pop_size = zeroD_immigrant_pool.size();
+		for(int i = 0;i < pop_size;i++){
+			material += zeroD_immigrant_pool[i].getBprop();
+		}
+	} else {
+		cerr << "getMaterial is not implemented for " << dimension << "D\n";
+	}
+	return material;
+}
+
+int World::getTotalJunctions() const{
+	int junctions = 0;
+	if(dimension == 0){
+		for(unsigned int i = 0;i < zeroD_immigrant_pool.size();i++){
+			junctions += zeroD_immigrant_pool[i].getNumberOfJunctions();
+		}
+	} else {
+		cerr << "getTotalJunctions is not implemented for " << dimension << "D\n";
+	}
+	return junctions;
+}
+
+double World::getMeanFitness() const{
+	double total_fitness = 0;
+	if(dimension == 0){
+		int pop_size = zeroD_immigrant_pool.size();
+		for(int i = 0;i < pop_size;i++){
+			total_fitness += zeroD_immigrant_pool[i].getFitness();
+		}
+		total_fitness = total_fitness / pop_size;
+	} else {
+		cerr << "getMeanFitness is not implemented for " << dimension << "D\n";
+	}
+	return total_fitness;
+}
+
 
 double World::getProportionOfHeterozygotes(int index){
 	return world[index]->getProportionOfHeterozygotes();

@@ -96,6 +96,14 @@ void Imigrant::makeGamete(std::vector<Chromosome>& gamete){
 	}
 }
 
+int Imigrant::getNumberOfJunctions() const{
+	int junctions = 0;
+	for(int i=0;i<number_of_chromosomes;i++){
+		junctions = genome[i].getNumberOfJunctions();
+	}
+	return junctions;
+}
+
 double Imigrant::getBprop() const{
 	int loci = genome[0].getResolution();
 	double prop = 0;
@@ -116,7 +124,7 @@ void Imigrant::getSizesOfBBlocks(vector<int>& sizes){
 }
 
 
-double Imigrant::getFitness(){
+double Imigrant::getFitness() const{
 	// cerr << "Selection presure: " << selection_pressure << endl;
 	// cerr << "B prop: " << getBprop() << endl;
 	return 1 - (selection_pressure * getBprop());
