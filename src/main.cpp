@@ -43,13 +43,13 @@ int main(int argc, char **argv)
 
 	if(argc > 1){
 		if(strcmp( argv[1], "--help") == 0 or strcmp( argv[1], "-h") == 0){
-			cerr << "all parameters are read form setting file (specified by argument or file setting.txt by default); details are online at wiki" << endl;
-			cerr << "\t conjunction [--version] [--help] [setting_file.txt]" << endl;
+			cout << "all parameters are read form setting file (specified by argument or file setting.txt by default); details are online at wiki" << endl;
+			cout << "\t conjunction [--version] [--help] [setting_file.txt]" << endl;
 			return 0;
 		}
 		if(strcmp( argv[1], "--version") == 0 or strcmp( argv[1], "-v") == 0){
-			cerr << "Conjunction v1.2.development" << endl;
-			cerr << "\tcommit: " << GITVERSION << endl;
+			cout << "Conjunction v1.2.development" << endl;
+			cout << "\tcommit: " << GITVERSION << endl;
 			return 0;
 		}
 
