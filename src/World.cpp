@@ -34,26 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-int getNumberOfDescendants(double fitness){
-	int x = RAND_MAX;
-	int detailness = 100000;
-	while(x >= RAND_MAX - (RAND_MAX % detailness)){
-		x = rand();
-	}
-	double uniform = double(x % detailness) / (detailness-1);
-
-	int result = 0;
-	double q = exp(-fitness);
-	double p = q;
-	double roll = uniform;
-	while(roll > q){
-		result++;
-		p = p * fitness / result;
-		q = q + p;
-	}
-	return result;
-}
-
 World::World() {
 	// USER
 	// space
@@ -224,12 +204,12 @@ void World::worldSlave(){
 // // // // // // // //
 
 int World::migration(){
-	const int demesize = deme_size;
+//	const int demesize = deme_size;
 	if(dimension == 0){
 //		cerr << "Premigration Population size: " << zeroD_immigrant_pool.size() << endl;
-		zeroD_immigrant_pool.reserve(zeroD_immigrant_pool.size() + demesize);
-		for(int i = 0; i < demesize;i++){
-			zeroD_immigrant_pool.push_back(Imigrant(number_of_chromosomes, number_of_loci, selection));
+		zeroD_immigrant_pool.reserve(zeroD_immigrant_pool.size() + deme_size);
+		for(int i = 0; i < deme_size;i++){
+			zeroD_immigrant_pool.push_back(Imigrant(number_of_chromosomes, number_of_loci, selection, lambda));
 		}
 //		cerr << "Postmigration Population size: " << zeroD_immigrant_pool.size() << endl;
 		return 0;
@@ -247,7 +227,7 @@ int World::migration(){
 	map<int, vector<Individual> > ImmigranBuffer;
 
 	vector<int> neigbours;
-	int MigInd = demesize / (2 * edges_per_deme );
+	int MigInd = deme_size / (2 * edges_per_deme );
 	int deme_index;
 	/*bufferVectorMap is container for all individuals imigrating to all demes*/
 	for (map<int, Deme*>::const_iterator deme=world.begin(); deme!=world.end(); ++deme){
@@ -341,12 +321,19 @@ void World::set(int index,string type){
 
 void World::globalBreeding(){
 	if(dimension == 0){
+		double material = 0;
+		for(int i = 0;i < zeroD_immigrant_pool.size();i++){
+			material += zeroD_immigrant_pool[i].getBprop();
+		}
+		// cout << "Starting population size: " << zeroD_immigrant_pool.size() << endl;
+		// cout << "Amount of material: " << material << endl;
+
 		vector<Imigrant> new_generation;
 		vector<Chromosome> gamete;
-		new_generation.reserve(zeroD_immigrant_pool.size());
-		gamete.reserve(number_of_chromosomes);
-		double fitness;
-		int num_of_desc;
+//		new_generation.reserve(zeroD_immigrant_pool.size());
+//		gamete.reserve(number_of_chromosomes);
+		double fitness = 0;
+		int num_of_desc = 0;
 
 //		cerr << "Breeding " << zeroD_immigrant_pool.size() << " immigrants" << endl;
 		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
@@ -359,7 +346,7 @@ void World::globalBreeding(){
 				if(gameteAcheck(gamete)){
 					continue;
 				}
-				new_generation.push_back( Imigrant(gamete, selection) );
+				new_generation.push_back( Imigrant(gamete, selection, lambda) );
 			}
 			num_of_desc = getNumberOfDescendants(fitness);
 			for(int i=0;i<num_of_desc;i++){
@@ -367,19 +354,18 @@ void World::globalBreeding(){
 				if(gameteAcheck(gamete)){
 					continue;
 				}
-				new_generation.push_back( Imigrant(gamete, selection) );
+				new_generation.push_back( Imigrant(gamete, selection, lambda) );
 			}
 		}
-//		cerr << " New generation baby: " << new_generation.size() << endl;
+		//cerr << " New generation baby: " << new_generation.size() << endl;
 		zeroD_immigrant_pool.clear(); // 1, this is incredibly stupid what I am doing here
-		zeroD_immigrant_pool = new_generation; // 2, I should change pointers instead of copy-pasting
-		double material = 0;
-		int pop_size = zeroD_immigrant_pool.size();
+		zeroD_immigrant_pool.swap(new_generation); // 2, I should change pointers instead of copy-pasting
+		int pop_size = int(zeroD_immigrant_pool.size());
 		for(int i = 0;i < pop_size;i++){
 			material += zeroD_immigrant_pool[i].getBprop();
 		}
-		cout << "Population size: " << pop_size << endl;
-// 		cout << "Amount of material: " << material << endl;
+		// cout << "Population size: " << pop_size << endl;
+		// cout << "Amount of material: " << material << endl;
 		new_generation.clear(); // 3, in memory
 		return;
 	}
@@ -495,11 +481,13 @@ void World::listOfDemes(){
 }
 
 int World::summary(ostream& stream){
+	stream << "Printing summary\n";
 	if(dimension == 0){
 		stream << "Selection: " << selection << endl;
 		stream << "Recombination rate: " << lambda << endl;
 		stream << "Theta: " << selection / lambda << endl;
 		stream << "Number of Immigrants per generation: " << deme_size << endl;
+		stream << "Population size: " << zeroD_immigrant_pool.size() << endl;
 	} else {
 		int worlsize = world.size();
 		cerr << "World of size " << worlsize << endl;
@@ -604,10 +592,6 @@ int World::SaveTheUniverse(string type, string filename){
 		ofile.close();
 		return return_value;
 	}
-
-	cerr << "WARNING: The output was not saved" << endl;
-	cerr << "         unknown saving format" << endl;
-	return 1;
 }
 
 void World::getLD(){
@@ -670,10 +654,14 @@ void World::restart(){
 }
 
 void World::clear(){
-	for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
-		delete i->second;
+	if(dimension == 0){
+		zeroD_immigrant_pool.clear();
+	} else {
+		for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
+			delete i->second;
+		}
+		world.clear();
 	}
-	world.clear();
 	return;
 }
 
@@ -760,6 +748,26 @@ bool World::gameteAcheck(std::vector<Chromosome>& gamete){
 		return 0;
 	}
 	return 1;
+}
+
+int World::getNumberOfDescendants(double fitness){
+	int x = RAND_MAX;
+	int detailness = 100000;
+	while(x > RAND_MAX - (RAND_MAX % detailness)){
+		x = rand();
+	}
+	double uniform = double(x % detailness) / (detailness);
+
+	int result = 0;
+	double q = exp(-fitness);
+	double p = q;
+	double roll = uniform;
+	while(roll > q){
+		result++;
+		p = p * fitness / result;
+		q = q + p;
+	}
+	return result;
 }
 
 int World::save_complete(ofstream& ofile){

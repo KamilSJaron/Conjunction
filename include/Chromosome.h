@@ -3,16 +3,16 @@
 
 class Chromosome
 {
-     public :
+	public :
 /* INITIATION */
 		Chromosome(); /* blank chromosome is used for recombination*/
 		Chromosome(char starting_char, int size);
 		Chromosome(std::map <int, char> input_chrom, int size);
 		~Chromosome();
-     	
+
 /* PLOTTING METHODS */
 		void showChromosome() const; /*writes all junctions*/
-		    	
+
 /* COMUNICATION METHODS */
 		bool Acheck() const; /*returns 1 if there are only A, 0 in other case*/
 		bool Bcheck() const; /*returns 1 if there are only B, 0 in other case*/
@@ -23,7 +23,7 @@ class Chromosome
 		void makeRecombinant(Chromosome& chromNew,int numberOfChaisma);
 		int tossAcoin();
 		int recombPosition();
-		
+
 /* COMUNICATION METHODS */
 		void setResolution(int res);
 		int getResolution() const; /* return resolution of the chromosome */
@@ -33,10 +33,10 @@ class Chromosome
 		std::map<int, char>::iterator begin();
 		std::map<int, char>::iterator end();
 		std::map<int, char>::iterator find(int i);
-		
+
 	protected:
 		std::map <int, char> chromosome;
 		int loci;
 };
- 
+
 #endif

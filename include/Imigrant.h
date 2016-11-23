@@ -5,26 +5,37 @@
 class Imigrant
 {
 	public:
-/* DECLARATION */
-		Imigrant(int input_ch, int size, double input_sp);
-		Imigrant(char origin, int input_ch, int size, double input_sp); /* init Individual as 'A', 'B' or pure "AB" heterozygot*/
-		Imigrant(std::vector<Chromosome>& gamete, double input_sp); /*init Individual by gametes on imput */
-		~Imigrant(){genome.clear();}; /* destructor */
+		/* DECLARATION */
+		Imigrant(int input_ch, int size, double input_sp, double input_lambda);
+		/* init Individual as 'A', 'B' or pure "AB" heterozygot*/
+		Imigrant(char origin, int input_ch, int size, double input_sp, double input_lambda);
+		/*init Individual by gametes on imput */
+		Imigrant(std::vector<Chromosome>& gamete, double input_sp, double input_lambda);
+		~Imigrant(); /* destructor */
 
-// /* COMPUTIONG METHODS */
+		/* COMPUTIONG METHODS */
 		int getChiasma();
-		void makeGamete(std::vector<Chromosome>& gamete); //this method should be rewriten to accept vector of chromosomes instead of pointer to imigrant
+		void makeGamete(std::vector<Chromosome>& gamete);
 		double getFitness();
-		double getBprop() const;
 		void getSizesOfBBlocks(std::vector<int>& sizes);
+
+		/* STATS */
+		double getBprop() const;
 		bool Acheck() const;
 		bool Bcheck() const;
+
+		/* GETTERS */
 		int getSelectionPressure() const;
+		int getLambda() const;
+
+		/* ASCII PLOTTING METHODS */
+		void readGenotype();
 
 	private:
 		std::vector<Chromosome> genome;
 		int number_of_chromosomes;
 		double selection_pressure;
+		double lambda;
 };
 
 

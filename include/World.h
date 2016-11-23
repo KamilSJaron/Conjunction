@@ -20,6 +20,7 @@ class World {
 		void Breed(int index);
 		void set(int index, std::string type);
 		void globalBreeding();
+		int getNumberOfDescendants(double fitness); // for imigrants
 
 	// 	testing functions vector<Chromosome>& gamete
 		bool Acheck(std::vector<Individual>& buffer);
@@ -51,17 +52,19 @@ class World {
 
 	private:
 	// 	inner methods
+	// computing
 		int upper_border(int index, int max_index); // function returns index of upper neigbour for new demes
 		int lower_border(int index, int max_index);
 		int side_border(int reflexive, int extending);
 		bool gameteAcheck(std::vector<Chromosome>& gamete);
+
+	// saving methods
 		int save_complete(std::ofstream& ofile);
 		int save_hybridIndices(std::ofstream& ofile);
 		int save_hybridIndicesJunctions(std::ofstream& ofile);
 		int save_blocks(std::ofstream& ofile);
 		int save_line(std::ofstream& ofile, int index, std::vector<double>& vec);
 		int save_line(std::ofstream& ofile, int index, std::vector<int>& vec);
-
 	// 	variables
 	//	containers
 		std::map<int, Deme*> world; // container of Demes for non zero dimensional simation
