@@ -63,8 +63,13 @@ class World {
 		int save_hybridIndices(std::ofstream& ofile);
 		int save_hybridIndicesJunctions(std::ofstream& ofile);
 		int save_blocks(std::ofstream& ofile);
-		int save_line(std::ofstream& ofile, int index, std::vector<double>& vec);
-		int save_line(std::ofstream& ofile, int index, std::vector<int>& vec);
+		template<typename T>
+		int save_line(std::ofstream& ofile, int index, std::vector<T>& vec) const;
+
+	// stats
+		double getMaterial() const;
+		int getTotalJunctions() const;
+		double getMeanFitness() const;
 	// 	variables
 	//	containers
 		std::map<int, Deme*> world; // container of Demes for non zero dimensional simation

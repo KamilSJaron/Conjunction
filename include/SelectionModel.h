@@ -14,7 +14,7 @@ public:
 	SelectionModel(double in_selection, double in_beta);
 	void setSelectionPressure(double Sp);
 	void setBeta(double in_beta);
-	double getFitness(double het);
+	double getFitness(double hybrid_index);
 
 private:
 	double selection_pressure;

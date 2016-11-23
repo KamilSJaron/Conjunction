@@ -154,11 +154,13 @@ void SettingHandler::printParameters() const{
 
 void SettingHandler::printWorld() const{
 	cerr << "##### WORLD SETTING #####\n"
-	<< "Dimension: " << dimension << endl
-	<< "COLUMNS: " << left_right_demes << endl
-	<< "ROWS: " << up_down_demes << endl
-	<< "UD DOWN BORDER: " << type_of_updown_edges << endl
-	<< "LEFT RIGHT BORDER: " << type_of_leftright_edges << endl;
+	<< "Dimension: " << dimension << endl;
+	if(dimension != 0){
+		cerr << "COLUMNS: " << left_right_demes << endl
+		<< "ROWS: " << up_down_demes << endl
+		<< "UD DOWN BORDER: " << type_of_updown_edges << endl
+		<< "LEFT RIGHT BORDER: " << type_of_leftright_edges << endl;
+	}
 	return;
 }
 

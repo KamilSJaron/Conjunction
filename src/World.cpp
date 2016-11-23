@@ -209,7 +209,7 @@ int World::migration(){
 //		cerr << "Premigration Population size: " << zeroD_immigrant_pool.size() << endl;
 		zeroD_immigrant_pool.reserve(zeroD_immigrant_pool.size() + deme_size);
 		for(int i = 0; i < deme_size;i++){
-			zeroD_immigrant_pool.push_back(Imigrant(number_of_chromosomes, number_of_loci, selection, lambda));
+			zeroD_immigrant_pool.push_back(Imigrant(number_of_chromosomes, number_of_loci, lambda));
 		}
 //		cerr << "Postmigration Population size: " << zeroD_immigrant_pool.size() << endl;
 		return 0;
@@ -321,51 +321,46 @@ void World::set(int index,string type){
 
 void World::globalBreeding(){
 	if(dimension == 0){
-		double material = 0;
-		for(int i = 0;i < zeroD_immigrant_pool.size();i++){
-			material += zeroD_immigrant_pool[i].getBprop();
-		}
+	SelectionModel selection_model;
+	selection_model.setSelectionPressure(selection);
+	selection_model.setBeta(beta);
+
+	double material = 0;
+	for(int i = 0;i < zeroD_immigrant_pool.size();i++){
+		material += zeroD_immigrant_pool[i].getBprop();
+	}
 		// cout << "Starting population size: " << zeroD_immigrant_pool.size() << endl;
 		// cout << "Amount of material: " << material << endl;
 
 		vector<Imigrant> new_generation;
 		vector<Chromosome> gamete;
-//		new_generation.reserve(zeroD_immigrant_pool.size());
-//		gamete.reserve(number_of_chromosomes);
-		double fitness = 0;
+
+		new_generation.reserve(zeroD_immigrant_pool.size());
+		gamete.reserve(number_of_chromosomes);
+		double fitness = 0, hybrid_index = 0;
 		int num_of_desc = 0;
 
-//		cerr << "Breeding " << zeroD_immigrant_pool.size() << " immigrants" << endl;
 		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
-			fitness = zeroD_immigrant_pool[index].getFitness();
-//			cerr << "Fitness: " << fitness << endl;
-			num_of_desc = getNumberOfDescendants(fitness);
-//			cerr << "Number of descendants: " << num_of_desc << endl;
-			for(int i=0;i<num_of_desc;i++){
-				zeroD_immigrant_pool[index].makeGamete(gamete);
-				if(gameteAcheck(gamete)){
-					continue;
+			hybrid_index = zeroD_immigrant_pool[index].getBprop() / 2;
+			fitness = selection_model.getFitness(hybrid_index);
+//			every7 individual has 2 attempts to mate
+			for(int attempt = 0; attempt < 2; attempt++){
+				num_of_desc = getNumberOfDescendants(fitness);
+				for(int i=0;i<num_of_desc;i++){
+					zeroD_immigrant_pool[index].makeGamete(gamete);
+					if(gameteAcheck(gamete)){
+						continue;
+					}
+					new_generation.push_back( Imigrant(gamete, lambda) );
 				}
-				new_generation.push_back( Imigrant(gamete, selection, lambda) );
-			}
-			num_of_desc = getNumberOfDescendants(fitness);
-			for(int i=0;i<num_of_desc;i++){
-				zeroD_immigrant_pool[index].makeGamete(gamete);
-				if(gameteAcheck(gamete)){
-					continue;
-				}
-				new_generation.push_back( Imigrant(gamete, selection, lambda) );
 			}
 		}
-		//cerr << " New generation baby: " << new_generation.size() << endl;
 		zeroD_immigrant_pool.clear(); // 1, this is incredibly stupid what I am doing here
 		zeroD_immigrant_pool.swap(new_generation); // 2, I should change pointers instead of copy-pasting
 		int pop_size = int(zeroD_immigrant_pool.size());
 		for(int i = 0;i < pop_size;i++){
 			material += zeroD_immigrant_pool[i].getBprop();
 		}
-		// cout << "Population size: " << pop_size << endl;
-		// cout << "Amount of material: " << material << endl;
 		new_generation.clear(); // 3, in memory
 		return;
 	}
@@ -434,13 +429,15 @@ bool World::empty(){
 // // // // // // // //
 
 void World::listOfParameters() const{
-	cerr << "***************" << endl
-	<< "Size of World: " << world.size() << " Dim: " << dimension << " edges_per_deme: " << edges_per_deme << endl
-	<< "Number of demes l/r: " << number_of_demes_l_r << " Number of demes u/d: " << number_of_demes_u_d << endl
-	<< "Type of l/r edges: " << type_of_l_r_edges << " Type of u/d edges: " << type_of_u_d_edges << endl
-	<< "Last left index: " << index_last_left << " Last right index: " << index_last_right << endl
-	<< "Next left index: " << index_next_left << " Next right index: " << index_next_right << endl
-	<< "***************" << endl;
+	cerr << "***************" << endl;
+	if(dimension != 0){
+		cerr << "Size of World: " << world.size() << " Dim: " << dimension << " edges_per_deme: " << edges_per_deme << endl
+		<< "Number of demes l/r: " << number_of_demes_l_r << " Number of demes u/d: " << number_of_demes_u_d << endl
+		<< "Type of l/r edges: " << type_of_l_r_edges << " Type of u/d edges: " << type_of_u_d_edges << endl
+		<< "Last left index: " << index_last_left << " Last right index: " << index_last_right << endl
+		<< "Next left index: " << index_next_left << " Next right index: " << index_next_right << endl
+		<< "***************" << endl;
+	}
 	listOfNumericalParameters(std::cerr);
 	cerr << "***************" << endl;
 	return;
@@ -451,8 +448,13 @@ void World::listOfNumericalParameters(std::ostream& stream) const{
 	<< "# Lambda: " << lambda << endl
 	<< "# Beta: " << beta << endl
 	<< "# Loci: " << number_of_loci << endl
-	<< "# Chromosomes: " << number_of_chromosomes << endl
-	<< "# Deme size: " << deme_size << endl;
+	<< "# Chromosomes: " << number_of_chromosomes << endl;
+	if(dimension == 0){
+		stream << "# Migrants per generation: ";
+	} else {
+		stream << "# Deme size: ";
+	}
+	stream << deme_size << endl;
 	return;
 }
 
@@ -481,13 +483,16 @@ void World::listOfDemes(){
 }
 
 int World::summary(ostream& stream){
-	stream << "Printing summary\n";
+	stream << " 0D summary\n";
 	if(dimension == 0){
-		stream << "Selection: " << selection << endl;
-		stream << "Recombination rate: " << lambda << endl;
-		stream << "Theta: " << selection / lambda << endl;
-		stream << "Number of Immigrants per generation: " << deme_size << endl;
-		stream << "Population size: " << zeroD_immigrant_pool.size() << endl;
+		stream << setw(12) << left <<  "Population"
+		<< setw(12) << left << "Material"
+		<< setw(16) << left << "TotalJunctions"
+		<< setw(12) << left << "MeanFitness" << endl;
+		stream << setw(12) << left <<  zeroD_immigrant_pool.size()
+		<< setw(12) << left <<  getMaterial()
+		<< setw(16) << left <<  getTotalJunctions()
+		<< setw(12) << left <<  getMeanFitness() << endl;
 	} else {
 		int worlsize = world.size();
 		cerr << "World of size " << worlsize << endl;
@@ -534,6 +539,50 @@ int World::summary(ostream& stream){
 		}
 	}
 	return 0;
+}
+
+double World::getMaterial() const{
+	double material = 0;
+	if(dimension == 0){
+		int pop_size = zeroD_immigrant_pool.size();
+		for(int i = 0;i < pop_size;i++){
+			material += zeroD_immigrant_pool[i].getBprop();
+		}
+	} else {
+		cerr << "getMaterial is not implemented for " << dimension << "D\n";
+	}
+	return material;
+}
+
+int World::getTotalJunctions() const{
+	int junctions = 0;
+	if(dimension == 0){
+		for(unsigned int i = 0;i < zeroD_immigrant_pool.size();i++){
+			junctions += zeroD_immigrant_pool[i].getNumberOfJunctions();
+		}
+	} else {
+		cerr << "getTotalJunctions is not implemented for " << dimension << "D\n";
+	}
+	return junctions;
+}
+
+double World::getMeanFitness() const{
+	double total_fitness = 0, hybrid_index = 0;
+	SelectionModel selection_model;
+	selection_model.setSelectionPressure(selection);
+	selection_model.setBeta(beta);
+
+	if(dimension == 0){
+		int pop_size = zeroD_immigrant_pool.size();
+		for(int i = 0;i < pop_size;i++){
+			hybrid_index = zeroD_immigrant_pool[i].getBprop() / 2;
+			total_fitness += selection_model.getFitness(hybrid_index);
+		}
+		total_fitness = total_fitness / pop_size;
+	} else {
+		cerr << "getMeanFitness is not implemented for " << dimension << "D\n";
+	}
+	return total_fitness;
 }
 
 double World::getProportionOfHeterozygotes(int index){
@@ -772,64 +821,75 @@ int World::getNumberOfDescendants(double fitness){
 
 int World::save_complete(ofstream& ofile){
 	cerr << "WARNING: experimental option save_complete " << endl;
-	int index = index_last_left;
-	vector<double> props;
-	for(unsigned int i = 0; i < world.size(); i++){
-		for(int y = 0; y < number_of_demes_u_d; y++){
-			world[index+y]->getBproportions(props);
-			save_line(ofile,index+y,props);
-			world[index+y]->getJunctionNumbers(props);
-			save_line(ofile,index+y,props);
-			world[index+y]->getHeterozygoty(props);
-			save_line(ofile,index+y,props);
-		}
-		if(index != index_last_right){
-			index = world[index]->getNeigbours()[1];
-		} else {
-			break;
+	if(dimension == 0){
+		// TO DO
+	} else {
+		int index = index_last_left;
+		vector<double> props;
+		for(unsigned int i = 0; i < world.size(); i++){
+			for(int y = 0; y < number_of_demes_u_d; y++){
+				world[index+y]->getBproportions(props);
+				save_line(ofile,index+y,props);
+				world[index+y]->getJunctionNumbers(props);
+				save_line(ofile,index+y,props);
+				world[index+y]->getHeterozygoty(props);
+				save_line(ofile,index+y,props);
+			}
+			if(index != index_last_right){
+				index = world[index]->getNeigbours()[1];
+			} else {
+				break;
+			}
 		}
 	}
+
 	ofile.close();
 	return 0;
 }
 
 
 int World::save_hybridIndices(ofstream& ofile){
-	int index = index_last_left;
-	vector<double> props;
-	for(unsigned int i = 0; i < world.size(); i++){
-		for(int y = 0; y < number_of_demes_u_d; y++){
-			world[index+y]->getBproportions(props);
-			save_line(ofile,index+y,props);
-		}
-		if(index != index_last_right){
-			index = world[index]->getNeigbours()[1];
-		} else {
-			break;
+	if(dimension == 0){
+		// TO DO
+	} else {
+		int index = index_last_left;
+		vector<double> props;
+		for(unsigned int i = 0; i < world.size(); i++){
+			for(int y = 0; y < number_of_demes_u_d; y++){
+				world[index+y]->getBproportions(props);
+				save_line(ofile,index+y,props);
+			}
+			if(index != index_last_right){
+				index = world[index]->getNeigbours()[1];
+			} else {
+				break;
+			}
 		}
 	}
-//	cerr << "The output was successfully saved to: " << NAMEofOUTPUTfile << endl;
 	ofile.close();
 	return 0;
 }
 
 int World::save_hybridIndicesJunctions(ofstream& ofile){
-	int index = index_last_left;
-	vector<double> props;
-	for(unsigned int i = 0; i < world.size(); i++){
-		for(int y = 0; y < number_of_demes_u_d; y++){
-			world[index+y]->getBproportions(props);
-			save_line(ofile,index+y,props);
-			world[index+y]->getJunctionNumbers(props);
-			save_line(ofile,index+y,props);
-		}
-		if(index != index_last_right){
-			index = world[index]->getNeigbours()[1];
-		} else {
-			break;
+	if(dimension == 0){
+		// TO DO
+	} else {
+		int index = index_last_left;
+		vector<double> props;
+		for(unsigned int i = 0; i < world.size(); i++){
+			for(int y = 0; y < number_of_demes_u_d; y++){
+				world[index+y]->getBproportions(props);
+				save_line(ofile,index+y,props);
+				world[index+y]->getJunctionNumbers(props);
+				save_line(ofile,index+y,props);
+			}
+			if(index != index_last_right){
+				index = world[index]->getNeigbours()[1];
+			} else {
+				break;
+			}
 		}
 	}
-//	cerr << "The output was successfully saved to: " << NAMEofOUTPUTfile << endl;
 	ofile.close();
 	return 0;
 }
@@ -872,38 +932,33 @@ int World::save_hybridIndicesJunctions(ofstream& ofile){
 //}
 
 int World::save_blocks(ofstream& ofile){
-	int index = index_last_left;
-	vector<int> block_sizes;
-	for(unsigned int i = 0; i < world.size(); i++){
-		for(int y = 0; y < number_of_demes_u_d; y++){
-			for(int ind_index = 0; ind_index < deme_size; ind_index++){
-				world[index]->getSizesOfABlocks(block_sizes, ind_index);
-				save_line(ofile,index+y,block_sizes);
-				world[index]->getSizesOfBBlocks(block_sizes, ind_index);
-				save_line(ofile,index+y,block_sizes);
+	if(dimension == 0){
+		//TO DO
+	} else {
+		int index = index_last_left;
+		vector<int> block_sizes;
+		for(unsigned int i = 0; i < world.size(); i++){
+			for(int y = 0; y < number_of_demes_u_d; y++){
+				for(int ind_index = 0; ind_index < deme_size; ind_index++){
+					world[index]->getSizesOfABlocks(block_sizes, ind_index);
+					save_line(ofile,index+y,block_sizes);
+					world[index]->getSizesOfBBlocks(block_sizes, ind_index);
+					save_line(ofile,index+y,block_sizes);
+				}
+			}
+			if(index != index_last_right){
+				index = world[index]->getNeigbours()[1];
+			} else {
+				break;
 			}
 		}
-		if(index != index_last_right){
-			index = world[index]->getNeigbours()[1];
-		} else {
-			break;
-		}
 	}
-//	cerr << "The output was successfully saved to: " << NAMEofOUTPUTfile << endl;
 	ofile.close();
 	return 0;
 }
 
-int World::save_line(ofstream& ofile, int index, vector< double >& vec){
-	ofile << index << '\t';
-	for(unsigned int ind = 0; ind < vec.size(); ind++){
-		ofile << vec[ind] << '\t';
-	}
-	ofile << endl;
-	return 0;
-}
-
-int World::save_line(ofstream& ofile, int index, vector<int>& vec){
+template<typename T>
+int World::save_line(ofstream& ofile, int index, vector<T>& vec) const{
 	ofile << index << '\t';
 	for(unsigned int ind = 0; ind < vec.size(); ind++){
 		ofile << vec[ind] << '\t';

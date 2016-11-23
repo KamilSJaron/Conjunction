@@ -36,9 +36,9 @@ double uniform_imig(){
 	return double(x % detailness) / (detailness - 1);
 }
 
-Imigrant::Imigrant(int input_ch, int size, double input_sp, double input_lambda){
+
+Imigrant::Imigrant(int input_ch, int size, double input_lambda){
 	lambda = input_lambda;
-	selection_pressure = input_sp;
 	number_of_chromosomes = input_ch;
 	genome.reserve(number_of_chromosomes);
 	for(int i=0;i<number_of_chromosomes;i++){
@@ -46,9 +46,8 @@ Imigrant::Imigrant(int input_ch, int size, double input_sp, double input_lambda)
 	}
 }
 
-Imigrant::Imigrant(char origin, int input_ch, int size, double input_sp, double input_lambda){
+Imigrant::Imigrant(char origin, int input_ch, int size, double input_lambda){
 	lambda = input_lambda;
-	selection_pressure = input_sp;
 	number_of_chromosomes = input_ch;
 	genome.reserve(number_of_chromosomes);
 	for(int i=0;i<number_of_chromosomes;i++){
@@ -56,9 +55,8 @@ Imigrant::Imigrant(char origin, int input_ch, int size, double input_sp, double 
 	}
 }
 
-Imigrant::Imigrant(vector<Chromosome>& gamete, double input_sp, double input_lambda){
+Imigrant::Imigrant(vector<Chromosome>& gamete, double input_lambda){
 	lambda = input_lambda;
-	selection_pressure = input_sp;
 	number_of_chromosomes = gamete.size();
 	genome.reserve(number_of_chromosomes);
 	for(int i=0;i<number_of_chromosomes;i++){
@@ -96,6 +94,14 @@ void Imigrant::makeGamete(std::vector<Chromosome>& gamete){
 	}
 }
 
+int Imigrant::getNumberOfJunctions() const{
+	int junctions = 0;
+	for(int i=0;i<number_of_chromosomes;i++){
+		junctions = genome[i].getNumberOfJunctions();
+	}
+	return junctions;
+}
+
 double Imigrant::getBprop() const{
 	int loci = genome[0].getResolution();
 	double prop = 0;
@@ -113,13 +119,6 @@ void Imigrant::getSizesOfBBlocks(vector<int>& sizes){
 		genome[ch].getSizesOfBBlocks(sizes);
 	}
 	return;
-}
-
-
-double Imigrant::getFitness(){
-	// cerr << "Selection presure: " << selection_pressure << endl;
-	// cerr << "B prop: " << getBprop() << endl;
-	return 1 - (selection_pressure * getBprop());
 }
 
 bool Imigrant::Acheck() const{
@@ -140,10 +139,6 @@ bool Imigrant::Bcheck() const{
 		return 0;
 	}
 	return 1;
-}
-
-int Imigrant::getSelectionPressure() const{
-	return selection_pressure;
 }
 
 int Imigrant::getLambda() const{
