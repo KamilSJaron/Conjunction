@@ -38,6 +38,6 @@ void SelectionModel::setBeta(double in_beta){
 	beta = in_beta;
 }
 
-double SelectionModel::getFitness(double het){
-	return 1 - (selection_pressure * pow( 4 * het * (1 - het),beta));
+double SelectionModel::getFitness(double hybrid_index){
+	return 1 - (selection_pressure * pow( 4 * hybrid_index * (1 - hybrid_index),beta));
 }

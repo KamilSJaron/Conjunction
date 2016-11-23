@@ -209,7 +209,7 @@ int World::migration(){
 //		cerr << "Premigration Population size: " << zeroD_immigrant_pool.size() << endl;
 		zeroD_immigrant_pool.reserve(zeroD_immigrant_pool.size() + deme_size);
 		for(int i = 0; i < deme_size;i++){
-			zeroD_immigrant_pool.push_back(Imigrant(number_of_chromosomes, number_of_loci, selection, lambda));
+			zeroD_immigrant_pool.push_back(Imigrant(number_of_chromosomes, number_of_loci, lambda));
 		}
 //		cerr << "Postmigration Population size: " << zeroD_immigrant_pool.size() << endl;
 		return 0;
@@ -321,6 +321,10 @@ void World::set(int index,string type){
 
 void World::globalBreeding(){
 	if(dimension == 0){
+		SelectionModel selection_model;
+		selection_model.setSelectionPressure(selection);
+		selection_model.setBeta(beta);
+
 		double material = 0;
 		for(int i = 0;i < zeroD_immigrant_pool.size();i++){
 			material += zeroD_immigrant_pool[i].getBprop();
@@ -330,42 +334,32 @@ void World::globalBreeding(){
 
 		vector<Imigrant> new_generation;
 		vector<Chromosome> gamete;
-//		new_generation.reserve(zeroD_immigrant_pool.size());
-//		gamete.reserve(number_of_chromosomes);
-		double fitness = 0;
+		new_generation.reserve(zeroD_immigrant_pool.size());
+		gamete.reserve(number_of_chromosomes);
+		double fitness = 0, hybrid_index = 0;
 		int num_of_desc = 0;
 
-//		cerr << "Breeding " << zeroD_immigrant_pool.size() << " immigrants" << endl;
 		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
-			fitness = zeroD_immigrant_pool[index].getFitness();
-//			cerr << "Fitness: " << fitness << endl;
-			num_of_desc = getNumberOfDescendants(fitness);
-//			cerr << "Number of descendants: " << num_of_desc << endl;
-			for(int i=0;i<num_of_desc;i++){
-				zeroD_immigrant_pool[index].makeGamete(gamete);
-				if(gameteAcheck(gamete)){
-					continue;
+			hybrid_index = zeroD_immigrant_pool[index].getBprop() / 2;
+			fitness = selection_model.getFitness(hybrid_index);
+//			every7 individual has 2 attempts to mate
+			for(int attempt = 0; attempt < 2; attempt++){
+				num_of_desc = getNumberOfDescendants(fitness);
+				for(int i=0;i<num_of_desc;i++){
+					zeroD_immigrant_pool[index].makeGamete(gamete);
+					if(gameteAcheck(gamete)){
+						continue;
+					}
+					new_generation.push_back( Imigrant(gamete, lambda) );
 				}
-				new_generation.push_back( Imigrant(gamete, selection, lambda) );
-			}
-			num_of_desc = getNumberOfDescendants(fitness);
-			for(int i=0;i<num_of_desc;i++){
-				zeroD_immigrant_pool[index].makeGamete(gamete);
-				if(gameteAcheck(gamete)){
-					continue;
-				}
-				new_generation.push_back( Imigrant(gamete, selection, lambda) );
 			}
 		}
-		//cerr << " New generation baby: " << new_generation.size() << endl;
 		zeroD_immigrant_pool.clear(); // 1, this is incredibly stupid what I am doing here
 		zeroD_immigrant_pool.swap(new_generation); // 2, I should change pointers instead of copy-pasting
 		int pop_size = int(zeroD_immigrant_pool.size());
 		for(int i = 0;i < pop_size;i++){
 			material += zeroD_immigrant_pool[i].getBprop();
 		}
-		// cout << "Population size: " << pop_size << endl;
-		// cout << "Amount of material: " << material << endl;
 		new_generation.clear(); // 3, in memory
 		return;
 	}
@@ -572,11 +566,16 @@ int World::getTotalJunctions() const{
 }
 
 double World::getMeanFitness() const{
-	double total_fitness = 0;
+	double total_fitness = 0, hybrid_index = 0;
+	SelectionModel selection_model;
+	selection_model.setSelectionPressure(selection);
+	selection_model.setBeta(beta);
+
 	if(dimension == 0){
 		int pop_size = zeroD_immigrant_pool.size();
 		for(int i = 0;i < pop_size;i++){
-			total_fitness += zeroD_immigrant_pool[i].getFitness();
+			hybrid_index = zeroD_immigrant_pool[i].getBprop() / 2;
+			total_fitness += selection_model.getFitness(hybrid_index);
 		}
 		total_fitness = total_fitness / pop_size;
 	} else {
@@ -584,7 +583,6 @@ double World::getMeanFitness() const{
 	}
 	return total_fitness;
 }
-
 
 double World::getProportionOfHeterozygotes(int index){
 	return world[index]->getProportionOfHeterozygotes();
