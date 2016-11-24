@@ -60,8 +60,7 @@ class World {
 
 	// saving methods
 		int save_complete(std::ofstream& ofile);
-		int save_hybridIndices(std::ofstream& ofile);
-		int save_hybridIndicesJunctions(std::ofstream& ofile);
+		int save_hybridIndices(std::ofstream& ofile, std::string type);
 		int save_blocks(std::ofstream& ofile);
 		template<typename T>
 		int save_line(std::ofstream& ofile, int index, std::vector<T>& vec) const;

@@ -598,48 +598,31 @@ void World::showOneDeme(int index){
 
 int World::SaveTheUniverse(string type, string filename){
 	ofstream ofile;
-	vector<double> props;
-
 	ofile.open(filename); // Opens file
 	if (ofile.fail()){
 		return 1;
 	}
 
-	if(dimension == 0){
-		vector<int> blockSizes;
-		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
-			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
-			for(unsigned int i = 0;i < blockSizes.size(); i++){
-				ofile << blockSizes[i] / double(number_of_loci) << endl;
-			}
-			blockSizes.clear();
-		}
-		ofile.close();
-		return 0;
-	} else {
-		int return_value = 0;
-		if(type == "complete"){
-			return_value = save_complete(ofile);
-		}
-		if(type == "summary"){
-			return_value = summary(ofile);
-		}
-		if(type == "hybridIndices"){
-			return_value = save_hybridIndices(ofile);
-		}
-		if(type == "hybridIndicesJunctions"){
-			return_value = save_hybridIndicesJunctions(ofile);
-		}
-//		if(type == "raspberrypi"){
-//			return save_raspberrypi(ofile);
-//		}
-		if(type == "blocks"){
-			return_value = save_blocks(ofile);
-		}
-
-		ofile.close();
-		return return_value;
+	int return_value = 1;
+	// for all dims; if one desires to save std out to separated files instead of one stream
+	if(type == "summary"){
+		return_value = summary(ofile);
 	}
+	// for 1D / 2D
+	if(type == "hybridIndices" or type == "hybridIndicesJunctions"){
+		return_value = save_hybridIndices(ofile, type);
+	}
+	// for all dims
+	if(type == "blocks"){
+		return_value = save_blocks(ofile);
+	}
+	// under construction
+	if(type == "complete"){
+		return_value = save_complete(ofile);
+	}
+
+	ofile.close();
+	return return_value;
 }
 
 void World::getLD(){
@@ -847,7 +830,7 @@ int World::save_complete(ofstream& ofile){
 }
 
 
-int World::save_hybridIndices(ofstream& ofile){
+int World::save_hybridIndices(ofstream& ofile, string type){
 	if(dimension == 0){
 		// TO DO
 	} else {
@@ -857,30 +840,10 @@ int World::save_hybridIndices(ofstream& ofile){
 			for(int y = 0; y < number_of_demes_u_d; y++){
 				world[index+y]->getBproportions(props);
 				save_line(ofile,index+y,props);
-			}
-			if(index != index_last_right){
-				index = world[index]->getNeigbours()[1];
-			} else {
-				break;
-			}
-		}
-	}
-	ofile.close();
-	return 0;
-}
-
-int World::save_hybridIndicesJunctions(ofstream& ofile){
-	if(dimension == 0){
-		// TO DO
-	} else {
-		int index = index_last_left;
-		vector<double> props;
-		for(unsigned int i = 0; i < world.size(); i++){
-			for(int y = 0; y < number_of_demes_u_d; y++){
-				world[index+y]->getBproportions(props);
-				save_line(ofile,index+y,props);
-				world[index+y]->getJunctionNumbers(props);
-				save_line(ofile,index+y,props);
+				if(type == "hybridIndicesJunctions"){
+					world[index+y]->getJunctionNumbers(props);
+					save_line(ofile,index+y,props);
+				}
 			}
 			if(index != index_last_right){
 				index = world[index]->getNeigbours()[1];
@@ -932,7 +895,14 @@ int World::save_hybridIndicesJunctions(ofstream& ofile){
 
 int World::save_blocks(ofstream& ofile){
 	if(dimension == 0){
-		//TO DO
+		vector<int> blockSizes;
+		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
+			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
+			for(unsigned int i = 0;i < blockSizes.size(); i++){
+				ofile << fixed << blockSizes[i] / double(number_of_loci) << endl;
+			}
+			blockSizes.clear();
+		}
 	} else {
 		int index = index_last_left;
 		vector<int> block_sizes;
