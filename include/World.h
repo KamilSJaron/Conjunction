@@ -53,21 +53,22 @@ class World {
 	private:
 	// 	inner methods
 	// computing
-		int upper_border(int index, int max_index); // function returns index of upper neigbour for new demes
-		int lower_border(int index, int max_index);
-		int side_border(int reflexive, int extending);
+		int upperBorder(int index, int max_index); // function returns index of upper neigbour for new demes
+		int lowerBorder(int index, int max_index);
+		int sideBorder(int reflexive, int extending);
 		bool gameteAcheck(std::vector<Chromosome>& gamete);
 
 	// saving methods
-		int save_complete(std::ofstream& ofile);
-		int save_hybridIndices(std::ofstream& ofile, std::string type);
-		int save_blocks(std::ofstream& ofile);
+		int saveLinesPerIndividual(std::ofstream& ofile, std::string type);
+		int saveBlocks(std::ofstream& ofile);
+
+		void streamBlockSizesOf0DWorld(std::ostream& stream);
 		template<typename T>
 		int save_line(std::ofstream& ofile, int index, std::vector<T>& vec) const;
 
 	// stats
 		double getMaterial() const;
-		int getTotalJunctions() const;
+		int getTotalNumberOfBBlocks();
 		double getMeanFitness() const;
 	// 	variables
 	//	containers

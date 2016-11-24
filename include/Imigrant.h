@@ -19,6 +19,7 @@ class Imigrant
 		void getSizesOfBBlocks(std::vector<int>& sizes);
 
 		/* STATS */
+		int getNumberOfBBlocks();
 		int getNumberOfJunctions() const;
 		double getBprop() const;
 		bool Acheck() const;

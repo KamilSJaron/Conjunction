@@ -71,9 +71,9 @@ void World::basicUnitCreator(char type, char init){
 				index_last_left = 0;
 				index_last_right = 0;
 				new_indexes.clear();
-				new_indexes.push_back(side_border(0,index_next_left));
+				new_indexes.push_back(sideBorder(0,index_next_left));
 				if(number_of_demes_l_r == 1){
-					new_indexes.push_back(side_border(0,index_next_right));
+					new_indexes.push_back(sideBorder(0,index_next_right));
 				} else {
 					new_indexes.push_back(index_next_right);
 				}
@@ -133,10 +133,10 @@ void World::basicUnitCreator(char type, char init){
 			index_last_right = 0;
 			for(int i=0;i<number_of_demes_u_d;i++){
 				new_indexes.clear();
-				new_indexes.push_back(side_border(i,index_next_left + i));
+				new_indexes.push_back(sideBorder(i,index_next_left + i));
 				new_indexes.push_back(i + number_of_demes_u_d * 2);
-				new_indexes.push_back(upper_border(i,max_index));
-				new_indexes.push_back(lower_border(i,max_index));
+				new_indexes.push_back(upperBorder(i,max_index));
+				new_indexes.push_back(lowerBorder(i,max_index));
 				world[i] = new Deme(i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
 			}
 			break;
@@ -145,10 +145,10 @@ void World::basicUnitCreator(char type, char init){
 			index_next_left = max_index + 2 * number_of_demes_u_d;
 			for(int i=0;i<number_of_demes_u_d;i++){
 				new_indexes.clear();
-				new_indexes.push_back(side_border(index + i,index_next_left + i));
+				new_indexes.push_back(sideBorder(index + i,index_next_left + i));
 				new_indexes.push_back(index_last_left + i);
-				new_indexes.push_back(upper_border(index + i,index));
-				new_indexes.push_back(lower_border(index + i,index));
+				new_indexes.push_back(upperBorder(index + i,index));
+				new_indexes.push_back(lowerBorder(index + i,index));
 				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
 			}
 			index_last_left = index;
@@ -159,9 +159,9 @@ void World::basicUnitCreator(char type, char init){
 			for(int i=0;i<number_of_demes_u_d;i++){
 				new_indexes.clear();
 				new_indexes.push_back(index_last_right + i);
-				new_indexes.push_back(side_border(index + i,index_next_right + i));
-				new_indexes.push_back(upper_border(index + i,index));
-				new_indexes.push_back(lower_border(index + i,index));
+				new_indexes.push_back(sideBorder(index + i,index_next_right + i));
+				new_indexes.push_back(upperBorder(index + i,index));
+				new_indexes.push_back(lowerBorder(index + i,index));
 				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
 			}
 			index_last_right = index;
@@ -486,11 +486,11 @@ int World::summary(ostream& stream){
 	if(dimension == 0){
 		stream << setw(12) << left <<  "Population"
 		<< setw(12) << left << "Material"
-		<< setw(16) << left << "TotalJunctions"
+		<< setw(16) << left << "TotalBlocks"
 		<< setw(12) << left << "MeanFitness" << endl;
 		stream << setw(12) << left <<  zeroD_immigrant_pool.size()
 		<< setw(12) << left <<  getMaterial()
-		<< setw(16) << left <<  getTotalJunctions()
+		<< setw(16) << left <<  getTotalNumberOfBBlocks()
 		<< setw(12) << left <<  getMeanFitness() << endl;
 	} else {
 		int worlsize = world.size();
@@ -553,16 +553,16 @@ double World::getMaterial() const{
 	return material;
 }
 
-int World::getTotalJunctions() const{
-	int junctions = 0;
+int World::getTotalNumberOfBBlocks(){
+	int blocks = 0;
 	if(dimension == 0){
 		for(unsigned int i = 0;i < zeroD_immigrant_pool.size();i++){
-			junctions += zeroD_immigrant_pool[i].getNumberOfJunctions();
+			blocks += zeroD_immigrant_pool[i].getNumberOfBBlocks();
 		}
 	} else {
 		cerr << "getTotalJunctions is not implemented for " << dimension << "D\n";
 	}
-	return junctions;
+	return blocks;
 }
 
 double World::getMeanFitness() const{
@@ -609,16 +609,12 @@ int World::SaveTheUniverse(string type, string filename){
 		return_value = summary(ofile);
 	}
 	// for 1D / 2D
-	if(type == "hybridIndices" or type == "hybridIndicesJunctions"){
-		return_value = save_hybridIndices(ofile, type);
+	if(type == "hybridIndices" or type == "hybridIndicesJunctions" or "complete"){
+		return_value = saveLinesPerIndividual(ofile, type);
 	}
 	// for all dims
 	if(type == "blocks"){
-		return_value = save_blocks(ofile);
-	}
-	// under construction
-	if(type == "complete"){
-		return_value = save_complete(ofile);
+		return_value = saveBlocks(ofile);
 	}
 
 	ofile.close();
@@ -700,7 +696,7 @@ void World::clear(){
  //  PRIVATE //
 // // // // //
 
-int World::upper_border(int index, int max_index){
+int World::upperBorder(int index, int max_index){
 	if(type_of_u_d_edges == "reflexive"){
 		if(index == max_index){
 			return index;
@@ -719,7 +715,7 @@ int World::upper_border(int index, int max_index){
 	return -1;
 }
 
-int World::lower_border(int index, int max_index){
+int World::lowerBorder(int index, int max_index){
 	if(type_of_u_d_edges == "reflexive"){
 		if(index == max_index + number_of_demes_u_d - 1){
 			return index;
@@ -738,7 +734,7 @@ int World::lower_border(int index, int max_index){
 	return -1;
 }
 
-int World::side_border(int reflexive, int extending){
+int World::sideBorder(int reflexive, int extending){
 	if(type_of_l_r_edges == "reflexive"){
 		if(reflexive < number_of_demes_l_r * number_of_demes_u_d and reflexive > number_of_demes_u_d){
 			return extending;
@@ -801,8 +797,7 @@ int World::getNumberOfDescendants(double fitness){
 	return result;
 }
 
-int World::save_complete(ofstream& ofile){
-	cerr << "WARNING: experimental option save_complete " << endl;
+int World::saveLinesPerIndividual(ofstream& ofile, string type){
 	if(dimension == 0){
 		// TO DO
 	} else {
@@ -812,36 +807,12 @@ int World::save_complete(ofstream& ofile){
 			for(int y = 0; y < number_of_demes_u_d; y++){
 				world[index+y]->getBproportions(props);
 				save_line(ofile,index+y,props);
-				world[index+y]->getJunctionNumbers(props);
-				save_line(ofile,index+y,props);
-				world[index+y]->getHeterozygoty(props);
-				save_line(ofile,index+y,props);
-			}
-			if(index != index_last_right){
-				index = world[index]->getNeigbours()[1];
-			} else {
-				break;
-			}
-		}
-	}
-
-	ofile.close();
-	return 0;
-}
-
-
-int World::save_hybridIndices(ofstream& ofile, string type){
-	if(dimension == 0){
-		// TO DO
-	} else {
-		int index = index_last_left;
-		vector<double> props;
-		for(unsigned int i = 0; i < world.size(); i++){
-			for(int y = 0; y < number_of_demes_u_d; y++){
-				world[index+y]->getBproportions(props);
-				save_line(ofile,index+y,props);
-				if(type == "hybridIndicesJunctions"){
+				if(type != "hybridIndices"){
 					world[index+y]->getJunctionNumbers(props);
+					save_line(ofile,index+y,props);
+				}
+				if(type == "complete"){
+					world[index+y]->getHeterozygoty(props);
 					save_line(ofile,index+y,props);
 				}
 			}
@@ -893,16 +864,9 @@ int World::save_hybridIndices(ofstream& ofile, string type){
 //	return 0;
 //}
 
-int World::save_blocks(ofstream& ofile){
+int World::saveBlocks(ofstream& ofile){
 	if(dimension == 0){
-		vector<int> blockSizes;
-		for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
-			zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
-			for(unsigned int i = 0;i < blockSizes.size(); i++){
-				ofile << fixed << blockSizes[i] / double(number_of_loci) << endl;
-			}
-			blockSizes.clear();
-		}
+		streamBlockSizesOf0DWorld(ofile);
 	} else {
 		int index = index_last_left;
 		vector<int> block_sizes;
@@ -924,6 +888,18 @@ int World::save_blocks(ofstream& ofile){
 	}
 	ofile.close();
 	return 0;
+}
+
+void World::streamBlockSizesOf0DWorld(std::ostream& stream){
+	vector<int> blockSizes;
+	for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
+		zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
+		for(unsigned int i = 0;i < blockSizes.size(); i++){
+			stream << fixed << blockSizes[i] / double(number_of_loci) << endl;
+		}
+		blockSizes.clear();
+	}
+	return;
 }
 
 template<typename T>
