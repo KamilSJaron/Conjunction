@@ -482,8 +482,8 @@ void World::listOfDemes(){
 }
 
 int World::summary(ostream& stream){
-	stream << " 0D summary\n";
 	if(dimension == 0){
+		stream << " 0D summary\n";
 		stream << setw(12) << left <<  "Population"
 		<< setw(12) << left << "Material"
 		<< setw(16) << left << "TotalBlocks"
