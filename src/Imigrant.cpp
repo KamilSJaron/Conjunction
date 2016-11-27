@@ -121,6 +121,23 @@ void Imigrant::getSizesOfBBlocks(vector<int>& sizes){
 	return;
 }
 
+int Imigrant::getNumberOfBBlocks(){
+	int number_of_blocks = 0, junctions = 0;
+	for(int ch = 0;ch < number_of_chromosomes;ch++){
+		junctions = genome[ch].getNumberOfJunctions();
+		if(junctions % 2 == 1){
+			number_of_blocks += (junctions + 1) / 2;
+		} else {
+			if(genome[ch].read(0) == 'A'){
+				number_of_blocks += junctions / 2;
+			} else {
+				number_of_blocks += (junctions / 2) + 1;
+			}
+		}
+	}
+	return number_of_blocks;
+}
+
 bool Imigrant::Acheck() const{
 	for(int i=0;i<number_of_chromosomes;i++){
 		if(genome[i].Acheck()){

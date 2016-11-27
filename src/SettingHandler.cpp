@@ -30,8 +30,14 @@ using namespace std;
 SettingHandler::SettingHandler(string filename) {
 	ifstream setting_file(filename);
 
-	parseSetting(setting_file);
-	fillDefault();
+	if (setting_file) {
+		parseSetting(setting_file);
+		fillDefault();
+	} else {
+		cerr << "Can not open setting file: " << filename
+		<< "; It does not exist or you do not have premssion to read it.\n";
+		exit (EXIT_FAILURE);
+	}
 
 	setting_file.close();
 
