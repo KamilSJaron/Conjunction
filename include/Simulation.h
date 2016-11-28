@@ -15,6 +15,7 @@ class Simulation {
 
 	private:
 		void setWorld(SimulationSetting& simulation_setting);
+		int saveWorld(int order, int save_pos);
 
 		std::string file_name, file_type;
 		int generations, delay, saves;

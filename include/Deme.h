@@ -40,7 +40,6 @@ class Deme
 
 // plotting functions
 		void showDeme();
-		void summary();
 		void summary(std::ostream& ofile);
 		void readAllGenotypes();
 		void readGenotypeFrequencies();

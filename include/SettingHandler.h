@@ -34,6 +34,7 @@ class SettingHandler{
 		template<typename T>
 		int printVectorValue(unsigned int index, std::vector<T> val_vec) const;
 		char setParameterOfSetting(SimulationSetting& mySetting, std::string parameter, int index) const;
+		void adjustFileName(std::string& name, char par, int total, int refactorised_index) const;
 
 		// simulation parameters
 

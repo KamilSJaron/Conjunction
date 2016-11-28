@@ -90,34 +90,21 @@ int Simulation::simulate(){
 		t2=clock();
 		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
 		if((((i - delay) % modulo)+1) == modulo and (i < generations - modulo or i+1 == generations)){
-			world.summary(std::cout);
 			order++;
-			if(saves > 1 and file_name[0] != '.' and file_name[0] != '_'){
-				if(order >= 10){
-					file_name[save_pos-1] = '0' + char(order / 10 % 10);
-					file_name[save_pos] = '0' + char(order % 10);
-				} else {
-					file_name[save_pos] = '0' + char(order);
-				}
-				cerr << "Saving output to: " << file_name << endl;
-				check = world.SaveTheUniverse(file_type, file_name);
-				if(check != 0){
-					cerr << "Error in saving the output." << endl;
-					return 1;
-				}
+			check = saveWorld(order, save_pos);
+			if(check != 0){
+				cerr << "Error in saving the output." << endl;
+				return 1;
 			}
 		}
 	}
 
 	if((((generations - 1 - delay) % modulo)+1) != modulo){ // if this statement wont be true, the save after simulation was performed already
-		world.summary(std::cout);
-		if(file_name[0] != '_' and file_name[0] != '.'){ // save just in case that filename was specified
-			cerr << "Saving output to: " << file_name << endl;
-			check = world.SaveTheUniverse(file_type, file_name);
-			if(check != 0){
-				cerr << "Error in saving the output." << endl;
-				return 1;
-			}
+		order++;
+		check = saveWorld(order, save_pos);
+		if(check != 0){
+			cerr << "Error in saving the output." << endl;
+			return 1;
 		}
 	}
 
@@ -151,4 +138,19 @@ void Simulation::setWorld(SimulationSetting& simulation_setting){
 	world.setNumberOfEdges(simulation_setting.edges_per_deme);
 
 	return;
+}
+
+int Simulation::saveWorld(int order, int save_pos){
+	world.summary(std::cout);
+	if(saves > 1 and file_name[0] != '.' and file_name[0] != '_'){
+		if(order >= 10){
+			file_name[save_pos-1] = '0' + char(order / 10 % 10);
+			file_name[save_pos] = '0' + char(order % 10);
+		} else {
+			file_name[save_pos] = '0' + char(order);
+		}
+		cerr << "Saving output to: " << file_name << endl;
+		return world.SaveTheUniverse(file_type, file_name);
+	}
+	return 0;
 }

@@ -385,38 +385,6 @@ void Deme::showDeme(){
 	cerr << endl;
 }
 
-void Deme::summary(){
-	int number_chromosomes = deme[0].getNumberOfChromosomes(), number_loci = deme[0].getNumberOfLoci(0);
-	double z = getMeanBproportion();
-	double varz = getVARhi();
-	double varp = getVARp();
-	int neigbsize = neigbours.size();
-	cout << setw(5) << right << index << ":  ";
-	for(int i = 0; i < neigbsize; i++){
-		cout << setw(5) << left << neigbours[i] << " ";
-	}
-	cout << setw(12) << left << ((round(getMeanFitness() * 1000000)) / 1000000);
-	cout << setw(12) << left << ((round(getProportionOfHeterozygotes() * 1000000)) / 1000000);
-	cout << setw(12) << left << ((round(z * 1000000)) / 1000000);
-	cout << setw(12) << left << ((round(varz * 1000000)) / 1000000);
-	if(number_loci * number_chromosomes > 1){
-		cout << setw(12) << left << ((round(varp * 1000000)) / 1000000);
-		cout << setw(12) << left << ((round(getLD(z,varz,varp) * 1000000)) / 1000000);
-	}
-	if((number_loci * number_chromosomes) <= 16){
-		vector<double> ps;
-		for(int ch = 0;ch < number_chromosomes; ch++){
-			ps.clear();
-			getps(ps,ch);
-			for(unsigned int l = 0; l < ps.size();l++){
-				cout << setw(12) << left << ((round(ps[l] * 10000)) / 10000);
-			}
-		}
-	}
-	cout << endl;
-}
-
-
 void Deme::summary(ostream& ofile){
 	int number_chromosomes = deme[0].getNumberOfChromosomes(), number_loci = deme[0].getNumberOfLoci(0);
 	double z = getMeanBproportion();

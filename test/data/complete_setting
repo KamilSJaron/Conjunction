@@ -23,17 +23,18 @@ SELECTIONpressure = 0.42             # real in {0;1}
 BETA = 1;                             # real in {0.0625;16}
 DEMEsize = 1024
 SEED = 910401,                        # 6 digit integer
+REPLICATES = 2
 
-NUMBERofGENERATIONS = 5 0             # integer in {1,10000}
+NUMBERofGENERATIONS = 10             # integer in {1,10000}
 
 #output parameters defining the output
 
 NUMBERofSAVES = 2                    # integer smaller than number of generations
 NAMEofOUTPUTfile = HI_multi_locus    # the sulfix will be added
-TYPEofOUTPUTfile = hybridIndices     # {complete, summary, hybridIndices, hybridIndicesJunctions, } 
-DELAY = 10                           # integer smaller than number of generations
+TYPEofOUTPUTfile = hybridIndices     # {complete, summary, hybridIndices, hybridIndicesJunctions, }
+DELAY = 2                           # integer smaller than number of generations
 
 # World definition
-	
-WORLDdefinition -quick = 'HybridZone' 1 
+
+WORLDdefinition -quick = 'HybridZone' 1
 # {'HybridZone','LowMigrationBazykin','InfInf','Arena'}

@@ -528,7 +528,7 @@ int World::summary(ostream& stream){
 		while(deme_to_print != index_next_right){
 			// iterate thought rows
 			for(int row = 0; row < number_of_demes_u_d; row++){
-				world[deme_to_print+row]->summary();
+				world[deme_to_print+row]->summary(stream);
 			}
 			next_deme = world[deme_to_print]->getNeigbours()[1];
 			// block for reflexive border
@@ -610,9 +610,11 @@ int World::SaveTheUniverse(string type, string filename){
 		return_value = summary(ofile);
 	}
 	// for 1D / 2D
-	if(type == "hybridIndices" or type == "hybridIndicesJunctions" or "complete"){
+
+	if(type == "hybridIndices" or type == "hybridIndicesJunctions" or type == "complete"){
 		return_value = saveLinesPerIndividual(ofile, type);
 	}
+
 	// for all dims
 	if(type == "blocks"){
 		return_value = saveBlocks(ofile);
