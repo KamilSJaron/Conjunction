@@ -66,12 +66,7 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) con
 			parsed_parameter = setParameterOfSetting(mySetting, parameters_in_order[parameter_index], refactorised_index);
 		}
 
-//		cerr << "parameters_numbers " << parameters_numbers[parameter_index] << endl;
-		if(parameters_numbers[parameter_index] > 1){
-			file_to_save = file_to_save + '_' + parsed_parameter + '!';
-//			cerr << "parameter_index " << parameter_index << endl;
-			file_to_save[file_to_save.find('!')] = '1' + char(refactorised_index);
-		}
+		adjustFileName(file_to_save, parsed_parameter, parameters_numbers[parameter_index], refactorised_index);
 
 		number_of_parsed_simulations = number_of_parsed_simulations * parameters_numbers[parameter_index];
 	}
@@ -82,8 +77,7 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) con
 
 	if(replicates > 1){
 		refactorised_index = (simulation_index % replicates);
-		file_to_save = file_to_save + "_n!";
-		file_to_save[file_to_save.find('!')] = '1' + char(refactorised_index);
+		adjustFileName(file_to_save, 'n', replicates, refactorised_index);
 	}
 
 
@@ -600,6 +594,19 @@ char SettingHandler::setParameterOfSetting(SimulationSetting& mySetting, std::st
 		return 'D';
 	}
 	return '?';
+}
+
+void SettingHandler::adjustFileName(string& name, char par, int total, int refactorised_index) const{
+	if(total > 1){
+		if(total > 9){
+			name = name + '_' + par + '?' + '!';
+			name[name.find('?')] = '0' + char((refactorised_index + 1) / 10);
+			refactorised_index = refactorised_index - (((refactorised_index + 1) / 10) * 10);
+		} else {
+			name = name + '_' + par + '!';
+		}
+		name[name.find('!')] = '1' + char(refactorised_index);
+	}
 }
 
 bool SettingHandler::checkParameters(){
