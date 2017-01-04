@@ -1,7 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -O3 -Wall -pedantic
 
-
 PRG = conjunction
 TEST = conjunction_test
 CLASSES = ./src/Chromosome.o ./src/Individual.o ./src/Imigrant.o ./src/Deme.o ./src/SelectionModel.o ./src/World.o ./src/SimulationSetting.o ./src/Simulation.o ./src/SettingHandler.o
@@ -11,12 +10,11 @@ all: $(PRG)
 
 $(PRG): ./include/gitversion.h $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJ)
-	rm ./include/gitversion.h 
 
 .cpp.o:
 	$(CXX) -o $@ -c $< $(CXXFLAGS)
 
-./include/gitversion.h:
+./include/gitversion.h: .git/HEAD
 	echo "#define GITVERSION \"$(shell git rev-parse HEAD)\"" > ./include/gitversion.h
 
 test: $(TEST)
