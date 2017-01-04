@@ -1,3 +1,4 @@
 *.o
 conjunction
 conjunction_test
+include/gitversion.h
