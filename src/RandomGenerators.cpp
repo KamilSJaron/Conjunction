@@ -28,24 +28,31 @@ int tossAcoin (){
 
 // discrete uniform (integers between 0 and ceil - 1)
 int recombPosition(int loci){
-  int roll = rand();
   if(loci == 1){
     return 0;
+  }
+  // this construction handles modulo bias; (of rand do uniform 0, RAND_MAX
+  // overhang of size RAND_MAX % loci would cause small disproportion of smaller
+  // values, not crutial for small numbers of locu, but very more important for big numbers
+  // similar construction is used in function bellow
+  int roll = RAND_MAX;
+  while(roll >= RAND_MAX - (RAND_MAX % loci)){
+    roll = rand();
   }
   return (roll % (loci-1)) + 1;
 }
 
 // continuus unifrom; corrected for modulo bias
 double uniform(){
-	int x = RAND_MAX;
-	int detailness = 100000;
-	while(x >= RAND_MAX - (RAND_MAX % detailness)){
-		x = rand();
+	int roll = RAND_MAX;
+	int detailness = 1000000;
+	while(roll >= RAND_MAX - (RAND_MAX % detailness)){
+		roll = rand();
 	}
-	return double(x % detailness) / detailness;
+	return double(roll % detailness) / detailness;
 }
 
-// Poisson
+// Poisson (by transformation from uniform)
 int poisson(double lambda){
   int result = 0;
 	double q = exp(-lambda);
