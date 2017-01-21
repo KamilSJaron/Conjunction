@@ -19,10 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <map>
 #include <vector>
-#include <cmath>
-#include <stdio.h>
 #include <string.h>
-#include <time.h>
 
 #include "../include/Chromosome.h"
 #include "../include/Imigrant.h"

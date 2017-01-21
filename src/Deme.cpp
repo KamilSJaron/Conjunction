@@ -23,18 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include <fstream>
 
+#include "../include/RandomGenerators.h"
 #include "../include/Chromosome.h"
 #include "../include/Individual.h"
 #include "../include/SelectionModel.h"
 #include "../include/Deme.h"
 
 using namespace std;
-
-// fctions
-double selectionRand(){
-		return (double)rand() / RAND_MAX;
-}
-
 
 /* DECLARATION */
 
@@ -121,10 +116,10 @@ void Deme::Breed(){
 	vector<int> fathers(deme_size);
 
 	for(int i=0;i < deme_size*2;i++){
-		roll = (selectionRand() * RandMax);
+		roll = (uniform() * RandMax);
 		it = parentPick.find(roll);
 		while(it != parentPick.end()){ //rolling twice same number will overwrite the first one, but this event is so rare, that solution is to just roll again without any bias
-			roll = (selectionRand() * RandMax);
+			roll = (uniform() * RandMax);
 			it = parentPick.find(roll);
 		}
 		parentPick[roll] = i;
@@ -442,10 +437,6 @@ void Deme::readGenotypeFrequencies(){
  // // // // //
 //  PRIVATE //
 // // // // //
-
-int Deme::pickAnIndividual(){
-		return rand() % deme_size;
-}
 
 int Deme::sum(vector< bool >& ve){
 	int sum = 0;

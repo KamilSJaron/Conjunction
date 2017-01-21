@@ -1,7 +1,7 @@
 #ifndef INDIVIDUAL_H
 #define INDIVIDUAL_H
 
-class Individual  
+class Individual
 {
 	public:
 /* DECLARATION */
@@ -11,7 +11,7 @@ class Individual
 					std::vector<Chromosome>& gamete2,
 					double input_lamda); /*init Individual by gametes on imput */
 		~Individual(); /* destructor */
-		
+
 /* COMPUTIONG METHODS */
 		void replace_chromozome(int set, int position,std::map <int, char> input_chrom, int size);
 		int getChiasma();
@@ -26,10 +26,10 @@ class Individual
 		int getNumberOfJunctions();
 		void getSizesOfBBlocks(std::vector<int>& sizes);
 		void getSizesOfABlocks(std::vector<int>& sizes);
-		
+
 /* ASCII PLOTTING METHODS */
 		void readGenotype();
-		
+
 /* COMUNICATION */
 		void setNumberOfChromosomes(int ch);
 		void setLambda(double Rr);
@@ -43,7 +43,7 @@ class Individual
 		std::vector<Chromosome> genome[2];
 		int number_of_chromosomes;
 		double lambda;
-		
+
 	/*inner functions*/
 		int getOneChromeHetero(bool write, std::map<int, char>::const_iterator& pos, int chromosome, int last_pos);
 };
