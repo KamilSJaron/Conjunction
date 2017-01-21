@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <iomanip>
 
+#include "../include/RandomGenerators.h"
 #include "../include/Chromosome.h"
 #include "../include/Individual.h"
 #include "../include/Imigrant.h"
@@ -345,7 +346,7 @@ void World::globalBreeding(){
 			fitness = selection_model.getFitness(hybrid_index);
 //			every7 individual has 2 attempts to mate
 			for(int attempt = 0; attempt < 2; attempt++){
-				num_of_desc = getNumberOfDescendants(fitness);
+				num_of_desc = poisson(fitness);
 				for(int i=0;i<num_of_desc;i++){
 					zeroD_immigrant_pool[index].makeGamete(gamete);
 					if(gameteAcheck(gamete)){
@@ -778,26 +779,6 @@ bool World::gameteAcheck(std::vector<Chromosome>& gamete){
 		return 0;
 	}
 	return 1;
-}
-
-int World::getNumberOfDescendants(double fitness){
-	int x = RAND_MAX;
-	int detailness = 100000;
-	while(x > RAND_MAX - (RAND_MAX % detailness)){
-		x = rand();
-	}
-	double uniform = double(x % detailness) / (detailness);
-
-	int result = 0;
-	double q = exp(-fitness);
-	double p = q;
-	double roll = uniform;
-	while(roll > q){
-		result++;
-		p = p * fitness / result;
-		q = q + p;
-	}
-	return result;
 }
 
 int World::saveLinesPerIndividual(ofstream& ofile, string type){

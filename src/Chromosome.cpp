@@ -1,5 +1,5 @@
 /*
-Implemenation of class Chromosome. Contating a map between junctions and origin of genetic materials. 
+Implemenation of class Chromosome. Contating a map between junctions and origin of genetic materials.
 Copyright (C) 2014-2016  Kamil S. Jaron
 
 This program is free software: you can redistribute it and/or modify
@@ -19,9 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <map>
 #include <vector>
-#include <algorithm>
 
 #include "../include/Chromosome.h"
+#include "../include/RandomGenerators.h"
+
 using namespace std;
 
 /* INITIATION */
@@ -51,7 +52,7 @@ void Chromosome::showChromosome() const{
 	}
 }
 
-/* COMUNICATION METHODS */ 
+/* COMUNICATION METHODS */
 bool Chromosome::Acheck() const{
 	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(pos->second != 'A'){
@@ -128,7 +129,7 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 	chromNew.clear();
 	chromNew.setResolution(loci);
 	chromNew.write(0,'A');
-	
+
 // 	this condition can be deleted if I will handle the numberOfChaisma=0 on some upper level
 	if(numberOfChaisma == 0){
 		if(starts_by == 0){
@@ -137,20 +138,20 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 		chromNew = Chromosome(chromosome, loci);
 		return;
 	}
-	
+
 	int index, lastposition = 0;
-	
+
 	for(index=0;index<numberOfChaisma;index++){
-		recombination.push_back(recombPosition());
+		recombination.push_back(recombPosition(loci));
 	}
-	
+
 	sort(recombination.begin(), recombination.end());
-	
+
 	/*for(index=0;index<numberOfChaisma;index++){
 		cout << recombination[index] << ' ';
 	}
 	cout << endl;*/
-	
+
 	index = 0;
 	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		while(recombination[index] <= pos->first && index < numberOfChaisma){
@@ -169,7 +170,7 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 		}
 		lastposition = pos->first;
 	}
-	
+
 	while(index < numberOfChaisma){
 		if (chromosome[lastposition] != 'A'){
 			if (starts_by == 1){
@@ -183,19 +184,6 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 	}
 	return;
 }
-
-int Chromosome::tossAcoin(){
-	return rand() % 2;
-}
-
-int Chromosome::recombPosition(){
-	int roll = rand();
-	if(loci == 1){
-		return 0;
-	}
-	return (roll % (loci-1)) + 1;
-}
-
 
 /* COMUNICATION METHODS */
 void Chromosome::setResolution(int res){
@@ -230,18 +218,3 @@ std::map<int, char>::iterator Chromosome::end(){
 std::map<int, char>::iterator Chromosome::find(int i){
 	return chromosome.find(i);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

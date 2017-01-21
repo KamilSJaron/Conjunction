@@ -1,3 +1,4 @@
+#include "../include/RandomGenerators.h"
 
 int testIndividual(){
 	Individual Lili;
@@ -5,7 +6,7 @@ int testIndividual(){
 
 	double sumCh = 0.0;
 	for(int i = 0; i < 10000; i++){
-		sumCh += Igor.getChiasma();
+		sumCh += poisson(Igor.getLambda());
 	}
 	sumCh = sumCh / 10000;
 

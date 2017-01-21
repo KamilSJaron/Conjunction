@@ -19,26 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <map>
 #include <vector>
-#include <cmath>
-#include <algorithm>
 
 #include "../include/Chromosome.h"
 #include "../include/Individual.h"
+#include "../include/RandomGenerators.h"
 
 using namespace std;
-
-int tossAcoin (){
-  return rand() % 2;
-}
-
-double uniform(){
-	int x = RAND_MAX;
-	int detailness = 100000;
-	while(x >= RAND_MAX - (RAND_MAX % detailness)){
-		x = rand();
-	}
-	return double(x % detailness) / detailness;
-}
 
 /* DECLARATION */
 
@@ -92,19 +78,6 @@ void Individual::replace_chromozome(int set, int position, map <int, char>  inpu
 	genome[set][position] = Chromosome(input_chrom, size);
 }
 
-int Individual::getChiasma(){
-	int result = 0;
-	double q = exp(-lambda);
-	double p = q;
-	double roll = uniform();
-	while(roll > q){
-		result++;
-		p = p * lambda / result;
-		q = q + p;
-	}
-	return result;
-}
-
 void Individual::makeGamete(vector<Chromosome>& gamete){
 	gamete.clear(); // variable for new gamete
 	gamete.reserve(number_of_chromosomes);
@@ -121,7 +94,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 //			genome[3][i].getResolution();
 //		}
 		int loci = genome[0][i].getResolution();
-		numberOfChaisma = getChiasma();
+		numberOfChaisma = poisson(lambda);
 		starts_by = tossAcoin();
 
 /* no chiasma mean inheritance of whole one parent chromosome */
@@ -142,7 +115,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		recombinant_ch.setResolution(loci);
 /* roll the chiasmas positions */
 		for(int index=0;index<numberOfChaisma;index++){
-			rec_pos = genome[0][i].recombPosition();
+			rec_pos = recombPosition(loci);
 			chiasmas.push_back(rec_pos);
 		}
 		sort(chiasmas.begin(), chiasmas.end());
