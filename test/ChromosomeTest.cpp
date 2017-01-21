@@ -33,14 +33,15 @@ int testChromosome(){
 				<< ch1.getNumberOfJunctions() << endl;
 	}
 
-	int toss = ch1.tossAcoin();
+	int toss = tossAcoin();
 	if(!(toss == 0 or toss == 1)){
 		cerr << "tossAcoin function is flawed." << endl;
 	}
 
 	for(int i = 0; i < 1000; i++){
 		Chromosome ch3('A', rand());
-		if(ch3.recombPosition() >= ch3.getResolution()){
+		int loci = ch3.getResolution();
+		if(recombPosition(loci) >= loci){
 			cerr << "recombPosition generated position larger that the size of the chromosome."
 				<< endl;
 			return 1;

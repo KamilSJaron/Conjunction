@@ -1,5 +1,3 @@
-#include "../include/RandomGenerators.h"
-
 int testIndividual(){
 	Individual Lili;
   Individual Igor('C', 3, 50, 2.3);

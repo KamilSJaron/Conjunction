@@ -5,6 +5,7 @@
 
 using namespace std;
 
+#include "../include/RandomGenerators.h"
 #include "../include/Chromosome.h"
 #include "../include/Imigrant.h"
 #include "../include/Individual.h"

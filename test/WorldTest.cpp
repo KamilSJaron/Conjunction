@@ -20,7 +20,7 @@ int testWorld(){
 
 	int number_descendants = 0;
 	for(int i = 0; i < 10000; i++){
-		number_descendants += world.getNumberOfDescendants(1);
+		number_descendants += poisson(1);
 	}
 	if(number_descendants < 9000 or number_descendants > 11000){
 		cerr << "Warning: unxepected behavious of generator of descendants\n";
