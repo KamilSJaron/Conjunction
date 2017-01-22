@@ -210,7 +210,7 @@ int SettingHandler::parseSetting(ifstream& myfile){
 				if(parameter.substr(0,16) == "NAMEofOUTPUTfile" or parameter.substr(0,16) == "TYPEofOUTPUTfile"){
 					if(line[i] == '.' or line[i] == '~' or line[i] == '*' or line[i] == '/' or line[i] == '\\'){
 						cerr << "Error: Symbols '.' '*' '~' and '/' are not allowed in any parameter value. \n";
-						return 1;
+						exit (EXIT_FAILURE);
 					}
 					if(!isspace(line[i])){
 						number += line[i];
@@ -321,7 +321,7 @@ int SettingHandler::parseWorldDefinition(string& line){
 // 						continue;
 // 					}
 					cerr << "ERROR: the " << type << " world description is not defined (yet)." << endl;
-					return 1;
+					exit (EXIT_FAILURE);
 				}
 			}
 		}
@@ -397,9 +397,9 @@ int SettingHandler::parseWorldDefinition(string& line){
 					return 0;
 				}
 				cerr << "Error: Unknown pre-defined world " << type << endl;
-				return 1;
-				}
+				exit (EXIT_FAILURE);
 			}
+		}
 
 		if(switcher == 12){
 			if(isdigit(line[i])){
@@ -462,7 +462,8 @@ int SettingHandler::parseWorldDefinition(string& line){
 		}
 	}
 
-	return -1;
+	cerr << "ERROR: unknown problem during loading setting file (contact us please)" << endl;
+	exit (EXIT_FAILURE);
 }
 
 void SettingHandler::parameterSave(std::string& parameter, double value){
@@ -750,42 +751,42 @@ bool SettingHandler::checkParameters(){
 		return 1;
 	}
 
-	vector<string> edges {"extending","wrapping","infinite","reflexive"};
-	if(type_of_leftright_edges.empty()){
-		if(dimension > 0){
+	if(dimension > 0){
+		vector<string> edges {"extending","wrapping","infinite","reflexive"};
+		if(type_of_leftright_edges.empty()){
 			cerr << "The type of left right edges of world was not set.\n";
 			return 1;
-		}
-	} else {
-		correct_type = 1;
-		for(unsigned int i = 0; i < edges.size(); i++){
-			if(type_of_leftright_edges == edges[i] and dimension > 0){
-				correct_type = !correct_type;
-				break;
+		} else {
+			correct_type = 1;
+			for(unsigned int i = 0; i < edges.size(); i++){
+				if(type_of_leftright_edges == edges[i] and dimension > 0){
+					correct_type = !correct_type;
+					break;
+				}
+			}
+			if(correct_type){
+				cerr << "Type of left-right edges is invalid: " << type_of_leftright_edges << endl;
+				return 1;
 			}
 		}
-		if(correct_type){
-			cerr << "Type of left-right edges is invalid: " << type_of_leftright_edges << endl;
-			return 1;
-		}
-	}
 
-	if(type_of_updown_edges.empty()){
-		if(dimension == 2){
-			cerr << "The type of up-down edges of 2D world was not set.\n";
-			return 1;
-		}
-	} else {
-		correct_type = 1;
-		for(unsigned int i = 1; i < edges.size(); i++){
-			if(type_of_updown_edges == edges[i]){
-				correct_type = !correct_type;
-				break;
+		if(type_of_updown_edges.empty()){
+			if(dimension == 2){
+				cerr << "The type of up-down edges of 2D world was not set.\n";
+				return 1;
 			}
-		}
-		if(correct_type){
-			cerr << "Type of UpDown edges is invalid: " << type_of_updown_edges << endl;
-			return 1;
+		} else {
+			correct_type = 1;
+			for(unsigned int i = 1; i < edges.size(); i++){
+				if(type_of_updown_edges == edges[i]){
+					correct_type = !correct_type;
+					break;
+				}
+			}
+			if(correct_type){
+				cerr << "Type of UpDown edges is invalid: " << type_of_updown_edges << endl;
+				return 1;
+			}
 		}
 	}
 
