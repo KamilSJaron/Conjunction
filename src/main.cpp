@@ -30,7 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../include/SimulationSetting.h"
 #include "../include/SettingHandler.h"
 #include "../include/Simulation.h"
+/* start of dev vesion */
 #include "../include/gitversion.h"
+/* end */
 
 using namespace std;
 
@@ -40,13 +42,17 @@ int main(int argc, char **argv)
 
 	if(argc > 1){
 		if(strcmp( argv[1], "--help") == 0 or strcmp( argv[1], "-h") == 0){
-			cout << "all parameters are read form setting file (specified by argument or file setting.txt by default); details are online at wiki" << endl;
+			cout << "all parameters are read form setting file (specified by argument or file setting.txt by default)" << endl;
+			cout << "details are online at wiki: https://github.com/KamilSJaron/Conjunction/wiki/setting" << endl;
 			cout << "\t conjunction [--version] [--help] [setting_file.txt]" << endl;
+
 			return 0;
 		}
 		if(strcmp( argv[1], "--version") == 0 or strcmp( argv[1], "-v") == 0){
 			cout << "Conjunction v1.2.development" << endl;
+			/* start of dev vesion */
 			cout << "\tcommit: " << GITVERSION << endl;
+			/* end */
 			return 0;
 		}
 
@@ -55,7 +61,9 @@ int main(int argc, char **argv)
 	}
 
 	cerr << "Running Conjunction" << endl;
+	/* start of dev vesion */
 	cerr << "Commit: " << GITVERSION << endl;
+	/* end */
 	cerr << "Loading ... " << setting_file << endl;
 
 	SettingHandler all_setting(setting_file);
