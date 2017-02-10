@@ -1,40 +1,50 @@
-# Conjunction
-the simulator of secondaty CONtact using Fisher's JUNCTION model of genome admixture. It is a direct descendant of forsim, simulator writen for my Master thesis.
+
+![logo](logo/Conjunction.png)
+
+the simulator of secondaty CONtact using Fisher's JUNCTION model of genome admixture. It is a direct descendant of forsim, simulator writen for my [Master thesis](http://is.muni.cz/th/376090/prif_m/thesis_jaron_zadani.pdf).
 
 ## Build
 
-The software was developed on OS X (Yossemite) and Linux (Kubuntu) and it has not been tested for windows.
+The software was developed and tested on OS X and Linux and it has not been tested for windows.
 
-### Quick
+#### Quick
 
-Open a terminal promt, go to folder `<path>/Conjunction/` and just write
+Open a terminal, download repository
 
-```{bash}
-make
+```
+git clone https://github.com/KamilSJaron/Conjunction
+```
+
+enter the folder and build Conjunction by
+
+```
+cd Conjunction && make
 ```
 
 The fully operational exectutible `conjunction` should be created and prepared for use.
 
-### Safe / developer build
+#### Testing
 
-First of all, built a testing program by
+tests are implemented in separated binary. To execute test
 
-```{bash}
+```
 make test
 ```
 
-if program report, that all tests passed, build a simulator
-
-```{bash}
-make
-```
-
-executible is ready to use.
+will compile testing binary, execute tests and delete binary if tests passed.
 
 ## Usage
 
-The software reads a setting file (`setting.txt` if it is not specified by argument), where all parameters are expected to be found. The template is delivered with the software, therefore simple `conjunction` should perform a set of sumulations. For details of check setting file or wiki.
+The software reads a setting file (`setting.txt` by default), the specification of the simulation is read from there. The template is delivered with the software, therefore simple `conjunction` should perform a set of sumulations. For details of check [setting file](setting.txt) or wikipage [setting](https://github.com/KamilSJaron/Conjunction/wiki/setting).
 
 ```{bash}
-conjunction [--version] [--help] [setting_file.txt] > summary.out
+conjunction [--version] [--help] [setting.txt] 1> summary.out 2> simulation_log.err
 ```
+
+The log of the simulation is streamed to standard error stream. The basic output of simulation is streamed to standard output stream. If other type of output is desired it has to be set in setting, details can be found at corresponding wikipage describing [output](https://github.com/KamilSJaron/Conjunction/wiki/output).
+
+## Mechanisms of simulations
+
+The simulator is restricted to secondary contact hybrid zones where reduced fitness of hybrids is caused purely by genetic background. The representation of individuals currently does not allow new mutations in simulation. The only information for every loci is if it originated in population on one or the other side of the hybrid zone (population A or B). All details can be found in [wiki](https://github.com/KamilSJaron/Conjunction/wiki#principles).
+
+If there is anything unclear or you encounter a bug, please open an issue!
