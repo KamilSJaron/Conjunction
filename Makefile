@@ -29,8 +29,12 @@ $(TEST): $(CLASSES)
 	$(CXX) $(CXXFLAGS) -o $@ ./test/conjunction_test.cpp $(CLASSES)
 
 .PHONY : install
-install : conjunction
-	install $< $(INSTAL_PREFIX)/bin
+install : $(PRG)
+	install -C $< $(INSTAL_PREFIX)/bin
+
+.PHONY : uninstall
+uninstall :
+	-rm $(INSTAL_PREFIX)/bin/$(PRG)
 
 .PHONY : clean
 clean:
