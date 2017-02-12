@@ -7,6 +7,7 @@ GIT_HEADER = include/gitversion.h
 CPP_FILES = $(wildcard src/[A-Z]*.cpp)
 CLASSES = $(patsubst %.cpp, %.o, $(CPP_FILES))
 OBJ = src/main.o $(CLASSES)
+INSTAL_PREFIX = /usr/local
 
 all: $(PRG)
 
@@ -27,6 +28,10 @@ test: $(TEST)
 $(TEST): $(CLASSES)
 	$(CXX) $(CXXFLAGS) -o $@ ./test/conjunction_test.cpp $(CLASSES)
 
+.PHONY : install
+install : conjunction
+	install $< $(INSTAL_PREFIX)/bin
+
 .PHONY : clean
 clean:
-	rm -f $(PRG) $(OBJ) $(TEST)
+	-rm -f $(PRG) $(OBJ) $(TEST)
