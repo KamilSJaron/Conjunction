@@ -23,11 +23,11 @@ class Deme
 		void integrateMigrantVector(std::vector<Individual>& migBuffer);
 // 		vector<double> getBproportions() const; // not used
 		void getBproportions(std::vector<double>& props) const;
-		void getJunctionNumbers(std::vector<double>& juncs) const;
-		void getHeterozygoty(std::vector<double>& heterozs);
+		//void getJunctionNumbers(std::vector<double>& juncs) const;
+		//void getHeterozygoty(std::vector<double>& heterozs);
 		double getMeanBproportion() const;
-		void getSizesOfBBlocks(std::vector<int>& sizes, int ind);
-		void getSizesOfABlocks(std::vector<int>& sizes, int ind);
+		//void getSizesOfBBlocks(std::vector<int>& sizes, int ind);
+		//void getSizesOfABlocks(std::vector<int>& sizes, int ind);
 		double getProportionOfHomozygotes(char population) const;
 		double getProportionOfHeterozygotes() const;
 		void getFitnessVector(std::vector<double>& fitnessVector);
@@ -42,6 +42,11 @@ class Deme
 		void showDeme();
 		void streamSummary(std::ostream& stream);
 		void streamBlocks(std::ostream& stream);
+		void streamHIs(std::ostream& stream) const;
+		void streamJunctions(std::ostream& stream) const;
+		void streamHeterozygocity(std::ostream& stream) const;
+
+
 		void readAllGenotypes();
 		void readGenotypeFrequencies();
 

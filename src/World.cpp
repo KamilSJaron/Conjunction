@@ -571,14 +571,6 @@ double World::getMeanFitness() const{
 	return total_fitness;
 }
 
-double World::getProportionOfHeterozygotes(int index){
-	return world[index]->getProportionOfHeterozygotes();
-}
-
-double World::getProportionOfHomozygotes(int index, char type){
-	return world[index]->getProportionOfHomozygotes(type);
-}
-
 void World::showOneDeme(int index){
 	world[index]->showDeme();
 }
@@ -770,27 +762,7 @@ int World::saveLinesPerIndividual(ofstream& ofile, string type){
 	if(dimension == 0){
 		// TO DO
 	} else {
-		int index = index_last_left;
-		vector<double> props;
-		for(unsigned int i = 0; i < world.size(); i++){
-			for(int y = 0; y < number_of_demes_u_d; y++){
-				world[index+y]->getBproportions(props);
-				save_line(ofile,index+y,props);
-				if(type != "hybridIndices"){
-					world[index+y]->getJunctionNumbers(props);
-					save_line(ofile,index+y,props);
-				}
-				if(type == "complete"){
-					world[index+y]->getHeterozygoty(props);
-					save_line(ofile,index+y,props);
-				}
-			}
-			if(index != index_last_right){
-				index = world[index]->getNeigbours()[1];
-			} else {
-				break;
-			}
-		}
+		saveLinesPerDeme(ofile, type);
 	}
 	ofile.close();
 	return 0;
@@ -811,7 +783,16 @@ int World::saveLinesPerDeme(ostream& stream, string type){
 			if(type == "blocks"){
 				world[deme_to_print]->streamBlocks(stream);
 			}
-			/* MORE SAVE TYPES, pheraps turn into cases to capture strange behaviour */
+			if(type == "hybridIndices" or type == "hybridIndicesJunctions" or type == "complete"){
+				world[deme_to_print]->streamHIs(stream);
+			}
+			if(type == "hybridIndicesJunctions" or type == "complete"){
+				world[deme_to_print]->streamJunctions(stream);
+			}
+			if(type == "complete"){
+				world[deme_to_print]->streamHeterozygocity(stream);
+			}
+
 		}
 		next_column = world[comlumn_to_print]->getNeigbours()[1];
 		// block for reflexive border
@@ -886,15 +867,4 @@ void World::streamBlockSizesOf0DWorld(std::ostream& stream){
 		blockSizes.clear();
 	}
 	return;
-}
-
-// TO BE MOVED TO DEME LEVEL
-template<typename T>
-int World::save_line(ostream& stream, int index, vector<T>& vec) const{
-	stream << index << '\t';
-	for(unsigned int ind = 0; ind < vec.size(); ind++){
-		stream << vec[ind] << '\t';
-	}
-	stream << endl;
-	return 0;
 }

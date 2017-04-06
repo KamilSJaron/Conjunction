@@ -32,8 +32,6 @@ class World {
 		void listOfNumericalParameters(std::ostream& stream) const;
 		void listOfDemes();
 		int summary(std::ostream& stream);
-		double getProportionOfHeterozygotes(int index);
-		double getProportionOfHomozygotes(int index, char type);
 		void showOneDeme(int index);
 		int SaveTheUniverse(std::string type, std::string filename);
 		void getLD();
@@ -64,8 +62,6 @@ class World {
 		int saveBlocks(std::ofstream& ofile);
 
 		void streamBlockSizesOf0DWorld(std::ostream& stream);
-		template<typename T>
-		int save_line(std::ostream& stream, int index, std::vector<T>& vec) const;
 
 	// stats
 		double getMaterial() const;
