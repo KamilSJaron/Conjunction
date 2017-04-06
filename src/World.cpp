@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include <cmath>
 #include <iomanip>
+#include <unistd.h>
 
 #include "../include/RandomGenerators.h"
 #include "../include/Chromosome.h"
@@ -576,6 +577,10 @@ void World::showOneDeme(int index){
 }
 
 int World::SaveTheUniverse(string type, string filename){
+	if(type == "raspberrypi"){
+		return saveRaspberrypi(cout);
+	}
+
 	ofstream ofile;
 	ofile.open(filename); // Opens file
 	if (ofile.fail()){
@@ -804,42 +809,41 @@ int World::saveLinesPerDeme(ostream& stream, string type){
 	return 0;
 }
 
-//int World::save_raspberrypi(ofstream& ofile){
-//
-//	if(world.size() != 64){
-//		cerr << "Wrong number of demes (" << world.size() << "), define 64 demes for raspberrypi file output \n";
-//		return 1;
-//	}
-//
-//	usleep(900);
-//	cout << 'c' << endl;
-//	usleep(100);
-//
-//	int index = index_last_left;
-//	double hybridIndex = 0, LD = 0;
-//	int R = 0, G = 0, B = 0;
-//	cout << "m ";
-//	for(unsigned int i = 0; i < world.size(); i++){
-//		for(int y = 0; y < number_of_demes_u_d; y++){
-//			hybridIndex = world[index+y]->getMeanBproportion();
-//			LD = world[index+y]->getLD();
-//			R = (int) (hybridIndex * 255 * 0.5);
-//			G = (int) (abs(LD) * 4 * 255);
-//// 			cerr << LD << ' ';
-//			B = (int) ((1 - hybridIndex) * 255 * 0.5);
-//			cout << R << ' ' << G << ' ' << B << ' ';
-////			R G B 0 255 FF0, 00F
-//		}
-//		if(index != index_last_right){
-//			index = world[index]->getNeigbours()[1];
-//		} else {
-//			break;
-//		}
-//	}
-//	cout << endl;
-//	ofile.close();
-//	return 0;
-//}
+int World::saveRaspberrypi(ostream& stream){
+
+	if(world.size() != 64){
+		cerr << "Wrong number of demes (" << world.size() << "), define 64 demes for raspberrypi file output \n";
+		return 1;
+	}
+
+	usleep(900);
+	stream << 'c' << endl;
+	usleep(100);
+
+	int index = index_last_left;
+	double hybridIndex = 0, LD = 0;
+	int R = 0, G = 0, B = 0;
+	stream << "m ";
+	for(unsigned int i = 0; i < world.size(); i++){
+		for(int y = 0; y < number_of_demes_u_d; y++){
+			hybridIndex = world[index+y]->getMeanBproportion();
+			LD = world[index+y]->getLD();
+			R = (int) (hybridIndex * 255 * 0.5);
+			G = (int) (abs(LD) * 4 * 255);
+// 			cerr << LD << ' ';
+			B = (int) ((1 - hybridIndex) * 255 * 0.5);
+			stream << R << ' ' << G << ' ' << B << ' ';
+//			R G B 0 255 FF0, 00F
+		}
+		if(index != index_last_right){
+			index = world[index]->getNeigbours()[1];
+		} else {
+			break;
+		}
+	}
+	stream << endl;
+	return 0;
+}
 
 int World::saveBlocks(ofstream& ofile){
 	if(dimension == 0){

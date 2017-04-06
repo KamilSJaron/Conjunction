@@ -59,6 +59,7 @@ class World {
 	// saving methods
 		int saveLinesPerIndividual(std::ofstream& ofile, std::string type);
 		int saveLinesPerDeme(std::ostream& ofile, std::string type);
+		int saveRaspberrypi(std::ostream& ofile);
 		int saveBlocks(std::ofstream& ofile);
 
 		void streamBlockSizesOf0DWorld(std::ostream& stream);

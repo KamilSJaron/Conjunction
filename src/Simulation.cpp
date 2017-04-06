@@ -144,7 +144,9 @@ void Simulation::setWorld(SimulationSetting& simulation_setting){
 
 int Simulation::saveWorld(int order, int save_pos){
 	// always print summary to std out
-	world.summary(std::cout);
+	if(file_type != "raspberrypi"){
+		world.summary(std::cout);
+	}
 	// only if number of saves and name of outfile are specified
 	if(saves >= 1 and file_name[0] != '.' and file_name[0] != '_'){
 		if(order >= 10){
