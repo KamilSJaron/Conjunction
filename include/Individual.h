@@ -37,6 +37,7 @@ class Individual
 		double getLambda() const;
 		int getNumberOfLoci(int ch) const;
 		void getNumberOfLoci(std::vector<int>& ch) const;
+		void getGenotype(std::vector<std::string>& hapl) const;
 
 	private:
 	/*data*/
@@ -46,6 +47,7 @@ class Individual
 
 	/*inner functions*/
 		int getOneChromeHetero(bool write, std::map<int, char>::const_iterator& pos, int chromosome, int last_pos);
+		std::string collapseBlocks(std::vector<int>& blocks) const;
 };
 
 #endif

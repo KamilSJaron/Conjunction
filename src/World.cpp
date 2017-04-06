@@ -522,22 +522,7 @@ int World::summary(ostream& stream){
 			}
 		}
 		stream << endl;
-
-		int deme_to_print = index_last_left;
-		int next_deme = -1;
-		// iterates through columns
-		while(deme_to_print != index_next_right){
-			// iterate thought rows
-			for(int row = 0; row < number_of_demes_u_d; row++){
-				world[deme_to_print+row]->summary(stream);
-			}
-			next_deme = world[deme_to_print]->getNeigbours()[1];
-			// block for reflexive border
-			if(next_deme == deme_to_print){
-				break;
-			}
-			deme_to_print = next_deme;
-		}
+		saveLinesPerDeme(stream, "summary");
 	}
 	return 0;
 }
@@ -811,6 +796,33 @@ int World::saveLinesPerIndividual(ofstream& ofile, string type){
 	return 0;
 }
 
+int World::saveLinesPerDeme(ostream& stream, string type){
+	int comlumn_to_print = index_last_left;
+	int deme_to_print = -1;
+	int next_column = -1;
+	// iterates through columns
+	while(comlumn_to_print != index_next_right){
+		// iterate thought rows
+		for(int row = 0; row < number_of_demes_u_d; row++){
+			deme_to_print = comlumn_to_print+row;
+			if(type == "summary"){
+				world[deme_to_print]->streamSummary(stream);
+			}
+			if(type == "blocks"){
+				world[deme_to_print]->streamBlocks(stream);
+			}
+			/* MORE SAVE TYPES, pheraps turn into cases to capture strange behaviour */
+		}
+		next_column = world[comlumn_to_print]->getNeigbours()[1];
+		// block for reflexive border
+		if(next_column == comlumn_to_print){
+			break;
+		}
+		comlumn_to_print = next_column;
+	}
+	return 0;
+}
+
 //int World::save_raspberrypi(ofstream& ofile){
 //
 //	if(world.size() != 64){
@@ -852,23 +864,13 @@ int World::saveBlocks(ofstream& ofile){
 	if(dimension == 0){
 		streamBlockSizesOf0DWorld(ofile);
 	} else {
-		int index = index_last_left;
-		vector<int> block_sizes;
-		for(unsigned int i = 0; i < world.size(); i++){
-			for(int y = 0; y < number_of_demes_u_d; y++){
-				for(int ind_index = 0; ind_index < deme_size; ind_index++){
-					world[index]->getSizesOfABlocks(block_sizes, ind_index);
-					save_line(ofile,index+y,block_sizes);
-					world[index]->getSizesOfBBlocks(block_sizes, ind_index);
-					save_line(ofile,index+y,block_sizes);
-				}
-			}
-			if(index != index_last_right){
-				index = world[index]->getNeigbours()[1];
-			} else {
-				break;
-			}
+		// PRINT HEADERS DEME_INDEX CH1h1 CH1h2 ...
+		ofile << "DEME";
+		for(int ch = 0; ch < number_of_chromosomes; ch++){
+			ofile << "\tC" << ch+1 << "h0\tC" << ch+1 << "h1";
 		}
+		ofile << endl;
+		saveLinesPerDeme(ofile, "blocks");
 	}
 	ofile.close();
 	return 0;
@@ -886,12 +888,13 @@ void World::streamBlockSizesOf0DWorld(std::ostream& stream){
 	return;
 }
 
+// TO BE MOVED TO DEME LEVEL
 template<typename T>
-int World::save_line(ofstream& ofile, int index, vector<T>& vec) const{
-	ofile << index << '\t';
+int World::save_line(ostream& stream, int index, vector<T>& vec) const{
+	stream << index << '\t';
 	for(unsigned int ind = 0; ind < vec.size(); ind++){
-		ofile << vec[ind] << '\t';
+		stream << vec[ind] << '\t';
 	}
-	ofile << endl;
+	stream << endl;
 	return 0;
 }

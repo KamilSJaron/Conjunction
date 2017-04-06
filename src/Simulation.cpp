@@ -72,6 +72,7 @@ int Simulation::simulate(){
 	clock_t t1, t2;
 
 	int order = 0, check = 0;
+	// variable modulo contain a modulo for generations to produce an output (check line 93)
 	int modulo = ceil((double)(generations-delay-1) / saves);
 	if(modulo == 0){
 		modulo = 1;
@@ -99,7 +100,8 @@ int Simulation::simulate(){
 		}
 	}
 
-	if((((generations - 1 - delay) % modulo)+1) != modulo){ // if this statement wont be true, the save after simulation was performed already
+// make the final save after simulation only if it was not done yet (in cases when number of generations divided by number of saves are not giving intiger)
+	if((((generations - 1 - delay) % modulo)+1) != modulo){
 		order++;
 		check = saveWorld(order, save_pos);
 		if(check != 0){
@@ -141,8 +143,10 @@ void Simulation::setWorld(SimulationSetting& simulation_setting){
 }
 
 int Simulation::saveWorld(int order, int save_pos){
+	// always print summary to std out
 	world.summary(std::cout);
-	if(saves > 1 and file_name[0] != '.' and file_name[0] != '_'){
+	// only if number of saves and name of outfile are specified
+	if(saves >= 1 and file_name[0] != '.' and file_name[0] != '_'){
 		if(order >= 10){
 			file_name[save_pos-1] = '0' + char(order / 10 % 10);
 			file_name[save_pos] = '0' + char(order % 10);

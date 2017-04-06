@@ -40,14 +40,17 @@ class Deme
 
 // plotting functions
 		void showDeme();
-		void summary(std::ostream& ofile);
+		void streamSummary(std::ostream& stream);
+		void streamBlocks(std::ostream& stream);
 		void readAllGenotypes();
 		void readGenotypeFrequencies();
 
 	private:
 		int pickAnIndividual();
 		static int sum(std::vector<bool>& ve);
-
+		template<typename T>
+		int streamLine(std::ostream& stream, int index, std::vector<T>& vec) const;
+		double roundForPrint(double number) const;
 
 		Individual *deme; // farme of individuals
 		int index; // index of deme in universe

@@ -405,6 +405,20 @@ void Individual::getNumberOfLoci(vector<int>& ch) const{
 	}
 }
 
+void Individual::getGenotype(std::vector<std::string>& hapl) const{
+	vector<int> blocks;
+	hapl.clear();
+	hapl.reserve(number_of_chromosomes*2);
+	for(int chrom = 0; chrom < number_of_chromosomes; chrom++){
+		for(int ploidy = 0; ploidy < 2; ploidy++){
+			// TO CHANGE
+			blocks.clear();
+			genome[ploidy][chrom].getSizesOfBlocks(blocks);
+			hapl.push_back(collapseBlocks(blocks));
+		}
+	}
+}
+
 /* PRIVATE */
 
 int Individual::getOneChromeHetero(bool write, map<int, char>::const_iterator& pos, int chromosome, int last_pos){
@@ -420,4 +434,16 @@ int Individual::getOneChromeHetero(bool write, map<int, char>::const_iterator& p
 	number_of_het_loci += (loci - last_pos) * write;
 
 	return number_of_het_loci;
+}
+
+string Individual::collapseBlocks(vector<int>& blocks) const{
+	string collapsed = "";
+	for(unsigned int block = 0; block < blocks.size(); block++){
+		if(collapsed == ""){
+			collapsed = to_string(blocks[block]);
+		} else {
+			collapsed = collapsed + "," + to_string(blocks[block]);
+		}
+	}
+	return collapsed;
 }

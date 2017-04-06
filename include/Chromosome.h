@@ -20,6 +20,7 @@ class Chromosome
 		int getNumberOfJunctions() const; /*returns number of Junctions in chromosome*/
 		void getSizesOfBBlocks(std::vector<int>& sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
 		void getSizesOfABlocks(std::vector<int>& sizes);
+		void getSizesOfBlocks(std::vector<int>& sizes) const;
 		void makeRecombinant(Chromosome& chromNew,int numberOfChaisma);
 
 /* COMUNICATION METHODS */

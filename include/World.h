@@ -60,11 +60,12 @@ class World {
 
 	// saving methods
 		int saveLinesPerIndividual(std::ofstream& ofile, std::string type);
+		int saveLinesPerDeme(std::ostream& ofile, std::string type);
 		int saveBlocks(std::ofstream& ofile);
 
 		void streamBlockSizesOf0DWorld(std::ostream& stream);
 		template<typename T>
-		int save_line(std::ofstream& ofile, int index, std::vector<T>& vec) const;
+		int save_line(std::ostream& stream, int index, std::vector<T>& vec) const;
 
 	// stats
 		double getMaterial() const;

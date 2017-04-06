@@ -380,23 +380,23 @@ void Deme::showDeme(){
 	cerr << endl;
 }
 
-void Deme::summary(ostream& ofile){
+void Deme::streamSummary(ostream& stream){
 	int number_chromosomes = deme[0].getNumberOfChromosomes(), number_loci = deme[0].getNumberOfLoci(0);
 	double z = getMeanBproportion();
 	double varz = getVARhi();
 	double varp = getVARp();
 	int neigbsize = neigbours.size();
-	ofile << setw(5) << right << index << ":  ";
+	stream << setw(5) << right << index << ":  ";
 	for(int i = 0; i < neigbsize; i++){
-		ofile << setw(5) << left << neigbours[i] << " ";
+		stream << setw(5) << left << neigbours[i] << " ";
 	}
-	ofile << setw(12) << left << ((round(getMeanFitness() * 1000000)) / 1000000)
-	<< setw(12) << left << ((round(getProportionOfHeterozygotes() * 1000000)) / 1000000)
-	<< setw(12) << left << ((round(z * 1000000)) / 1000000)
-	<< setw(12) << left << ((round(varz * 1000000)) / 1000000);
+	stream << setw(12) << left << roundForPrint(getMeanFitness())
+	<< setw(12) << left << roundForPrint(getProportionOfHeterozygotes())
+	<< setw(12) << left << roundForPrint(z)
+	<< setw(12) << left << roundForPrint(varz);
 	if(number_loci * number_chromosomes > 1){
-		ofile	<< setw(12) << left << ((round(varp * 1000000)) / 1000000)
-		<< setw(12) << left << ((round(getLD(z,varz,varp) * 1000000)) / 1000000);
+		stream	<< setw(12) << left << roundForPrint(varp)
+		<< setw(12) << left << roundForPrint(getLD(z,varz,varp));
 	}
 	if((number_loci * number_chromosomes) <= 16){
 		vector<double> ps;
@@ -404,11 +404,19 @@ void Deme::summary(ostream& ofile){
 			ps.clear();
 			getps(ps,ch);
 			for(unsigned int l = 0; l < ps.size();l++){
-				ofile << setw(12) << left << ((round(ps[l] * 10000)) / 10000);
+				stream << setw(12) << left << roundForPrint(ps[l]);
 			}
 		}
 	}
-	ofile << endl;
+	stream << endl;
+}
+
+void Deme::streamBlocks(ostream& stream){
+	vector<string> block_sizes;
+	for(int ind_index = 0; ind_index < deme_size; ind_index++){
+		deme[ind_index].getGenotype(block_sizes);
+		streamLine(stream,index,block_sizes);
+	}
 }
 
 void Deme::readAllGenotypes(){
@@ -438,10 +446,25 @@ void Deme::readGenotypeFrequencies(){
 //  PRIVATE //
 // // // // //
 
-int Deme::sum(vector< bool >& ve){
+int Deme::sum(vector<bool>& ve){
 	int sum = 0;
 	for(unsigned int i = 0; i < ve.size();i++){
 		sum += ve[i];
 	}
 	return sum;
+}
+
+// CURENTLY DUPLICIT IN WORLD (as save_line)
+template<typename T>
+int Deme::streamLine(ostream& stream, int index, vector<T>& vec) const{
+	stream << index << '\t';
+	for(unsigned int ind = 0; ind < vec.size(); ind++){
+		stream << vec[ind] << '\t';
+	}
+	stream << endl;
+	return 0;
+}
+
+double Deme::roundForPrint(double number) const{
+	return ((round(number * 1000000)) / 1000000);
 }
