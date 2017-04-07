@@ -18,8 +18,9 @@ $(PRG): $(GIT_HEADER) $(OBJ)
 %.o: %.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS)
 
-$(GIT_HEADER): .git/HEAD
+$(GIT_HEADER): .git/COMMIT_EDITMSG .git/HEAD
 	echo "#define GITVERSION \"$(shell git rev-parse HEAD)\"" > $@
+FORCE:
 
 .PHONY : test
 test: $(TEST)
