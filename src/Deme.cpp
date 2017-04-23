@@ -164,36 +164,6 @@ void Deme::integrateMigrantVector(vector<Individual>& migBuffer){
 	return;
 }
 
-
-// vector<double>
-void Deme::getBproportions(vector<double>& props) const{
-	props.clear();
-	props.reserve(deme_size);
-	for(int i = 0;i < deme_size;i++){
-		props.push_back(deme[i].getBprop());
-	}
-	return;
-}
-
-void Deme::getJunctionNumbers(vector< double >& juncs) const{
-	juncs.clear();
-	juncs.reserve(deme_size);
-	for(int i = 0;i < deme_size;i++){
-		juncs.push_back(deme[i].getNumberOfJunctions());
-	}
-	return;
-}
-
-
-void Deme::getHeterozygoty(vector< double >& heterozs){
-	heterozs.clear();
-	heterozs.reserve(deme_size);
-	for(int i = 0;i < deme_size;i++){
-		heterozs.push_back(deme[i].getHetProp());
-	}
-	return;
-}
-
 double Deme::getMeanBproportion() const{
 	double props = 0;
 	for(int i = 0;i < deme_size;i++){
@@ -201,16 +171,6 @@ double Deme::getMeanBproportion() const{
 	}
 //	cout << props / deme_size << props << " / " << deme_size << endl;
 	return (props / deme_size);
-}
-
-void Deme::getSizesOfBBlocks(vector<int>& sizes, int ind){
-	deme[ind].getSizesOfBBlocks(sizes);
-	return;
-}
-
-void Deme::getSizesOfABlocks(vector<int>& sizes, int ind){
-	deme[ind].getSizesOfABlocks(sizes);
-	return;
 }
 
 double Deme::getProportionOfHomozygotes(char population) const{
@@ -417,6 +377,39 @@ void Deme::streamBlocks(ostream& stream){
 		deme[ind_index].getGenotype(block_sizes);
 		streamLine(stream,index,block_sizes);
 	}
+}
+
+void Deme::streamHIs(std::ostream& stream) const{
+	vector<double> HIs;
+ 	HIs.clear();
+ 	HIs.reserve(deme_size);
+	for(int i = 0;i < deme_size;i++){
+		HIs.push_back(deme[i].getBprop());
+	}
+	streamLine(stream, index, HIs);
+	return;
+}
+
+void Deme::streamJunctions(std::ostream& stream) const{
+	vector<double> juncs;
+ 	juncs.clear();
+ 	juncs.reserve(deme_size);
+	for(int i = 0;i < deme_size;i++){
+		juncs.push_back(deme[i].getNumberOfJunctions());
+	}
+	streamLine(stream, index, juncs);
+	return;
+}
+
+void Deme::streamHeterozygocity(std::ostream& stream) const{
+	vector<double> heterozs;
+ 	heterozs.clear();
+ 	heterozs.reserve(deme_size);
+	for(int i = 0;i < deme_size;i++){
+		heterozs.push_back(deme[i].getHetProp());
+	}
+	streamLine(stream, index, heterozs);
+	return;
 }
 
 void Deme::readAllGenotypes(){

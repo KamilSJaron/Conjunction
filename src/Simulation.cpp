@@ -90,7 +90,7 @@ int Simulation::simulate(){
 		world.globalBreeding();
 		t2=clock();
 		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
-		if((((i - delay) % modulo)+1) == modulo and (i < generations - modulo or i+1 == generations)){
+		if((((i - delay) % modulo)+1) == modulo and (i - delay < generations - modulo or i+1 == generations)){
 			order++;
 			check = saveWorld(order, save_pos);
 			if(check != 0){
@@ -144,7 +144,9 @@ void Simulation::setWorld(SimulationSetting& simulation_setting){
 
 int Simulation::saveWorld(int order, int save_pos){
 	// always print summary to std out
-	world.summary(std::cout);
+	if(file_type != "raspberrypi"){
+		world.summary(std::cout);
+	}
 	// only if number of saves and name of outfile are specified
 	if(saves >= 1 and file_name[0] != '.' and file_name[0] != '_'){
 		if(order >= 10){
