@@ -328,7 +328,7 @@ void World::globalBreeding(){
 	selection_model.setBeta(beta);
 
 	double material = 0;
-	for(int i = 0;i < zeroD_immigrant_pool.size();i++){
+	for(unsigned int i = 0;i < zeroD_immigrant_pool.size();i++){
 		material += zeroD_immigrant_pool[i].getBprop();
 	}
 		// cout << "Starting population size: " << zeroD_immigrant_pool.size() << endl;
