@@ -649,8 +649,16 @@ void World::setSlectionBetaLambda(double s, double b, double l){
 	lambda = l;
 }
 
-void World::setLociChromDeme(int l, int ch, int d){
+void World::setLociSelLoci(int l, int L){
 	number_of_loci = l;
+	if(L == -1){
+		number_of_selected_loci = l;
+	} else {
+		number_of_selected_loci = L;
+	}
+}
+
+void World::setChromDeme(int ch, int d){
 	number_of_chromosomes = ch;
 	deme_size = d;
 }

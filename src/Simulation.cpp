@@ -130,7 +130,8 @@ void Simulation::setWorld(SimulationSetting& simulation_setting){
 	cerr << "The SEED for random numbers is set to: " << simulation_setting.seed << endl;
 
 	world.setSlectionBetaLambda(simulation_setting.selection, simulation_setting.beta, simulation_setting.lambda);
-	world.setLociChromDeme(simulation_setting.loci, simulation_setting.chromosomes, simulation_setting.deme_size);
+	world.setLociSelLoci(simulation_setting.loci, simulation_setting.selected_loci);
+	world.setChromDeme(simulation_setting.chromosomes, simulation_setting.deme_size);
 
 	world.setHeight(simulation_setting.up_down_demes);
 	world.setWidth(simulation_setting.left_right_demes);

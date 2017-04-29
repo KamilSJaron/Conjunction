@@ -106,6 +106,7 @@ int SettingHandler::getNumberOfSimulations() const{
 void SettingHandler::printParameters() const{
 	int checker = 0;
 	cerr << setw(15) << "loci"
+		  << setw(15) << "selected_loci"
 			<< setw(15) << "chromosomes"
 			<< setw(15) << "deme_size"
 			<< setw(15) << "generations"
@@ -121,6 +122,8 @@ void SettingHandler::printParameters() const{
 	for(int val_index = 0; val_index < number_of_simulations; val_index++){
 		cerr << setw(15);
 		checker += printVectorValue(val_index, loci);
+		cerr << setw(15);
+		checker += printVectorValue(val_index, selected_loci);
 		cerr << setw(15);
 		checker += printVectorValue(val_index, chrom);
 		cerr << setw(15);
@@ -471,6 +474,10 @@ void SettingHandler::parameterSave(std::string& parameter, double value){
 		loci.push_back(int(value));
 		return;
 	}
+	if(parameter == "SELECTEDloci"){
+		selected_loci.push_back(int(value));
+		return;
+	}
 	if(parameter == "NUMBERofCHROMOSOMES"){
 		chrom.push_back(int(value));
 		return;
@@ -530,6 +537,7 @@ void SettingHandler::updateNumberOfSimulations(){
 //	cerr << "REPLICATES: " << replicates << endl;
 	number_of_simulations =
 			loci.size() *
+			selected_loci.size() *
 			chrom.size() *
 			deme.size() *
 			gen.size() *
@@ -561,6 +569,10 @@ char SettingHandler::setParameterOfSetting(SimulationSetting& mySetting, std::st
 	if(parameter == "LOCI"){
 		mySetting.loci = loci[index];
 		return 'l';
+	}
+	if(parameter == "SELECTEDloci"){
+		mySetting.selected_loci = selected_loci[index];
+		return 'L';
 	}
 	if(parameter == "NUMBERofCHROMOSOMES"){
 		mySetting.chromosomes = chrom[index];
@@ -646,7 +658,7 @@ bool SettingHandler::checkParameters(){
 	bool correct_type = 1;
 
 	if(!file_name_patten.empty()){
-		vector<string> types{"complete", "summary","hybridIndices", "hybridIndicesJunctions","blocks","raspberrypi"};
+		vector<string> types{"complete", "summary", "hybridIndices", "hybridIndicesJunctions", "blocks", "raspberrypi"};
 		for(unsigned int i = 0; i < types.size(); i++){
 			if(type_of_save == types[i]){
 				correct_type = !correct_type;
@@ -701,6 +713,10 @@ bool SettingHandler::checkParameters(){
 //			return 1;
 //		}
 //	}
+	if(selected_loci.size() == 0){
+		cerr << "The number of selected loci per chromosome was not set.\n";
+		return 1;
+	}
 
 	if(sel.size() == 0){
 		cerr << "The selection pressure was not set.\n";
@@ -797,6 +813,16 @@ void SettingHandler::fillDefault(){
 
 	if(delay.empty()){
 		delay.push_back(0);
+	}
+
+	if(selected_loci.empty()){
+		cerr << "Assuming all loci under selection.\n";
+		selected_loci.push_back(-1);
+	}
+
+	if(selected_loci.empty()){
+		cerr << "Assuming no epistatic interaction (BETA = 1).\n";
+		beta.push_back(1);
 	}
 
 	updateNumberOfSimulations();

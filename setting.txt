@@ -17,7 +17,7 @@
 # Numerical parameters
 
 LOCI = [40, 100]                        # integer in {1,10000}
-SELECTED_LOCI = [4, 10]
+SELECTEDloci = [4, 10]
 NUMBERofCHROMOSOMES = 1              # integer in {1,21}
 LAMBDA = 1.53                        # real in {0,5}, recombination
 SELECTIONpressure = 0.42             # real in {0,1}
