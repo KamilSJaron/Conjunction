@@ -36,14 +36,15 @@ class Individual
 		int getNumberOfChromosomes() const;
 		double getLambda() const;
 		int getNumberOfLoci(int ch) const;
+		int getNumberOfSelectedLoci() const;
 		void getNumberOfLoci(std::vector<int>& ch) const;
 		void getGenotype(std::vector<std::string>& hapl) const;
 
 	private:
 	/*data*/
 		std::vector<Chromosome> genome[2];
-		int number_of_chromosomes;
-		double lambda, slected_hybrid_index;
+		int number_of_chromosomes, selected_loci;
+		double lambda;
 
 	/*inner functions*/
 		int getOneChromeHetero(bool write, std::map<int, char>::const_iterator& pos, int chromosome, int last_pos);

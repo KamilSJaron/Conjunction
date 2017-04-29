@@ -79,13 +79,13 @@ void World::basicUnitCreator(char type, char init){
 				} else {
 					new_indexes.push_back(index_next_right);
 				}
-				world[0] = new Deme(0,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[0] = new Deme(0,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
 				break;
 			case 'l':
 				new_indexes.clear();
 				new_indexes.push_back(max_index + 2);
 				new_indexes.push_back(index_last_left);
-				world[index_next_left] = new Deme(index_next_left,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[index_next_left] = new Deme(index_next_left,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
 				index_last_left = index_next_left;
 				index_next_left = max_index + 2;
 				break;
@@ -117,7 +117,7 @@ void World::basicUnitCreator(char type, char init){
 					}
 				}
 
-				world[index_next_right] = new Deme(index_next_right,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[index_next_right] = new Deme(index_next_right,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
 				index_last_right = index_next_right;
 				index_next_right = max_index + 2;
 				break;
@@ -139,7 +139,7 @@ void World::basicUnitCreator(char type, char init){
 				new_indexes.push_back(i + number_of_demes_u_d * 2);
 				new_indexes.push_back(upperBorder(i,max_index));
 				new_indexes.push_back(lowerBorder(i,max_index));
-				world[i] = new Deme(i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[i] = new Deme(i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
 			}
 			break;
 		case 'l':
@@ -151,7 +151,7 @@ void World::basicUnitCreator(char type, char init){
 				new_indexes.push_back(index_last_left + i);
 				new_indexes.push_back(upperBorder(index + i,index));
 				new_indexes.push_back(lowerBorder(index + i,index));
-				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
 			}
 			index_last_left = index;
 			break;
@@ -164,7 +164,7 @@ void World::basicUnitCreator(char type, char init){
 				new_indexes.push_back(sideBorder(index + i,index_next_right + i));
 				new_indexes.push_back(upperBorder(index + i,index));
 				new_indexes.push_back(lowerBorder(index + i,index));
-				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
 			}
 			index_last_right = index;
 			break;

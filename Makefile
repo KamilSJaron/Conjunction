@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -O3 -Wall -pedantic
+CXXFLAGS = -std=c++11 -O3 -Wall -pedantic -g
 
 PRG = conjunction
 GIT_HEADER = include/gitversion.h

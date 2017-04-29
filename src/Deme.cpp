@@ -37,7 +37,7 @@ using namespace std;
 // constructor/destructors functions / //
 // // // // // // // // // // // // // //
 
-Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, double in_lambda){
+Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loci, double in_lambda){
 	index = ind;
 	neigbours = neigb;
 	deme_size = size;
