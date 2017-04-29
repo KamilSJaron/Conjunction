@@ -37,19 +37,19 @@ using namespace std;
 // constructor/destructors functions / //
 // // // // // // // // // // // // // //
 
-Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, double in_lambda){
+Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loc, double in_lambda){
 	index = ind;
 	neigbours = neigb;
 	deme_size = size;
 	deme = new Individual[deme_size];
 	if(init == 'A' or init == 'B'){
-			Individual temp(init, in_ch, in_loc, in_lambda);
+			Individual temp(init, in_ch, in_loc, in_sel_loc, in_lambda);
 			for(int i=0;i<deme_size;i++){
 				deme[i] = temp;
 			}
 	} else {
-		Individual tempA('A', in_ch, in_loc, in_lambda);
-		Individual tempB('B', in_ch, in_loc, in_lambda);
+		Individual tempA('A', in_ch, in_loc, in_sel_loc, in_lambda);
+		Individual tempB('B', in_ch, in_loc, in_sel_loc, in_lambda);
 		int i = 0;
 		while(i< (deme_size / 2)){
 			deme[i] = tempA;
@@ -99,16 +99,18 @@ int Deme::getDemeSize(){
 
 void Deme::Breed(){
 	double lambda = deme[0].getLambda();
+	int selected_loci = deme[0].getNumberOfSelectedLoci();
 	vector<double> fitnessVector;
 	vector<Chromosome> gamete1, gamete2;
 	getFitnessVector(fitnessVector);
+	int step = 0;
 
 	// for(unsigned int i = 0; i < fitnessVector.size(); i++){
 	// 	cout << " " << fitnessVector[i] << " ";
 	// }
 
-	double RandMax = fitnessVector[deme_size-1];
-	// cout << " RAND MAX: " << RandMax << endl;
+	double rand_max = fitnessVector[deme_size-1];
+	// cout << " RAND MAX: " << rand_max << endl;
 	double roll;
 	map<double, int> parentPick;
 	map<double, int>::iterator it;
@@ -116,10 +118,10 @@ void Deme::Breed(){
 	vector<int> fathers(deme_size);
 
 	for(int i=0;i < deme_size*2;i++){
-		roll = (uniform() * RandMax);
+		roll = (uniform() * rand_max);
 		it = parentPick.find(roll);
 		while(it != parentPick.end()){ //rolling twice same number will overwrite the first one, but this event is so rare, that solution is to just roll again without any bias
-			roll = (uniform() * RandMax);
+			roll = (uniform() * rand_max);
 			it = parentPick.find(roll);
 		}
 		parentPick[roll] = i;
@@ -146,7 +148,7 @@ void Deme::Breed(){
 	for(int i=0;i<deme_size;i++){
 		deme[mothers[i]].makeGamete(gamete1);
 		deme[fathers[i]].makeGamete(gamete2);
-		metademe[i] = Individual(gamete1,gamete2,lambda);
+		metademe[i] = Individual(gamete1, gamete2, selected_loci, lambda);
 	}
 
 	for(int i=0;i<deme_size;i++){
@@ -210,6 +212,7 @@ void Deme::getFitnessVector(vector<double> &fitnessVector){
 	for(int i = 0;i < deme_size;i++){
 		// getBprop > getHetProp ??
 		read_fitness = selection_model.getFitness(deme[i].getBprop());
+//		read_fitness = selection_model.getFitness(deme[i].getSelectedHybridIndex());
 //		cout << " B prop: " << deme[i].getBprop() << " - fitness: " << read_fitness << endl;
 		sum += read_fitness;
 		fitnessVector.push_back(sum);
@@ -244,7 +247,7 @@ double Deme::getVARp(){
 	double p = 0, varp = 0, pmean = getMeanBproportion();
 	vector<double> ps;
 	for(int ch = 0; ch < number_chromosomes; ch++){
-		getps(ps,ch);
+		getPs(ps,ch);
 		for(unsigned int locus = 0;locus < ps.size();locus++){
 			p = ps[locus];
 			varp += (pmean - p) * (pmean - p);
@@ -255,7 +258,7 @@ double Deme::getVARp(){
 	return varp;
 }
 
-void Deme::getps(vector<double>& ps, int ch){
+void Deme::getPs(vector<double>& ps, int ch){
 	double p = 0;
 	int TotalCHnum = deme_size * 2; //total number of chromosomes in deme (which one is computed using parameter ch)
 	int number_loci = deme[0].getNumberOfLoci(0);
@@ -362,7 +365,7 @@ void Deme::streamSummary(ostream& stream){
 		vector<double> ps;
 		for(int ch = 0;ch < number_chromosomes; ch++){
 			ps.clear();
-			getps(ps,ch);
+			getPs(ps,ch);
 			for(unsigned int l = 0; l < ps.size();l++){
 				stream << setw(12) << left << roundForPrint(ps[l]);
 			}

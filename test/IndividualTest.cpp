@@ -1,6 +1,6 @@
 int testIndividual(){
 	Individual Lili;
-  Individual Igor('C', 3, 50, 2.3);
+  Individual Igor('C', 3, 50, 10, 2.3);
 
 	double sumCh = 0.0;
 	for(int i = 0; i < 10000; i++){
@@ -25,7 +25,7 @@ int testIndividual(){
 	for(unsigned int i = 0; i < gamete1.size(); i++){
 		gamete2.push_back(Chromosome('A',gamete1[i].getResolution()));
 	}
-	Individual Stuart(gamete1, gamete2, 1.6);
+	Individual Stuart(gamete1, gamete2, 5, 1.6);
 
 	int count = 0;
 	for(int i=0;i<Stuart.getNumberOfChromosomes();i++){

@@ -8,7 +8,7 @@ class Deme
 {
 	public:
 // constructor / destructors
-		Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, double in_lambda);
+		Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loc, double in_lambda);
 		~Deme();
 
 // communication functions
@@ -34,7 +34,7 @@ class Deme
 		double getMeanFitness();
 		double getVARhi() const;
 		double getVARp();
-		void getps(std::vector<double>& ps, int ch);
+		void getPs(std::vector<double>& ps, int ch);
 		double getLD();
 		double getLD(double z,double varz,double varp);
 

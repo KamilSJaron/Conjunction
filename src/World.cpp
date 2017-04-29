@@ -79,13 +79,13 @@ void World::basicUnitCreator(char type, char init){
 				} else {
 					new_indexes.push_back(index_next_right);
 				}
-				world[0] = new Deme(0,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[0] = new Deme(0,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
 				break;
 			case 'l':
 				new_indexes.clear();
 				new_indexes.push_back(max_index + 2);
 				new_indexes.push_back(index_last_left);
-				world[index_next_left] = new Deme(index_next_left,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[index_next_left] = new Deme(index_next_left,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
 				index_last_left = index_next_left;
 				index_next_left = max_index + 2;
 				break;
@@ -117,7 +117,7 @@ void World::basicUnitCreator(char type, char init){
 					}
 				}
 
-				world[index_next_right] = new Deme(index_next_right,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[index_next_right] = new Deme(index_next_right,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
 				index_last_right = index_next_right;
 				index_next_right = max_index + 2;
 				break;
@@ -139,7 +139,7 @@ void World::basicUnitCreator(char type, char init){
 				new_indexes.push_back(i + number_of_demes_u_d * 2);
 				new_indexes.push_back(upperBorder(i,max_index));
 				new_indexes.push_back(lowerBorder(i,max_index));
-				world[i] = new Deme(i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[i] = new Deme(i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
 			}
 			break;
 		case 'l':
@@ -151,7 +151,7 @@ void World::basicUnitCreator(char type, char init){
 				new_indexes.push_back(index_last_left + i);
 				new_indexes.push_back(upperBorder(index + i,index));
 				new_indexes.push_back(lowerBorder(index + i,index));
-				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
 			}
 			index_last_left = index;
 			break;
@@ -164,7 +164,7 @@ void World::basicUnitCreator(char type, char init){
 				new_indexes.push_back(sideBorder(index + i,index_next_right + i));
 				new_indexes.push_back(upperBorder(index + i,index));
 				new_indexes.push_back(lowerBorder(index + i,index));
-				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
 			}
 			index_last_right = index;
 			break;
@@ -248,12 +248,12 @@ int World::migration(){
 	for(map<int, vector<Individual> >::iterator buff=ImmigranBuffer.begin(); buff!=ImmigranBuffer.end(); ++buff){
 		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
 			for(int k=0;k < MigInd; k++){
-				ImmigranBuffer[buff->first].push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda));
+				ImmigranBuffer[buff->first].push_back(Individual('A', number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda));
 			}
 		}
 		if(buff->first >= index_last_right_fix and buff->first < index_last_right_fix + number_of_demes_u_d){
 			for(int k=0;k < MigInd; k++){
-				ImmigranBuffer[buff->first].push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda));
+				ImmigranBuffer[buff->first].push_back(Individual('B', number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda));
 			}
 		}
 		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
@@ -278,7 +278,7 @@ void World::set(int index,string type){
 	vector<Individual> migBuffer;
 	if(type == "pureA"){
 		for(int i=0;i<demesize;i++){
-			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda));
+			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda));
 		}
 		world[index]->integrateMigrantVector(migBuffer);
 		return;
@@ -286,7 +286,7 @@ void World::set(int index,string type){
 
 	if(type == "pureB"){
 		for(int i=0;i<demesize;i++){
-			migBuffer.push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda));
+			migBuffer.push_back(Individual('B', number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda));
 		}
 		world[index]->integrateMigrantVector(migBuffer);
 		return;
@@ -294,13 +294,13 @@ void World::set(int index,string type){
 
 	if(type == "hetero"){
 		for(int i=0;i<demesize/4;i++){
-			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda));
+			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda));
 		}
 		for(int i=0;i<demesize/2;i++){
-			migBuffer.push_back(Individual('C', number_of_chromosomes, number_of_loci, lambda));
+			migBuffer.push_back(Individual('C', number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda));
 		}
 		for(int i=0;i<demesize/4;i++){
-			migBuffer.push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda));
+			migBuffer.push_back(Individual('B', number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda));
 		}
 		world[index]->integrateMigrantVector(migBuffer);
 		return;
@@ -308,10 +308,10 @@ void World::set(int index,string type){
 
 	if(type == "halfAhalfhetero"){
 		for(int i=0;i<demesize/2;i++){
-			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda));
+			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda));
 		}
 		for(int i=0;i<demesize/2;i++){
-			migBuffer.push_back(Individual('C', number_of_chromosomes, number_of_loci, lambda));
+			migBuffer.push_back(Individual('C', number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda));
 		}
 		world[index]->integrateMigrantVector(migBuffer);
 		return;

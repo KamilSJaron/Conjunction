@@ -29,23 +29,18 @@ using namespace std;
 
 /* DECLARATION */
 
+// to be able create a vector with 'empty' individuals
 Individual::Individual(){
 	number_of_chromosomes = -1;
 	lambda = -1;
-	// slected_hybrid_index = -1;
+	selected_loci = -1;
 }
 
-Individual::Individual(	char origin, int input_ch, int input_loci,
-						double input_lamda){
+// to be able to create native individuals (A, B, or puer heterozytes)
+Individual::Individual(char origin, int input_ch, int input_loci, int input_sel_loci, double input_lamda){
 	number_of_chromosomes = input_ch;
 	lambda = input_lamda;
-	// if(origin == 'A'){
-	// 	slected_hybrid_index = 0;
-	// } else if(origin == 'B') {
-	// 	slected_hybrid_index = 1;
-	// } else {
-	// 	slected_hybrid_index = 0.5;
-	// }
+	selected_loci = input_sel_loci;
 
 	genome[0].reserve(number_of_chromosomes);
 	genome[1].reserve(number_of_chromosomes);
@@ -62,12 +57,13 @@ Individual::Individual(	char origin, int input_ch, int input_loci,
 	}
 }
 
+// for individuals created by fusion of two gametes
 Individual::Individual(	vector<Chromosome>& gamete1,
 						vector<Chromosome>& gamete2,
-						double input_lamda){
+						int input_sel_loci, double input_lamda){
 	number_of_chromosomes = gamete1.size();
-	// slected_hybrid_index = 0;
-	lambda = input_lamda;
+	selected_loci = 0;
+	lambda = input_sel_loci;
 
 	genome[0].reserve(number_of_chromosomes);
 	genome[1].reserve(number_of_chromosomes);
@@ -240,6 +236,10 @@ double Individual::getBprop() const{
 	return prop;
 }
 
+double Individual::getSelectedHybridIndex() const{
+	return 0.6;
+}
+
 double Individual::getHetProp(){
 	bool write;
 	long number_of_het_loci = 0;
@@ -404,6 +404,10 @@ double Individual::getLambda() const{
 
 int Individual::getNumberOfLoci(int ch) const{
 	return genome[0][ch].getResolution();
+}
+
+int Individual::getNumberOfSelectedLoci() const{
+	return selected_loci;
 }
 
 void Individual::getNumberOfLoci(vector<int>& ch) const{

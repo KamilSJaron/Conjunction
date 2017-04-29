@@ -6,10 +6,10 @@ class Individual
 	public:
 /* DECLARATION */
 		Individual();
-		Individual(char origin, int input_ch, int input_loci, double input_lamda);
+		Individual(char origin, int input_ch, int input_loci, int input_sel_loci, double input_lamda);
 		Individual(	std::vector<Chromosome>& gamete1,
 					std::vector<Chromosome>& gamete2,
-					double input_lamda); /*init Individual by gametes on imput */
+					int input_sel_loci, double input_lamda); /*init Individual by gametes on imput */
 		~Individual(); /* destructor */
 
 /* COMPUTIONG METHODS */
@@ -18,6 +18,7 @@ class Individual
 		void makeGamete(std::vector<Chromosome>& gamete);
 		int getBcount() const;
 		double getBprop() const;
+		double getSelectedHybridIndex() const;
 		double getHetProp();
 		bool Acheck() const;
 		bool Bcheck() const;
@@ -36,14 +37,15 @@ class Individual
 		int getNumberOfChromosomes() const;
 		double getLambda() const;
 		int getNumberOfLoci(int ch) const;
+		int getNumberOfSelectedLoci() const;
 		void getNumberOfLoci(std::vector<int>& ch) const;
 		void getGenotype(std::vector<std::string>& hapl) const;
 
 	private:
 	/*data*/
 		std::vector<Chromosome> genome[2];
-		int number_of_chromosomes;
-		double lambda, slected_hybrid_index;
+		int number_of_chromosomes, selected_loci;
+		double lambda;
 
 	/*inner functions*/
 		int getOneChromeHetero(bool write, std::map<int, char>::const_iterator& pos, int chromosome, int last_pos);
