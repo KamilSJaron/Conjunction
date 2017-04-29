@@ -43,7 +43,7 @@ class Individual
 	/*data*/
 		std::vector<Chromosome> genome[2];
 		int number_of_chromosomes;
-		double lambda;
+		double lambda, slected_hybrid_index;
 
 	/*inner functions*/
 		int getOneChromeHetero(bool write, std::map<int, char>::const_iterator& pos, int chromosome, int last_pos);

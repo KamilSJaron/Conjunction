@@ -10,7 +10,7 @@ int testDeme(){
     Deme Hell(0, neigb, 'C', 10000, 0.8, 1, 1, 16, 10);
 
   //  cout << "*****S*****" << endl;
-  //  Hell.summary();
+  //  Hell.streamSummary(cout);
   //  cout << "*****FG*****" << endl;
   //  Hell.readGenotypeFrequencies();
   //  cout << endl;
@@ -26,7 +26,7 @@ int testDeme(){
    Hell.Breed();
 
   //  cout << "*****S*****" << endl;
-  //  Hell.summary();
+  //  Hell.streamSummary(cout);
   //  cout << "*****FG*****" << endl;
   //  Hell.readGenotypeFrequencies();
   //  cout << endl;
@@ -36,12 +36,12 @@ int testDeme(){
   //    cout << " C " << fv[i] << " C ";
   //  }
 
-  //  cout << " Mean fitness: " << Hell.getMeanFitness() << endl;
+  // cout << " Mean fitness: " << Hell.getMeanFitness() << endl;
 
     Hell.Breed();
 
   //  cout << "*****S*****" << endl;
-  //  Hell.summary();
+  //  Hell.streamSummary(cout);
   //  cout << "*****FG*****" << endl;
   //  Hell.readGenotypeFrequencies();
   //  cout << endl;

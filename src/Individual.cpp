@@ -32,12 +32,20 @@ using namespace std;
 Individual::Individual(){
 	number_of_chromosomes = -1;
 	lambda = -1;
+	// slected_hybrid_index = -1;
 }
 
 Individual::Individual(	char origin, int input_ch, int input_loci,
 						double input_lamda){
 	number_of_chromosomes = input_ch;
 	lambda = input_lamda;
+	// if(origin == 'A'){
+	// 	slected_hybrid_index = 0;
+	// } else if(origin == 'B') {
+	// 	slected_hybrid_index = 1;
+	// } else {
+	// 	slected_hybrid_index = 0.5;
+	// }
 
 	genome[0].reserve(number_of_chromosomes);
 	genome[1].reserve(number_of_chromosomes);
@@ -58,6 +66,7 @@ Individual::Individual(	vector<Chromosome>& gamete1,
 						vector<Chromosome>& gamete2,
 						double input_lamda){
 	number_of_chromosomes = gamete1.size();
+	// slected_hybrid_index = 0;
 	lambda = input_lamda;
 
 	genome[0].reserve(number_of_chromosomes);
