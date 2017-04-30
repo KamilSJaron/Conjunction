@@ -89,6 +89,24 @@ int Chromosome::countB() const{
 	return sum;
 }
 
+int Chromosome::countB(int selectedB) const{
+	int sum = 0;
+	char last_seq = 'A';
+	int last_val = 0;
+	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+		if(last_seq == 'B'){
+			// SOMEHOW ADD ONLY THAT MANY AS I NEED
+			sum += (pos->first - last_val);
+		}
+		last_seq = pos->second;
+		last_val = pos->first;
+	}
+	if(last_seq == 'B'){
+			sum += (loci - last_val);
+	}
+	return sum;
+}
+
 int Chromosome::getNumberOfJunctions() const{
 	return chromosome.size() - 1;
 }

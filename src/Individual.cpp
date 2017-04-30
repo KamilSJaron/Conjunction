@@ -234,6 +234,17 @@ double Individual::getBprop() const{
 	return prop;
 }
 
+double Individual::getSelectedHybridIndex() const{
+	//TODO add constrain on selected loci ( (loci - selected) % (selected - 2) == 0)
+	double prop = 0;
+	for(int i=0;i<number_of_chromosomes;i++){
+		prop += genome[0][i].countB(selected_loci);
+		prop += genome[1][i].countB(selected_loci);
+	}
+	prop = prop / (2 * selected_loci * number_of_chromosomes);
+	return prop;
+}
+
 double Individual::getHetProp(){
 	bool write;
 	long number_of_het_loci = 0;

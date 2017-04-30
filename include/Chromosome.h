@@ -17,6 +17,7 @@ class Chromosome
 		bool Acheck() const; /*returns 1 if there are only A, 0 in other case*/
 		bool Bcheck() const; /*returns 1 if there are only B, 0 in other case*/
 		int countB() const; /*returns number of B loci in chromosome*/
+		int countB(int selectedB) const; /*returns number of B loci in chromosome*/
 		int getNumberOfJunctions() const; /*returns number of Junctions in chromosome*/
 		void getSizesOfBBlocks(std::vector<int>& sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
 		void getSizesOfABlocks(std::vector<int>& sizes);

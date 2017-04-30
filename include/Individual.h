@@ -18,6 +18,7 @@ class Individual
 		void makeGamete(std::vector<Chromosome>& gamete);
 		int getBcount() const;
 		double getBprop() const;
+		double getSelectedHybridIndex() const;
 		double getHetProp();
 		bool Acheck() const;
 		bool Bcheck() const;
