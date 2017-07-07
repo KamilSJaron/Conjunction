@@ -25,10 +25,10 @@ The fully operational exectutible `conjunction` should be created and prepared f
 
 #### Testing
 
-travis test of `master` branch : ![master_test](https://travis-ci.org/KamilSJaron/Conjunction.svg?branch=master)
-travis test of `dev` branch    : ![dev_test](https://travis-ci.org/KamilSJaron/Conjunction.svg?branch=dev)
+Travis build & unit test of `master` branch : [![master_build](https://travis-ci.org/KamilSJaron/Conjunction.svg?branch=master)](https://travis-ci.org/KamilSJaron/Conjunction)
+Travis build & unit test of `dev` branch : [![dev_test](https://travis-ci.org/KamilSJaron/Conjunction.svg?branch=dev)](https://travis-ci.org/KamilSJaron/Conjunction/branches)
 
-tests are implemented in separated binary. To execute test on your computer
+Several unit tests are implemented in separated binary. To execute the unit test on your computer
 
 ```
 make test
