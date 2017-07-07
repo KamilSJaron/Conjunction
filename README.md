@@ -25,7 +25,7 @@ The fully operational exectutible `conjunction` should be created and prepared f
 
 #### Testing
 
-Travis build & unit test of `master` branch : [![master_build](https://travis-ci.org/KamilSJaron/Conjunction.svg?branch=master)](https://travis-ci.org/KamilSJaron/Conjunction)
+Travis build & unit test of `master` branch : [![master_build](https://travis-ci.org/KamilSJaron/Conjunction.svg?branch=master)](https://travis-ci.org/KamilSJaron/Conjunction/branches)
 Travis build & unit test of `dev` branch : [![dev_test](https://travis-ci.org/KamilSJaron/Conjunction.svg?branch=dev)](https://travis-ci.org/KamilSJaron/Conjunction/branches)
 
 Several unit tests are implemented in separated binary. To execute the unit test on your computer
