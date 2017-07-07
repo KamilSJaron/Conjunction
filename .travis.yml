@@ -15,5 +15,6 @@ addons:
     - clang
 branches:
   only:
+    - master
     - dev
 script: make && make test
