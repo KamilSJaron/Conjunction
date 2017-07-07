@@ -25,13 +25,16 @@ The fully operational exectutible `conjunction` should be created and prepared f
 
 #### Testing
 
-tests are implemented in separated binary. To execute test
+travis test of `master` branch : ![master_test](https://travis-ci.org/KamilSJaron/Conjunction.svg?branch=master)
+travis test of `dev` branch    : ![dev_test](https://travis-ci.org/KamilSJaron/Conjunction.svg?branch=dev)
+
+tests are implemented in separated binary. To execute test on your computer
 
 ```
 make test
 ```
 
-will compile testing binary, execute tests and delete binary if tests passed.
+will compile testing binary, execute tests and delete testing binary if tests passed.
 
 ## Usage
 
