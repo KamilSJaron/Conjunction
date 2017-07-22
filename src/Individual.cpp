@@ -235,11 +235,26 @@ double Individual::getBprop() const{
 }
 
 double Individual::getSelectedHybridIndex() const{
-	//TODO add constrain on selected loci ( (loci - selected) % (selected - 2) == 0)
+	//TODO add constrain on selected loci ( (loci - selected) % (selected - 1) == 0)
+	int neutural_block_size = 1 + (genome[0][0].getResolution() - selected_loci) / (selected_loci - 1);
+	int last_pos = 0;
 	double prop = 0;
+
+	map<int, char>::const_iterator pos;
 	for(int i=0;i<number_of_chromosomes;i++){
-		prop += genome[0][i].countB(selected_loci);
-		prop += genome[1][i].countB(selected_loci);
+//		for(int ploidy = 0; ploidy < 2, ploidy++){}
+		last_pos = 0;
+		for(pos = genome[0][i].begin(); pos == genome[0][i].end(); pos++){
+			// if( last_pos ...){
+			prop++;
+			// }
+			last_pos = pos->first;
+		}
+//		 if( last_pos ...){
+			prop++;
+//		 }
+
+		//prop += genome[1][i].countB(selected_loci);
 	}
 	prop = prop / (2 * selected_loci * number_of_chromosomes);
 	return prop;
