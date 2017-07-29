@@ -234,27 +234,30 @@ double Individual::getBprop() const{
 	return prop;
 }
 
-double Individual::getSelectedHybridIndex() const{
+double Individual::getSelectedHybridIndex(){
 	//TODO add constrain on selected loci ( (loci - selected) % (selected - 1) == 0)
-	int neutural_block_size = 1 + (genome[0][0].getResolution() - selected_loci) / (selected_loci - 1);
-	int last_pos = 0;
+	int loci = genome[0][0].getResolution();
+	int neutural_block_size = 1 + ((loci - selected_loci) / (selected_loci - 1));
 	double prop = 0;
 
-	map<int, char>::const_iterator pos;
-	for(int i=0;i<number_of_chromosomes;i++){
-//		for(int ploidy = 0; ploidy < 2, ploidy++){}
-		last_pos = 0;
-		for(pos = genome[0][i].begin(); pos == genome[0][i].end(); pos++){
-			// if( last_pos ...){
-			prop++;
-			// }
-			last_pos = pos->first;
+	map<int, char>::const_iterator pos, next_pos;
+	for (int i=0; i<number_of_chromosomes; i++){
+		for (int ploidy = 0; ploidy < 2; ploidy++){
+			pos = genome[ploidy][i].begin();
+			next_pos = genome[ploidy][i].begin();
+			while (next_pos != genome[ploidy][i].end()){
+				if(pos->second == 'B'){
+					prop += ((next_pos->first - 1) / neutural_block_size) -
+							((pos->first - 1) / neutural_block_size);
+				}
+				pos = next_pos;
+				next_pos++;
+			}
+			if(next_pos->second == 'B'){
+				prop += ((loci - 1) / neutural_block_size) -
+						((next_pos->first - 1) / neutural_block_size);
+			}
 		}
-//		 if( last_pos ...){
-			prop++;
-//		 }
-
-		//prop += genome[1][i].countB(selected_loci);
 	}
 	prop = prop / (2 * selected_loci * number_of_chromosomes);
 	return prop;
