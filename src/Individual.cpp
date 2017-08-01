@@ -239,7 +239,7 @@ double Individual::getSelectedHybridIndex(){
 	int loci = genome[0][0].getResolution();
 	int neutural_block_size = 1 + ((loci - selected_loci) / (selected_loci - 1));
 	double prop = 0;
-	 cerr << "Block size : " << neutural_block_size << endl;
+	// cerr << "Block size : " << neutural_block_size << endl;
 
 	map<int, char>::const_iterator pos, next_pos;
 	for (int i=0; i<number_of_chromosomes; i++){

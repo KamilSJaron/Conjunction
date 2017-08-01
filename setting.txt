@@ -37,7 +37,7 @@ DELAY = 30                           # integer smaller than number of generation
 
 # World definition
 
-WORLDdefinition -quick = 'InfInf' 1
+WORLDdefinition -quick = 'HybridZone' 1
 # Predefined worlds: {'HybridZone';LowMigrationBazykin';'InfInf';'Arena'}
 
 # WORLDdefinition -standard = <dimension> <left_right_border> <columns> <up_down_border> <rows>

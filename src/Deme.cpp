@@ -208,13 +208,24 @@ double Deme::getProportionOfHeterozygotes() const{
 void Deme::getFitnessVector(vector<double> &fitnessVector){
 	double sum = 0, read_fitness = 0;
 	fitnessVector.reserve(deme_size);
-	for(int i = 0;i < deme_size;i++){
-		// getBprop > getHetProp ??
-		read_fitness = selection_model.getFitness(deme[i].getBprop());
-//		cout << " B prop: " << deme[i].getBprop() << " - fitness: " << read_fitness << endl;
-		sum += read_fitness;
-		fitnessVector.push_back(sum);
+	if(deme[0].getNumberOfLoci(0) == deme[0].getNumberOfSelectedLoci()){
+		for(int i = 0;i < deme_size;i++){
+			// getBprop > getHetProp ??
+			read_fitness = selection_model.getFitness(deme[i].getBprop());
+	//		cout << " B prop: " << deme[i].getBprop() << " - fitness: " << read_fitness << endl;
+			sum += read_fitness;
+			fitnessVector.push_back(sum);
+		}
+	} else {
+		for(int i = 0;i < deme_size;i++){
+			// getBprop > getHetProp ??
+			read_fitness = selection_model.getFitness(deme[i].getSelectedHybridIndex());
+	//		cout << " B prop: " << deme[i].getBprop() << " - fitness: " << read_fitness << endl;
+			sum += read_fitness;
+			fitnessVector.push_back(sum);
+		}
 	}
+
 	return;
 }
 
