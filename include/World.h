@@ -44,7 +44,9 @@ class World {
 		void setDimension(int dim);
 		void setNumberOfEdges(int nue);
 		void setSlectionBetaLambda(double s, double b, double l);
-		void setLociChromDeme(int l, int ch, int d);
+		void setLociSelLoci(int l, int L);
+		void setChromDeme(int ch, int d);
+
 		void restart(); // clear the space, creates a new one (2 columns, rows defined by user)
 		void clear();	// deletes all demes
 
@@ -78,7 +80,7 @@ class World {
 		std::string type_of_l_r_edges, type_of_u_d_edges; // defines the behavior of the l / r and u /d edges of HZ
 
 	//	parameters:	deme, individual, chromosome setting
-		int deme_size, number_of_chromosomes, number_of_loci;
+		int deme_size, number_of_chromosomes, number_of_loci, number_of_selected_loci;
 		double selection, beta, lambda;
 
 	//	internal

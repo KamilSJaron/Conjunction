@@ -3,6 +3,7 @@ CXXFLAGS = -std=c++11 -O3 -Wall -pedantic
 PRG = conjunction
 GIT_HEADER = include/gitversion.h
 CPP_FILES = $(wildcard src/[A-Z]*.cpp)
+TEST_FILES = $(wildcard test/[A-Z]*.cpp)
 CLASSES = $(patsubst %.cpp, %.o, $(CPP_FILES))
 OBJ = src/main.o $(CLASSES)
 INSTAL_PREFIX = /usr/local
@@ -34,7 +35,7 @@ test: conjunction_test
 	./$< && rm $< HI_multi_locus_l1_c1_n1_[12].tsv
 
 # testing binary recepie
-conjunction_test : test/conjunction_test.cpp $(CLASSES)
+conjunction_test : test/conjunction_test.cpp $(CLASSES) $(TEST_FILES)
 	$(CXX) $(CXXFLAGS) -o $@ $< $(CLASSES)
 
 # install Conjunciton to /usr/local/bin

@@ -38,7 +38,7 @@ class SettingHandler{
 
 		// simulation parameters
 
-		std::vector<int> loci, chrom, deme, gen;
+		std::vector<int> loci, selected_loci, chrom, deme, gen;
 		std::vector<double> sel, beta, lambda;
 
 		// capture output parameters

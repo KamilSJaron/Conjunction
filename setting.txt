@@ -16,7 +16,8 @@
 
 # Numerical parameters
 
-LOCI = [2, 4]                        # integer in {1,10000}
+LOCI = [40, 100]                        # integer in {1,10000}
+SELECTEDloci = [4, 10]
 NUMBERofCHROMOSOMES = 1              # integer in {1,21}
 LAMBDA = 1.53                        # real in {0,5}, recombination
 SELECTIONpressure = 0.42             # real in {0,1}
@@ -36,7 +37,7 @@ DELAY = 30                           # integer smaller than number of generation
 
 # World definition
 
-WORLDdefinition -quick = 'InfInf' 1
+WORLDdefinition -quick = 'HybridZone' 1
 # Predefined worlds: {'HybridZone';LowMigrationBazykin';'InfInf';'Arena'}
 
 # WORLDdefinition -standard = <dimension> <left_right_border> <columns> <up_down_border> <rows>

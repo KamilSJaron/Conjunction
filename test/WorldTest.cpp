@@ -29,8 +29,8 @@ int testWorld(){
 	}
 
 	world.setSlectionBetaLambda(0.1, 1, 1.5);
-	world.setLociChromDeme(16, 4, 64);
-
+	world.setLociSelLoci(16, 16);
+	world.setChromDeme(4, 64);
 //	world.listOfParameters();
 
 //	world.listOfDemes();

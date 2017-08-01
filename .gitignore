@@ -2,3 +2,4 @@
 conjunction
 conjunction_test
 include/gitversion.h
+test/data/blocks.tsv
