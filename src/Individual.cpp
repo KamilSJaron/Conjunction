@@ -36,10 +36,10 @@ Individual::Individual(){
 }
 
 Individual::Individual(	char origin, int input_ch, int input_loci,
-						double input_lamda){
+						double input_lamda, int input_selected_loci){
 	number_of_chromosomes = input_ch;
 	lambda = input_lamda;
-	selected_loci = -1;
+	selected_loci = input_selected_loci;
 
 	genome[0].reserve(number_of_chromosomes);
 	genome[1].reserve(number_of_chromosomes);
@@ -58,9 +58,9 @@ Individual::Individual(	char origin, int input_ch, int input_loci,
 
 Individual::Individual(	vector<Chromosome>& gamete1,
 						vector<Chromosome>& gamete2,
-						double input_lamda){
+						double input_lamda, int input_selected_loci){
 	number_of_chromosomes = gamete1.size();
-	selected_loci = -1;
+	selected_loci = input_selected_loci;
 	lambda = input_lamda;
 
 	genome[0].reserve(number_of_chromosomes);
@@ -239,27 +239,45 @@ double Individual::getSelectedHybridIndex(){
 	int loci = genome[0][0].getResolution();
 	int neutural_block_size = 1 + ((loci - selected_loci) / (selected_loci - 1));
 	double prop = 0;
+	 cerr << "Block size : " << neutural_block_size << endl;
 
 	map<int, char>::const_iterator pos, next_pos;
 	for (int i=0; i<number_of_chromosomes; i++){
 		for (int ploidy = 0; ploidy < 2; ploidy++){
+			// cerr << "ploidy : " << ploidy << " chromosome : " << i << endl;
+
 			pos = genome[ploidy][i].begin();
 			next_pos = genome[ploidy][i].begin();
+			next_pos++;
+			if(pos->second == 'B'){
+				prop++;
+			}
 			while (next_pos != genome[ploidy][i].end()){
+				// cerr << pos->second << " block : " << pos->first << " to " << next_pos->first << endl;
 				if(pos->second == 'B'){
+					// cerr << "adding "
+					// 	<< (((next_pos->first - 1) / neutural_block_size) -
+					// 	    ((pos->first - 1) / neutural_block_size))
+					// 	<< " to prop" << endl;
 					prop += ((next_pos->first - 1) / neutural_block_size) -
 							((pos->first - 1) / neutural_block_size);
 				}
 				pos = next_pos;
 				next_pos++;
 			}
-			if(next_pos->second == 'B'){
+			if(pos->second == 'B'){
+				// cerr << pos->second << " block : " << pos->first << " to " << loci << endl;
+				// cerr << "adding "
+				// 	<< (((loci - 1) / neutural_block_size) - ((pos->first - 1) / neutural_block_size))
+				// 	<< " to prop"  << endl;
 				prop += ((loci - 1) / neutural_block_size) -
-						((next_pos->first - 1) / neutural_block_size);
+						((pos->first - 1) / neutural_block_size);
 			}
 		}
 	}
+	// cerr << "B count: " << prop << endl;
 	prop = prop / (2 * selected_loci * number_of_chromosomes);
+	// cerr << "selected hybrid index : " << prop << endl;
 	return prop;
 }
 

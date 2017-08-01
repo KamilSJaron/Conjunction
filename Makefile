@@ -33,7 +33,7 @@ $(GIT_HEADER): .git/HEAD .git/COMMIT_EDITMSG
 # compile testing binary, run test and clean if everything succedes.
 .PHONY : test
 test: conjunction_test
-	./$< && rm $< HI_multi_locus_l1_c1_n1_[12].tsv
+	./$< && rm $< HI_multi_locus_l1_c1_n1_[12].tsv; rm -r conjunction_test.dSYM
 
 # testing binary recepie
 conjunction_test : test/conjunction_test.cpp $(CLASSES) $(TEST_FILES)

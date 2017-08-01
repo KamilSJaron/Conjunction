@@ -43,13 +43,13 @@ Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, dou
 	deme_size = size;
 	deme = new Individual[deme_size];
 	if(init == 'A' or init == 'B'){
-			Individual temp(init, in_ch, in_loc, in_lambda);
+			Individual temp(init, in_ch, in_loc, in_lambda, in_sel_loci);
 			for(int i=0;i<deme_size;i++){
 				deme[i] = temp;
 			}
 	} else {
-		Individual tempA('A', in_ch, in_loc, in_lambda);
-		Individual tempB('B', in_ch, in_loc, in_lambda);
+		Individual tempA('A', in_ch, in_loc, in_lambda, in_sel_loci);
+		Individual tempB('B', in_ch, in_loc, in_lambda, in_sel_loci);
 		int i = 0;
 		while(i< (deme_size / 2)){
 			deme[i] = tempA;
@@ -99,6 +99,7 @@ int Deme::getDemeSize(){
 
 void Deme::Breed(){
 	double lambda = deme[0].getLambda();
+	int sel_loci = deme[0].getNumberOfSelectedLoci();
 	vector<double> fitnessVector;
 	vector<Chromosome> gamete1, gamete2;
 	getFitnessVector(fitnessVector);
@@ -146,7 +147,7 @@ void Deme::Breed(){
 	for(int i=0;i<deme_size;i++){
 		deme[mothers[i]].makeGamete(gamete1);
 		deme[fathers[i]].makeGamete(gamete2);
-		metademe[i] = Individual(gamete1,gamete2,lambda);
+		metademe[i] = Individual(gamete1, gamete2, lambda, sel_loci);
 	}
 
 	for(int i=0;i<deme_size;i++){
