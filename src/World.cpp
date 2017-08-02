@@ -449,8 +449,11 @@ void World::listOfNumericalParameters(std::ostream& stream) const{
 	stream << "# Selection: " << selection << endl
 	<< "# Lambda: " << lambda << endl
 	<< "# Beta: " << beta << endl
-	<< "# Loci: " << number_of_loci << endl
-	<< "# Chromosomes: " << number_of_chromosomes << endl;
+	<< "# Loci: " << number_of_loci << endl;
+	if(number_of_selected_loci != number_of_loci){
+		stream << "# Selected loci : " << number_of_selected_loci << endl;
+	}
+	stream << "# Chromosomes: " << number_of_chromosomes << endl;
 	if(dimension == 0){
 		stream << "# Migrants per generation: ";
 	} else {

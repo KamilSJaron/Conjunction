@@ -47,6 +47,10 @@ SettingHandler::SettingHandler(string filename) {
 	}
 }
 
+/* 	getSimualtionSetting is a lazy loader of settings, all the parameters are read from the vector parameters_in_order
+	TODO make an explicit test for having all the values defined
+	TODO (i.e. length of parameters_in_order == number of parameters for every simulation).
+*/
 SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) const{
 	SimulationSetting mySetting;
 	int number_of_parsed_simulations = 1; // 1 * parameters_numbers[i] for all i
@@ -56,7 +60,8 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) con
 //	cerr << "file_name_patten " << file_name_patten << endl;
 
 	for(unsigned int parameter_index = 0; parameter_index < parameters_in_order.size(); parameter_index++){
-		//cerr << "parameters_in_order " << parameters_in_order[parameter_index] << endl;
+		// cerr	<< "parameters_in_order " << parameters_in_order[parameter_index] << '\t'
+		// 		<< "parameters_numbers " << parameters_numbers[parameter_index] << endl;
 		refactorised_index = simulation_index % (number_of_parsed_simulations * parameters_numbers[parameter_index]);
 		refactorised_index = (refactorised_index - (refactorised_index % number_of_parsed_simulations)) / number_of_parsed_simulations;
 
@@ -80,8 +85,6 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) con
 		adjustFileName(file_to_save, 'n', replicates, refactorised_index);
 	}
 
-
-
 //	cerr << file_to_save << endl;
 
 	mySetting.file_to_save = file_to_save;
@@ -94,7 +97,6 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) con
 
 	mySetting.type_of_updown_edges = type_of_updown_edges;
 	mySetting.type_of_leftright_edges = type_of_leftright_edges;
-
 
 	return mySetting;
 }
@@ -571,7 +573,11 @@ char SettingHandler::setParameterOfSetting(SimulationSetting& mySetting, std::st
 		return 'l';
 	}
 	if(parameter == "SELECTEDloci"){
-		mySetting.selected_loci = selected_loci[index];
+		if(selected_loci[0] == 0){
+			mySetting.selected_loci = loci[index];
+		} else {
+			mySetting.selected_loci = selected_loci[index];
+		}
 		return 'L';
 	}
 	if(parameter == "NUMBERofCHROMOSOMES"){
@@ -707,21 +713,40 @@ bool SettingHandler::checkParameters(){
 		cerr << "The number of loci per chromosome was not set.\n";
 		return 1;
 	}
+
 //	for(unsigned int i = 0; i < loci.size(); i++){
 //		if(loci[i] == -1){
 //
 //			return 1;
 //		}
 //	}
-	if(selected_loci.size() == 0){
-		cerr << "The number of selected loci per chromosome was not set.\n";
-		return 1;
+
+	for(unsigned int i = 0; i < selected_loci.size(); i++){
+		if(selected_loci[i] == 0){
+			if(selected_loci.size() > 1){
+				cerr << "If selected loci parameter is set to 0 it is expected to be only one value only\n";
+				cerr << "Is selected loci are set to 0, all the loci are selected\n";
+				return 1;
+			}
+		} else {
+			for(unsigned int i = 0; i < loci.size(); i++){
+				if( ((loci[i] - selected_loci[i]) % (selected_loci[i] - 1)) != 0){
+					cerr 	<< "Values of loci (" << loci[i]
+							<< ") and selected loci (" << selected_loci[i]
+							<< ") are incompatible\n" << endl;
+					cerr	<< "(loci - selected_loci) % (selected_loci - 1)\n" << endl;
+					cerr	<< "has to be equal to 0" << endl;
+					return 1;
+				}
+			}
+		}
 	}
 
 	if(sel.size() == 0){
 		cerr << "The selection pressure was not set.\n";
 		return 1;
 	}
+
 //	for(unsigned int i = 0; i < sel.size(); i++){
 //		if(sel[i] == -1){
 //			return 1;
@@ -813,16 +838,22 @@ void SettingHandler::fillDefault(){
 
 	if(delay.empty()){
 		delay.push_back(0);
+		parameters_in_order.push_back("DELAY");
+		parameters_numbers.push_back(1);
 	}
 
 	if(selected_loci.empty()){
 		cerr << "Assuming all loci under selection.\n";
-		selected_loci.push_back(-1);
+		selected_loci.push_back(0);
+		parameters_in_order.push_back("SELECTEDloci");
+		parameters_numbers.push_back(1);
 	}
 
-	if(selected_loci.empty()){
+	if(beta.empty()){
 		cerr << "Assuming no epistatic interaction (BETA = 1).\n";
 		beta.push_back(1);
+		parameters_in_order.push_back("BETA");
+		parameters_numbers.push_back(1);
 	}
 
 	updateNumberOfSimulations();
