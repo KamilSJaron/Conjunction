@@ -81,11 +81,13 @@ SimulationSetting SettingHandler::getSimualtionSetting(int simulation_index) con
 	mySetting.seed = seed[simulation_index];
 
 	if(replicates > 1){
-		refactorised_index = (simulation_index % replicates);
+		// number_of_simulations / replicates corresponds to size of replicated block
+		// simulation_index / size of block (integer division) give index of replicate
+		refactorised_index = (simulation_index / (number_of_simulations / replicates));
 		adjustFileName(file_to_save, 'n', replicates, refactorised_index);
 	}
 
-//	cerr << file_to_save << endl;
+	// cerr << "File to save: " << file_to_save << endl;
 
 	mySetting.file_to_save = file_to_save;
 	mySetting.type_of_save = type_of_save;
