@@ -723,6 +723,7 @@ bool SettingHandler::checkParameters(){
 //		}
 //	}
 
+	int neutral_block_size = 0;
 	for(unsigned int i = 0; i < selected_loci.size(); i++){
 		if(selected_loci[i] == 0){
 			if(selected_loci.size() > 1){
@@ -731,13 +732,15 @@ bool SettingHandler::checkParameters(){
 				return 1;
 			}
 		} else {
-			for(unsigned int i = 0; i < loci.size(); i++){
-				if( ((loci[i] - selected_loci[i]) % (selected_loci[i] - 1)) != 0){
-					cerr 	<< "Values of loci (" << loci[i]
+			for(unsigned int j = 0; j < loci.size(); j++){
+				neutral_block_size = (loci[j] - selected_loci[i]) % (selected_loci[i] - 1);
+				if(neutral_block_size != 0){
+					cerr 	<< "Values of loci (" << loci[j]
 							<< ") and selected loci (" << selected_loci[i]
-							<< ") are incompatible\n" << endl;
-					cerr	<< "(loci - selected_loci) % (selected_loci - 1)\n" << endl;
-					cerr	<< "has to be equal to 0" << endl;
+							<< ") are incompatible" << endl;
+					cerr	<< "\t(loci - selected_loci) % (selected_loci - 1)" << endl;
+					cerr	<< "\thas to be equal to 0, but in this case..." << endl;
+					cerr	<< "\t(" << loci[j] << " - " << selected_loci[i] << ") % (" << selected_loci[i] << " - 1) = " << neutral_block_size << endl;
 					return 1;
 				}
 			}
