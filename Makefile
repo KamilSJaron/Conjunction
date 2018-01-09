@@ -6,7 +6,9 @@ CPP_FILES = $(wildcard src/[A-Z]*.cpp)
 TEST_FILES = $(wildcard test/[A-Z]*.cpp)
 CLASSES = $(patsubst %.cpp, %.o, $(CPP_FILES))
 OBJ = src/main.o $(CLASSES)
-INSTAL_PREFIX = /usr/local
+ifndef INSTAL_PREFIX
+    INSTAL_PREFIX = /usr/local
+endif
 
 .PHONY: all
 all: $(PRG)

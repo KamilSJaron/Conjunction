@@ -21,7 +21,19 @@ enter the folder and build Conjunction by
 cd Conjunction && make
 ```
 
-The fully operational exectutible `conjunction` should be created and prepared for use.
+The fully operational executable `conjunction` should be created and prepared for use. You can install `conjunction` to by
+
+```
+make install
+```
+
+which will copy the binary to `/usr/local/bin`. If you wist to install `conjunction` to an alternative place you can type
+
+```
+make install INSTAL_PREFIX=/home/slim/
+```
+
+and it will be installed in provided path/bin. In my example `/home/slim/bin`.
 
 #### Testing
 
