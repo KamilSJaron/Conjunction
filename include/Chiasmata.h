@@ -14,6 +14,7 @@ class Chiasmata
 		int get(int index) const;
 		void set(std::vector<int> input_chiasmata);
 		void add(int chiasma);
+		std::string collapse() const;
 
 	protected:
 		std::vector <int> chiasmata;

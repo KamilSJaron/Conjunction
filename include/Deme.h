@@ -42,6 +42,7 @@ class Deme
 		void showDeme();
 		void streamSummary(std::ostream& stream);
 		void streamBlocks(std::ostream& stream);
+		void streamChiasmata(std::ostream& stream);
 		void streamHIs(std::ostream& stream) const;
 		void streamJunctions(std::ostream& stream) const;
 		void streamHeterozygocity(std::ostream& stream) const;
@@ -54,7 +55,7 @@ class Deme
 		int pickAnIndividual();
 		static int sum(std::vector<bool>& ve);
 		template<typename T>
-		int streamLine(std::ostream& stream, int index, std::vector<T>& vec) const;
+		int streamLine(std::ostream& stream, std::vector<T>& vec) const;
 		double roundForPrint(double number) const;
 
 		Individual *deme; // farme of individuals

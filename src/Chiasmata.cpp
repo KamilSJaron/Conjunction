@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <vector>
+#include <string>
 #include <iostream>
 
 #include "../include/Chiasmata.h"
@@ -54,4 +55,19 @@ void Chiasmata::set(std::vector<int> input_chiasmata){
 void Chiasmata::add(int chiasma){
 	chiasmata.push_back(chiasma);
 	sort(chiasmata.begin(), chiasmata.end());
+}
+
+std::string Chiasmata::collapse() const{
+	if( length() == 0){
+		return "~";
+	}
+	string collapsed = "";
+	for(unsigned int chiasma = 0; chiasma < length(); chiasma++){
+		if(collapsed == ""){
+			collapsed = to_string(chiasmata[chiasma]);
+		} else {
+			collapsed = collapsed + "," + to_string(chiasmata[chiasma]);
+		}
+	}
+	return collapsed;
 }

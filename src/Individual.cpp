@@ -59,11 +59,11 @@ Individual::Individual(	char origin, int input_ch, int input_loci,
 Individual::Individual(	std::vector<Chromosome>& gamete1, std::vector<Chiasmata>& chaiasmata1,
 						std::vector<Chromosome>& gamete2, std::vector<Chiasmata>& chaiasmata2,
 						double input_lamda, int input_selected_loci,
-						int input_birthdeme, int input_babynumber){
+						int input_birthdeme, int input_birthindex){
 	number_of_chromosomes = gamete1.size();
 	selected_loci = input_selected_loci;
 	lambda = input_lamda;
-	babynumber = input_babynumber;
+	birthindex = input_birthindex;
 	birthdeme = input_birthdeme;
 
 	genome[0].reserve(number_of_chromosomes);
@@ -454,6 +454,13 @@ void Individual::setLambda(double Rr){
 	lambda = Rr;
 }
 
+void Individual::setParents(int in_mum_birthdeme, int in_mum_birthindex, int in_dad_birthdeme, int in_dad_birthindex){
+	mum_birthdeme = in_mum_birthdeme;
+	mum_birthindex = in_mum_birthindex;
+	dad_birthdeme = in_dad_birthdeme;
+	dad_birthindex = in_dad_birthindex;
+}
+
 int Individual::getNumberOfChromosomes() const{
 	return number_of_chromosomes;
 }
@@ -490,6 +497,40 @@ void Individual::getGenotype(std::vector<std::string>& hapl) const{
 			hapl.push_back(collapseBlocks(blocks));
 		}
 	}
+}
+
+void Individual::getChiasmata(std::vector<std::string>& rec) const{
+	rec.clear();
+	rec.reserve(number_of_chromosomes*2);
+	for(int chrom = 0; chrom < number_of_chromosomes; chrom++){
+		for(int ploidy = 0; ploidy < 2; ploidy++){
+			rec.push_back(chiasmata[ploidy][chrom].collapse());
+		}
+	}
+}
+
+int Individual::getBirtheme() const {
+	return birthdeme;
+}
+
+int Individual::getBirthindex() const {
+	return birthindex;
+}
+
+int Individual::getMumBirtheme() const {
+	return mum_birthdeme;
+}
+
+int Individual::getMumBirthindex() const {
+	return mum_birthindex;
+}
+
+int Individual::getDadBirtheme() const {
+	return dad_birthdeme;
+}
+
+int Individual::getDadBirthindex() const {
+	return dad_birthindex;
 }
 
 /* PRIVATE */

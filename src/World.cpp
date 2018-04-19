@@ -606,6 +606,11 @@ int World::SaveTheUniverse(string type, string filename){
 		return_value = saveBlocks(ofile);
 	}
 
+	// for all dims, similar to blocks
+	if(type == "backtrace"){
+		return_value = saveBacktrace(ofile);
+	}
+
 	ofile.close();
 	return return_value;
 }
@@ -799,6 +804,9 @@ int World::saveLinesPerDeme(ostream& stream, string type){
 			if(type == "blocks"){
 				world[deme_to_print]->streamBlocks(stream);
 			}
+			if(type == "backtrace"){
+				world[deme_to_print]->streamChiasmata(stream);
+			}
 			if(type == "hybridIndices" or type == "hybridIndicesJunctions" or type == "complete"){
 				world[deme_to_print]->streamHIs(stream);
 			}
@@ -867,6 +875,23 @@ int World::saveBlocks(ofstream& ofile){
 		}
 		ofile << endl;
 		saveLinesPerDeme(ofile, "blocks");
+	}
+	ofile.close();
+	return 0;
+}
+
+int World::saveBacktrace(ofstream& ofile){
+	if(dimension == 0){
+		cerr << "ERROR : not implemented for 0D simulations. If you wish to have this functionality open an issue on https://github.com/KamilSJaron/Conjunction with tag feature_request.\n";
+		exit(1);
+	} else {
+		// PRINT HEADERS DEME_INDEX CH1h1 CH1h2 ...
+		ofile << "DEME_IND\tDEME_IND_h0\tDEME_IND_h1";
+		for(int ch = 0; ch < number_of_chromosomes; ch++){
+			ofile << "\tC" << ch+1 << "h0\tC" << ch+1 << "h1";
+		}
+		ofile << endl;
+		saveLinesPerDeme(ofile, "backtrace");
 	}
 	ofile.close();
 	return 0;

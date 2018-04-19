@@ -150,6 +150,10 @@ void Deme::Breed(){
 		deme[mothers[i]].makeGamete(gamete1, chiasmata1);
 		deme[fathers[i]].makeGamete(gamete2, chiasmata2);
 		metademe[i] = Individual(gamete1, chiasmata1, gamete2, chiasmata2, lambda, sel_loci, index, i);
+		metademe[i].setParents(deme[mothers[i]].getBirtheme(),
+							   deme[mothers[i]].getBirthindex(),
+							   deme[fathers[i]].getBirtheme(),
+							   deme[fathers[i]].getBirthindex());
 	}
 
 	for(int i=0;i<deme_size;i++){
@@ -389,7 +393,26 @@ void Deme::streamBlocks(ostream& stream){
 	vector<string> block_sizes;
 	for(int ind_index = 0; ind_index < deme_size; ind_index++){
 		deme[ind_index].getGenotype(block_sizes);
-		streamLine(stream,index,block_sizes);
+		stream << index << '\t';
+		streamLine(stream,block_sizes);
+	}
+}
+
+void Deme::streamChiasmata(ostream& stream){
+	int birthindex, birthdeme, mum_birthdeme, mum_birthindex, dad_birthdeme, dad_birthindex;
+	vector<string> recombination_events;
+	for(int ind_index = 0; ind_index < deme_size; ind_index++){
+		birthindex = deme[ind_index].getBirtheme();
+		birthdeme = deme[ind_index].getBirthindex();
+		mum_birthdeme = deme[ind_index].getMumBirtheme();
+		mum_birthindex = deme[ind_index].getMumBirthindex();
+		dad_birthdeme = deme[ind_index].getDadBirtheme();
+		dad_birthindex = deme[ind_index].getDadBirthindex();
+		deme[ind_index].getChiasmata(recombination_events);
+		stream << birthindex << ',' << birthdeme << '\t';
+		stream << mum_birthdeme << ',' << mum_birthindex << '\t';
+		stream << dad_birthdeme << ',' << dad_birthindex << '\t';
+		streamLine(stream,recombination_events);
 	}
 }
 
@@ -400,7 +423,8 @@ void Deme::streamHIs(std::ostream& stream) const{
 	for(int i = 0;i < deme_size;i++){
 		HIs.push_back(deme[i].getBprop());
 	}
-	streamLine(stream, index, HIs);
+	stream << index << '\t';
+	streamLine(stream, HIs);
 	return;
 }
 
@@ -411,7 +435,8 @@ void Deme::streamJunctions(std::ostream& stream) const{
 	for(int i = 0;i < deme_size;i++){
 		juncs.push_back(deme[i].getNumberOfJunctions());
 	}
-	streamLine(stream, index, juncs);
+	stream << index << '\t';
+	streamLine(stream, juncs);
 	return;
 }
 
@@ -422,7 +447,8 @@ void Deme::streamHeterozygocity(std::ostream& stream) const{
 	for(int i = 0;i < deme_size;i++){
 		heterozs.push_back(deme[i].getHetProp());
 	}
-	streamLine(stream, index, heterozs);
+	stream << index << '\t';
+	streamLine(stream, heterozs);
 	return;
 }
 
@@ -463,8 +489,7 @@ int Deme::sum(vector<bool>& ve){
 
 // CURENTLY DUPLICIT IN WORLD (as save_line)
 template<typename T>
-int Deme::streamLine(ostream& stream, int index, vector<T>& vec) const{
-	stream << index << '\t';
+int Deme::streamLine(ostream& stream, vector<T>& vec) const{
 	for(unsigned int ind = 0; ind < vec.size(); ind++){
 		stream << vec[ind] << '\t';
 	}
