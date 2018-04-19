@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 
 #include "../include/RandomGenerators.h"
+#include "../include/Chiasmata.h"
 #include "../include/Chromosome.h"
 #include "../include/Individual.h"
 #include "../include/SelectionModel.h"
@@ -102,6 +103,7 @@ void Deme::Breed(){
 	int sel_loci = deme[0].getNumberOfSelectedLoci();
 	vector<double> fitnessVector;
 	vector<Chromosome> gamete1, gamete2;
+	vector<Chiasmata> chiasmata1, chiasmata2;
 	getFitnessVector(fitnessVector);
 
 	// for(unsigned int i = 0; i < fitnessVector.size(); i++){
@@ -145,9 +147,9 @@ void Deme::Breed(){
 
 	Individual *metademe = new Individual[deme_size];
 	for(int i=0;i<deme_size;i++){
-		deme[mothers[i]].makeGamete(gamete1);
-		deme[fathers[i]].makeGamete(gamete2);
-		metademe[i] = Individual(gamete1, gamete2, lambda, sel_loci);
+		deme[mothers[i]].makeGamete(gamete1, chiasmata1);
+		deme[fathers[i]].makeGamete(gamete2, chiasmata2);
+		metademe[i] = Individual(gamete1, chiasmata1, gamete2, chiasmata2, lambda, sel_loci, index, i);
 	}
 
 	for(int i=0;i<deme_size;i++){

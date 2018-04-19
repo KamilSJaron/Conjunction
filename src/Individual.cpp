@@ -152,10 +152,10 @@ void Individual::makeGamete(vector<Chromosome>& gamete, vector<Chiasmata>& chias
 
 		chiasmata.push_back(Chiasmata(local_chiasmata));
 
+// I think that given the code above we could replace starts_by by 0 in both expressions bellow
 		if(local_chiasmata[0] != 0){
 			recombinant_ch.write(0,genome[starts_by][i].read(0));
 		} else {
-			std::cerr << "Unexpected place... just saying. Check it please (Individual/dealing with starts_by = 1 -> undexpected)\n";
 			recombinant_ch.write(0,genome[(starts_by + 1) % 2][i].read(0));
 		}
 		pos1++;
