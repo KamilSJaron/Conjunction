@@ -1,6 +1,8 @@
 #ifndef INDIVIDUAL_H
 #define INDIVIDUAL_H
 
+#include "../include/Chiasmata.h"
+
 class Individual
 {
 	public:
@@ -10,12 +12,16 @@ class Individual
 		Individual(	std::vector<Chromosome>& gamete1,
 					std::vector<Chromosome>& gamete2,
 					double input_lamda, int input_selected_loci); /*init Individual by gametes on imput */
+		Individual(	std::vector<Chromosome>& gamete1, std::vector<Chiasmata>& chaiasmata1,
+					std::vector<Chromosome>& gamete2, std::vector<Chiasmata>& chaiasmata2,
+					double input_lamda, int input_selected_loci,
+					int input_birthdeme, int input_babynumber); /*init Individual by gametes on imput */
 		~Individual(); /* destructor */
 
 /* COMPUTIONG METHODS */
 		void replace_chromozome(int set, int position,std::map <int, char> input_chrom, int size);
 		int getChiasma();
-		void makeGamete(std::vector<Chromosome>& gamete);
+		void makeGamete(std::vector<Chromosome>& gamete, std::vector<Chiasmata>& chiasmata);
 		int getBcount() const;
 		double getBprop() const;
 		double getSelectedHybridIndex();
@@ -44,8 +50,10 @@ class Individual
 	private:
 	/*data*/
 		std::vector<Chromosome> genome[2];
+		std::vector<Chiasmata> chiasmata[2];
 		int number_of_chromosomes, selected_loci;
 		double lambda;
+		int birthdeme, babynumber; // deme index and individual index where he has born
 
 	/*inner functions*/
 		int getOneChromeHetero(bool write, std::map<int, char>::const_iterator& pos, int chromosome, int last_pos);
