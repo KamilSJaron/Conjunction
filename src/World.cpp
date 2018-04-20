@@ -825,6 +825,11 @@ int World::saveLinesPerDeme(ostream& stream, string type){
 		}
 		comlumn_to_print = next_column;
 	}
+
+	if(type == "backtrace"){
+		// # generation 1, individuals = 1536
+		stream << "# individuals = " << number_of_demes_l_r * number_of_demes_u_d * deme_size << endl;
+	}
 	return 0;
 }
 

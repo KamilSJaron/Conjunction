@@ -33,6 +33,8 @@ Individual::Individual(){
 	number_of_chromosomes = -1;
 	lambda = -1;
 	selected_loci = -1;
+	birthdeme = -1;
+	birthindex = -1;
 }
 
 Individual::Individual(	char origin, int input_ch, int input_loci,
@@ -54,6 +56,8 @@ Individual::Individual(	char origin, int input_ch, int input_loci,
 			genome[1].push_back(Chromosome('B', input_loci));
 		}
 	}
+	birthdeme = -1;
+	birthindex = -1;
 }
 
 Individual::Individual(	std::vector<Chromosome>& gamete1, std::vector<Chiasmata>& chaiasmata1,
