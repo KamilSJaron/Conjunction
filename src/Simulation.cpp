@@ -45,17 +45,20 @@ Simulation::Simulation(SimulationSetting& simulation_setting) {
 }
 
 int Simulation::simulate(){
+	int save_pos = -1;
 
-	if(saves >= 10){
-		file_name = file_name + "_0*.tsv";
-	} else {
-		if(saves > 1 and saves < 10){
-			file_name = file_name + "_*.tsv";
+	if(file_type != "backtrace"){
+		if(saves >= 10){
+			file_name = file_name + "_0*";
 		} else {
-			file_name = file_name + ".tsv";
+			if(saves > 1 and saves < 10){
+				file_name = file_name + "_*";
+			}
 		}
+		save_pos = file_name.find('*');
 	}
-	int save_pos = file_name.find('*');
+
+	file_name = file_name + ".tsv";
 
 	if(saves > 0){ // no saves means no saves
 		if(file_name[0] != '_' and file_name[0] != '.'){ // non specified name means no saves
@@ -149,7 +152,13 @@ int Simulation::saveWorld(int order, int save_pos){
 	// always print summary to std out
 	if(file_type != "raspberrypi"){
 		world.summary(std::cout);
-		cerr << "Saving output to: " << file_name << endl;
+		if(saves >= 1 || file_type == "backtrace"){
+			cerr << "Saving output to: " << file_name << endl;
+		}
+	}
+
+	if (file_type == "backtrace"){
+		return world.SaveTheUniverse(file_type, file_name);
 	}
 	// only if number of saves and name of outfile are specified
 	if(saves >= 1 and file_name[0] != '.' and file_name[0] != '_'){

@@ -585,12 +585,20 @@ int World::SaveTheUniverse(string type, string filename){
 	}
 
 	ofstream ofile;
-	ofile.open(filename); // Opens file
+	int return_value = 1;
+
+	// for all dims, similar to blocks
+	if(type == "backtrace"){
+		ofile.open(filename, ios_base::app); // Opens file
+		return_value = saveBacktrace(ofile);
+	} else {
+		ofile.open(filename); // Opens file
+	}
+
 	if (ofile.fail()){
 		return 1;
 	}
 
-	int return_value = 1;
 	// for all dims; if one desires to save std out to separated files instead of one stream
 	if(type == "summary"){
 		return_value = summary(ofile);
@@ -604,11 +612,6 @@ int World::SaveTheUniverse(string type, string filename){
 	// for all dims
 	if(type == "blocks"){
 		return_value = saveBlocks(ofile);
-	}
-
-	// for all dims, similar to blocks
-	if(type == "backtrace"){
-		return_value = saveBacktrace(ofile);
 	}
 
 	ofile.close();
@@ -793,6 +796,7 @@ int World::saveLinesPerDeme(ostream& stream, string type){
 	int comlumn_to_print = index_last_left;
 	int deme_to_print = -1;
 	int next_column = -1;
+	int total_columns = 0;
 	// iterates through columns
 	while(comlumn_to_print != index_next_right){
 		// iterate thought rows
@@ -824,11 +828,12 @@ int World::saveLinesPerDeme(ostream& stream, string type){
 			break;
 		}
 		comlumn_to_print = next_column;
+		total_columns++;
 	}
 
 	if(type == "backtrace"){
 		// # generation 1, individuals = 1536
-		stream << "# individuals = " << number_of_demes_l_r * number_of_demes_u_d * deme_size << endl;
+		stream << "# individuals = " << total_columns * number_of_demes_u_d * deme_size << endl;
 	}
 	return 0;
 }
