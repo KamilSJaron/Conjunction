@@ -38,7 +38,9 @@ using namespace std;
 // constructor/destructors functions / //
 // // // // // // // // // // // // // //
 
-Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loci, double in_lambda){
+Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loci, double in_lambda, int in_x, int in_y){
+	x = in_x;
+	y = in_y;
 	index = ind;
 	neigbours = neigb;
 	deme_size = size;
@@ -92,6 +94,14 @@ void Deme::setDemeSize(int size){
 
 int Deme::getDemeSize(){
 	return deme_size;
+}
+
+int Deme::getX(){
+	return x;
+}
+
+int Deme::getY(){
+	return y;
 }
 
 // // // // // // // // // // // // // //
@@ -367,6 +377,10 @@ void Deme::streamSummary(ostream& stream){
 	stream << setw(5) << right << index << ":  ";
 	for(int i = 0; i < neigbsize; i++){
 		stream << setw(5) << left << neigbours[i] << " ";
+	}
+	stream << setw(6) << left << x;
+	if(neigbours.size() > 2){
+		stream << setw(6) << left << y;
 	}
 	stream << setw(12) << left << roundForPrint(getMeanFitness())
 	<< setw(12) << left << roundForPrint(getProportionOfHeterozygotes())

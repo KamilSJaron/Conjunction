@@ -62,6 +62,7 @@ World::World() {
 
 void World::basicUnitCreator(char type, char init){
 	int max_index = world.size();
+	int x_coordinate = 0;
 	vector<int> new_indexes;
 	int index;
 // 	1D world definition
@@ -79,13 +80,14 @@ void World::basicUnitCreator(char type, char init){
 				} else {
 					new_indexes.push_back(index_next_right);
 				}
-				world[0] = new Deme(0,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
+				world[0] = new Deme(0,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, 0);
 				break;
 			case 'l':
 				new_indexes.clear();
 				new_indexes.push_back(max_index + 2);
 				new_indexes.push_back(index_last_left);
-				world[index_next_left] = new Deme(index_next_left,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
+				x_coordinate = world[index_last_left]->getX() - 1;
+				world[index_next_left] = new Deme(index_next_left,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, 0);
 				index_last_left = index_next_left;
 				index_next_left = max_index + 2;
 				break;
@@ -116,8 +118,8 @@ void World::basicUnitCreator(char type, char init){
 						new_indexes.push_back(max_index + 2);
 					}
 				}
-
-				world[index_next_right] = new Deme(index_next_right,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
+				x_coordinate = world[index_last_right]->getX() + 1;
+				world[index_next_right] = new Deme(index_next_right,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, 0);
 				index_last_right = index_next_right;
 				index_next_right = max_index + 2;
 				break;
@@ -139,32 +141,34 @@ void World::basicUnitCreator(char type, char init){
 				new_indexes.push_back(i + number_of_demes_u_d * 2);
 				new_indexes.push_back(upperBorder(i,max_index));
 				new_indexes.push_back(lowerBorder(i,max_index));
-				world[i] = new Deme(i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
+				world[i] = new Deme(i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, 0, i);
 			}
 			break;
 		case 'l':
 			index = index_next_left;
 			index_next_left = max_index + 2 * number_of_demes_u_d;
+			x_coordinate = world[index_last_left]->getX() - 1;
 			for(int i=0;i<number_of_demes_u_d;i++){
 				new_indexes.clear();
 				new_indexes.push_back(sideBorder(index + i,index_next_left + i));
 				new_indexes.push_back(index_last_left + i);
 				new_indexes.push_back(upperBorder(index + i,index));
 				new_indexes.push_back(lowerBorder(index + i,index));
-				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
+				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, i);
 			}
 			index_last_left = index;
 			break;
 		case 'r':
 			index = index_next_right;
 			index_next_right = max_index + 2 * number_of_demes_u_d;
+			x_coordinate = world[index_last_right]->getX() + 1;
 			for(int i=0;i<number_of_demes_u_d;i++){
 				new_indexes.clear();
 				new_indexes.push_back(index_last_right + i);
 				new_indexes.push_back(sideBorder(index + i,index_next_right + i));
 				new_indexes.push_back(upperBorder(index + i,index));
 				new_indexes.push_back(lowerBorder(index + i,index));
-				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda);
+				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, i);
 			}
 			index_last_right = index;
 			break;
@@ -508,6 +512,10 @@ int World::summary(ostream& stream){
 		if(dimension == 2){
 			stream << setw(6) << left << "UP"
 			<< setw(6) << left << "DOWN";
+		}
+		stream << setw(6) << left << "X";
+		if(dimension == 2){
+			stream << setw(6) << left << "Y";
 		}
 		stream << setw(12) << left << "meanf"
 		<< setw(12) << left << "f(heter)"
