@@ -33,8 +33,6 @@ Individual::Individual(){
 	number_of_chromosomes = -1;
 	lambda = -1;
 	selected_loci = -1;
-	birthdeme = -1;
-	birthindex = -1;
 }
 
 Individual::Individual(	char origin, int input_ch, int input_loci,
@@ -56,19 +54,17 @@ Individual::Individual(	char origin, int input_ch, int input_loci,
 			genome[1].push_back(Chromosome('B', input_loci));
 		}
 	}
-	birthdeme = -1;
-	birthindex = -1;
+	birthplace = std::tuple<int, int, int>(-1, -1, -1);
 }
 
 Individual::Individual(	std::vector<Chromosome>& gamete1, std::vector<Chiasmata>& chaiasmata1,
 						std::vector<Chromosome>& gamete2, std::vector<Chiasmata>& chaiasmata2,
 						double input_lamda, int input_selected_loci,
-						int input_birthdeme, int input_birthindex){
+						std::tuple<int, int, int> ind_birthplace){
 	number_of_chromosomes = gamete1.size();
 	selected_loci = input_selected_loci;
 	lambda = input_lamda;
-	birthindex = input_birthindex;
-	birthdeme = input_birthdeme;
+	birthplace = ind_birthplace;
 
 	genome[0].reserve(number_of_chromosomes);
 	genome[1].reserve(number_of_chromosomes);
@@ -458,11 +454,9 @@ void Individual::setLambda(double Rr){
 	lambda = Rr;
 }
 
-void Individual::setParents(int in_mum_birthdeme, int in_mum_birthindex, int in_dad_birthdeme, int in_dad_birthindex){
-	mum_birthdeme = in_mum_birthdeme;
-	mum_birthindex = in_mum_birthindex;
-	dad_birthdeme = in_dad_birthdeme;
-	dad_birthindex = in_dad_birthindex;
+void Individual::setParents(std::tuple<int,int,int> in_mum, std::tuple<int,int,int> in_dad){
+	mum = in_mum;
+	dad = in_dad;
 }
 
 int Individual::getNumberOfChromosomes() const{
@@ -513,30 +507,17 @@ void Individual::getChiasmata(std::vector<std::string>& rec) const{
 	}
 }
 
-int Individual::getBirtheme() const {
-	return birthdeme;
+std::tuple<int,int,int> Individual::getBirthplace() const {
+	return birthplace;
 }
 
-int Individual::getBirthindex() const {
-	return birthindex;
+std::tuple<int,int,int> Individual::getMum() const {
+	return mum;
 }
 
-int Individual::getMumBirtheme() const {
-	return mum_birthdeme;
+std::tuple<int,int,int> Individual::getDad() const {
+	return dad;
 }
-
-int Individual::getMumBirthindex() const {
-	return mum_birthindex;
-}
-
-int Individual::getDadBirtheme() const {
-	return dad_birthdeme;
-}
-
-int Individual::getDadBirthindex() const {
-	return dad_birthindex;
-}
-
 /* PRIVATE */
 
 int Individual::getOneChromeHetero(bool write, map<int, char>::const_iterator& pos, int chromosome, int last_pos){

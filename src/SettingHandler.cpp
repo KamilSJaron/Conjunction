@@ -404,7 +404,7 @@ int SettingHandler::parseWorldDefinition(string& line){
 					return 0;
 				}
 				cerr << "Error: Unknown pre-defined world " << type << endl;
-				exit (EXIT_FAILURE);
+				throw "missing informaiton in setting!";
 			}
 		}
 

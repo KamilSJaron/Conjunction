@@ -15,7 +15,7 @@ class Individual
 		Individual(	std::vector<Chromosome>& gamete1, std::vector<Chiasmata>& chaiasmata1,
 					std::vector<Chromosome>& gamete2, std::vector<Chiasmata>& chaiasmata2,
 					double input_lamda, int input_selected_loci,
-					int input_birthdeme, int input_birthindex); /*init Individual by gametes on imput */
+					std::tuple<int, int, int> ind_birthplace); /*init Individual by gametes on imput */
 		~Individual(); /* destructor */
 
 /* COMPUTIONG METHODS */
@@ -40,7 +40,7 @@ class Individual
 /* COMUNICATION */
 		void setNumberOfChromosomes(int ch);
 		void setLambda(double Rr);
-		void setParents(int in_mum_birthdeme, int in_mum_birthindex, int in_dad_birthdeme, int in_dad_birthindex);
+		void setParents(std::tuple<int,int,int> in_mum, std::tuple<int,int,int> in_dad);
 		int getNumberOfChromosomes() const;
 		double getLambda() const;
 		int getNumberOfLoci(int ch) const;
@@ -48,12 +48,9 @@ class Individual
 		void getNumberOfLoci(std::vector<int>& ch) const;
 		void getGenotype(std::vector<std::string>& hapl) const;
 		void getChiasmata(std::vector<std::string>& rec) const;
-		int getBirtheme() const;
-		int getBirthindex() const;
-		int getMumBirtheme() const;
-		int getMumBirthindex() const;
-		int getDadBirtheme() const;
-		int getDadBirthindex() const;
+		std::tuple<int,int,int> getBirthplace() const;
+		std::tuple<int,int,int> getMum() const;
+		std::tuple<int,int,int> getDad() const;
 
 	private:
 	/*data*/
@@ -61,9 +58,8 @@ class Individual
 		std::vector<Chiasmata> chiasmata[2];
 		int number_of_chromosomes, selected_loci;
 		double lambda;
-		int birthdeme, birthindex; // deme index and individual index where he has born
-		int mum_birthdeme, mum_birthindex;
-		int dad_birthdeme, dad_birthindex;
+		// cartesian x, y of deme indeces and index of ind within the deme
+		std::tuple<int,int,int> birthplace, mum, dad;
 
 	/*inner functions*/
 		int getOneChromeHetero(bool write, std::map<int, char>::const_iterator& pos, int chromosome, int last_pos);

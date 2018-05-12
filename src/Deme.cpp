@@ -159,11 +159,10 @@ void Deme::Breed(){
 	for(int i=0;i<deme_size;i++){
 		deme[mothers[i]].makeGamete(gamete1, chiasmata1);
 		deme[fathers[i]].makeGamete(gamete2, chiasmata2);
-		metademe[i] = Individual(gamete1, chiasmata1, gamete2, chiasmata2, lambda, sel_loci, index, i);
-		metademe[i].setParents(deme[mothers[i]].getBirtheme(),
-							   deme[mothers[i]].getBirthindex(),
-							   deme[fathers[i]].getBirtheme(),
-							   deme[fathers[i]].getBirthindex());
+		std::tuple<int, int, int> ind_birthplace(x,y,i);
+		metademe[i] = Individual(gamete1, chiasmata1, gamete2, chiasmata2, lambda, sel_loci, ind_birthplace);
+		metademe[i].setParents(deme[mothers[i]].getBirthplace(),
+							   deme[fathers[i]].getBirthplace());
 	}
 
 	for(int i=0;i<deme_size;i++){
@@ -413,19 +412,19 @@ void Deme::streamBlocks(ostream& stream){
 }
 
 void Deme::streamChiasmata(ostream& stream){
-	int birthindex, birthdeme, mum_birthdeme, mum_birthindex, dad_birthdeme, dad_birthindex;
+	std::tuple<int, int, int> birthplace, mum, dad;
 	vector<string> recombination_events;
 	for(int ind_index = 0; ind_index < deme_size; ind_index++){
-		birthindex = deme[ind_index].getBirtheme();
-		birthdeme = deme[ind_index].getBirthindex();
-		mum_birthdeme = deme[ind_index].getMumBirtheme();
-		mum_birthindex = deme[ind_index].getMumBirthindex();
-		dad_birthdeme = deme[ind_index].getDadBirtheme();
-		dad_birthindex = deme[ind_index].getDadBirthindex();
+		// birthindex = deme[ind_index].getBirtheme();
+		// birthdeme = deme[ind_index].getBirthindex();
+		// mum_birthdeme = deme[ind_index].getMumBirtheme();
+		// mum_birthindex = deme[ind_index].getMumBirthindex();
+		// dad_birthdeme = deme[ind_index].getDadBirtheme();
+		// dad_birthindex = deme[ind_index].getDadBirthindex();
 		deme[ind_index].getChiasmata(recombination_events);
-		stream << birthindex << ',' << birthdeme << '\t';
-		stream << mum_birthdeme << ',' << mum_birthindex << '\t';
-		stream << dad_birthdeme << ',' << dad_birthindex << '\t';
+		// stream << birthindex << ',' << birthdeme << '\t';
+		// stream << mum_birthdeme << ',' << mum_birthindex << '\t';
+		// stream << dad_birthdeme << ',' << dad_birthindex << '\t';
 		streamLine(stream,recombination_events);
 	}
 }
