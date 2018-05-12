@@ -14,8 +14,8 @@ class Chromosome
 		void showChromosome() const; /*writes all junctions*/
 
 /* COMUNICATION METHODS */
-		bool Acheck() const; /*returns 1 if there are only A, 0 in other case*/
-		bool Bcheck() const; /*returns 1 if there are only B, 0 in other case*/
+		bool isPureA() const; /*returns 1 if there are only A, 0 in other case*/
+		bool isPureB() const; /*returns 1 if there are only B, 0 in other case*/
 		int countB() const; /*returns number of B loci in chromosome*/
 		int countB(int selectedB) const; /*returns number of B loci in chromosome*/
 		int getNumberOfJunctions() const; /*returns number of Junctions in chromosome*/

@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <stdexcept>
 
 #include "../include/Chiasmata.h"
 

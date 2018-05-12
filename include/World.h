@@ -22,9 +22,9 @@ class World {
 		int getNumberOfDescendants(double fitness); // for imigrants
 
 	// 	testing functions vector<Chromosome>& gamete
-		bool Acheck(std::vector<Individual>& buffer);
-		bool Bcheck(std::vector<Individual>& buffer);
-		bool empty();
+		bool isPureA(std::vector<Individual>& buffer);
+		bool isPureB(std::vector<Individual>& buffer);
+		bool isEmpty();
 
 	// 	plotting functions
 		void listOfParameters() const;
@@ -32,7 +32,7 @@ class World {
 		void listOfDemes();
 		int summary(std::ostream& stream);
 		void showOneDeme(int index);
-		int SaveTheUniverse(std::string type, std::string filename);
+		int saveTheUniverse(std::string type, std::string filename);
 		void getLD();
 
 	// 	parameter changing functions
@@ -55,7 +55,7 @@ class World {
 		int upperBorder(int index, int max_index); // function returns index of upper neigbour for new demes
 		int lowerBorder(int index, int max_index);
 		int sideBorder(int reflexive, int extending);
-		bool gameteAcheck(std::vector<Chromosome>& gamete);
+		bool isGameteA(std::vector<Chromosome>& gamete);
 
 	// saving methods
 		int saveLinesPerIndividual(std::ofstream& ofile, std::string type);

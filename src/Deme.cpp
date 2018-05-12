@@ -193,14 +193,14 @@ double Deme::getProportionOfHomozygotes(char population) const{
 	double proportion = 0;
 	if(population == 'A'){
 		for(int i = 0;i < deme_size;i++){
-			proportion += (deme[i].Acheck());
+			proportion += (deme[i].isPureA());
 		}
 		proportion = proportion / deme_size;
 		return proportion;
 	}
 	if(population == 'B'){
 		for(int i = 0;i < deme_size;i++){
-			proportion += (deme[i].Bcheck());
+			proportion += (deme[i].isPureB());
 		}
 		proportion = proportion / deme_size;
 		return proportion;
@@ -212,8 +212,8 @@ double Deme::getProportionOfHomozygotes(char population) const{
 double Deme::getProportionOfHeterozygotes() const{
 	double proportion = 0;
 	for(int i = 0;i < deme_size;i++){
-		proportion += (deme[i].Acheck());
-		proportion += (deme[i].Bcheck());
+		proportion += (deme[i].isPureA());
+		proportion += (deme[i].isPureB());
 	}
 	proportion = 1 - (proportion / deme_size);
 	return proportion;

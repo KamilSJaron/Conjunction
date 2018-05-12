@@ -26,8 +26,8 @@ class Individual
 		double getBprop() const;
 		double getSelectedHybridIndex();
 		double getHetProp();
-		bool Acheck() const;
-		bool Bcheck() const;
+		bool isPureA() const;
+		bool isPureB() const;
 		std::map<int, char>::iterator getChromosomeBegining(int set, int chrom);
 		int getNumberOfJunctions(int set, int chrom);
 		int getNumberOfJunctions();

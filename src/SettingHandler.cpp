@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <string>
 #include <iomanip>
+#include <stdexcept>
 
 #include "../include/SimulationSetting.h"
 #include "../include/SettingHandler.h"

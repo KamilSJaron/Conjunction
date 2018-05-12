@@ -265,13 +265,13 @@ int World::migration(){
 			}
 		}
 		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
-			if(Acheck(buff->second)){
+			if(isPureA(buff->second)){
 				continue;
 			}
 			basicUnitCreator('l', 'A');
 		}
 		if(index_next_right <= buff->first and buff->first < index_next_right + number_of_demes_u_d){
-			if(Bcheck(buff->second)){
+			if(isPureB(buff->second)){
 				continue;
 			}
 			basicUnitCreator('r', 'B');
@@ -310,7 +310,7 @@ void World::globalBreeding(){
 				num_of_desc = poisson(fitness);
 				for(int i=0;i<num_of_desc;i++){
 					zeroD_immigrant_pool[index].makeGamete(gamete);
-					if(gameteAcheck(gamete)){
+					if(isGameteA(gamete)){
 						continue;
 					}
 					new_generation.push_back( Imigrant(gamete, lambda) );
@@ -362,9 +362,9 @@ void World::globalBreeding(){
  // LOGICAL METHODS//
 // // // // // // //
 
-bool World::Acheck(vector<Individual>& buffer){
+bool World::isPureA(vector<Individual>& buffer){
 	for(int i = 0; (unsigned)i < buffer.size(); i++){
-		if(buffer[i].Acheck()){
+		if(buffer[i].isPureA()){
 			continue;
 		}
 		return 0;
@@ -372,9 +372,9 @@ bool World::Acheck(vector<Individual>& buffer){
 	return 1;
 }
 
-bool World::Bcheck(vector<Individual>& buffer){
+bool World::isPureB(vector<Individual>& buffer){
 	for(int i = 0; (unsigned)i < buffer.size(); i++){
-		if(buffer[i].Bcheck()){
+		if(buffer[i].isPureB()){
 			continue;
 		}
 		return 0;
@@ -382,7 +382,7 @@ bool World::Bcheck(vector<Individual>& buffer){
 	return 1;
 }
 
-bool World::empty(){
+bool World::isEmpty(){
 	return (world.size() == 0);
 }
 
@@ -543,7 +543,7 @@ void World::showOneDeme(int index){
 	world[index]->showDeme();
 }
 
-int World::SaveTheUniverse(string type, string filename){
+int World::saveTheUniverse(string type, string filename){
 	if(type == "raspberrypi"){
 		return saveRaspberrypi(cout);
 	}
@@ -736,9 +736,9 @@ int World::sideBorder(int reflexive, int extending){
 	return -1;
 }
 
-bool World::gameteAcheck(std::vector<Chromosome>& gamete){
+bool World::isGameteA(std::vector<Chromosome>& gamete){
 	for(int i=0;i<number_of_chromosomes;i++){
-		if(gamete[i].Acheck()){
+		if(gamete[i].isPureA()){
 			continue;
 		}
 		return 0;

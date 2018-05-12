@@ -374,9 +374,9 @@ double Individual::getHetProp(){
 	return ((double)number_of_het_loci / (loci * number_of_chromosomes));
 }
 
-bool Individual::Acheck() const{
+bool Individual::isPureA() const{
 	for(int i=0;i<number_of_chromosomes;i++){
-		if(genome[0][i].Acheck() and genome[1][i].Acheck()){
+		if(genome[0][i].isPureA() and genome[1][i].isPureA()){
 			continue;
 		}
 		return 0;
@@ -384,9 +384,9 @@ bool Individual::Acheck() const{
 	return 1;
 }
 
-bool Individual::Bcheck() const{
+bool Individual::isPureB() const{
 	for(int i=0;i<number_of_chromosomes;i++){
-		if(genome[0][i].Bcheck() and genome[1][i].Bcheck()){
+		if(genome[0][i].isPureB() and genome[1][i].isPureB()){
 			continue;
 		}
 		return 0;

@@ -24,8 +24,8 @@ class Imigrant
 		int getNumberOfJunctions() const;
 
 		double getBprop() const;
-		bool Acheck() const;
-		bool Bcheck() const;
+		bool isPureA() const;
+		bool isPureB() const;
 
 		/* GETTERS */
 		int getLambda() const;

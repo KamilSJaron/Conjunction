@@ -158,7 +158,7 @@ int Simulation::saveWorld(int order, int save_pos){
 	}
 
 	if (file_type == "backtrace"){
-		return world.SaveTheUniverse(file_type, file_name);
+		return world.saveTheUniverse(file_type, file_name);
 	}
 	// only if number of saves and name of outfile are specified
 	if(saves >= 1 and file_name[0] != '.' and file_name[0] != '_'){
@@ -168,7 +168,7 @@ int Simulation::saveWorld(int order, int save_pos){
 		} else {
 			file_name[save_pos] = '0' + char(order);
 		}
-		return world.SaveTheUniverse(file_type, file_name);
+		return world.saveTheUniverse(file_type, file_name);
 	}
 	return 0;
 }
