@@ -114,9 +114,9 @@ int Imigrant::getNumberOfBBlocks(){
 	return number_of_blocks;
 }
 
-bool Imigrant::Acheck() const{
+bool Imigrant::isPureA() const{
 	for(int i=0;i<number_of_chromosomes;i++){
-		if(genome[i].Acheck()){
+		if(genome[i].isPureA()){
 			continue;
 		}
 		return 0;
@@ -124,9 +124,9 @@ bool Imigrant::Acheck() const{
 	return 1;
 }
 
-bool Imigrant::Bcheck() const{
+bool Imigrant::isPureB() const{
 	for(int i=0;i<number_of_chromosomes;i++){
-		if(genome[i].Bcheck()){
+		if(genome[i].isPureB()){
 			continue;
 		}
 		return 0;

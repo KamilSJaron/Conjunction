@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 
 #include "../include/RandomGenerators.h"
+#include "../include/Chiasmata.h"
 #include "../include/Chromosome.h"
 #include "../include/Individual.h"
 #include "../include/SelectionModel.h"
@@ -37,19 +38,21 @@ using namespace std;
 // constructor/destructors functions / //
 // // // // // // // // // // // // // //
 
-Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, double in_lambda){
+Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loci, double in_lambda, int in_x, int in_y){
+	x = in_x;
+	y = in_y;
 	index = ind;
 	neigbours = neigb;
 	deme_size = size;
 	deme = new Individual[deme_size];
 	if(init == 'A' or init == 'B'){
-			Individual temp(init, in_ch, in_loc, in_lambda);
+			Individual temp(init, in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
 			for(int i=0;i<deme_size;i++){
 				deme[i] = temp;
 			}
 	} else {
-		Individual tempA('A', in_ch, in_loc, in_lambda);
-		Individual tempB('B', in_ch, in_loc, in_lambda);
+		Individual tempA('A', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
+		Individual tempB('B', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
 		int i = 0;
 		while(i< (deme_size / 2)){
 			deme[i] = tempA;
@@ -93,14 +96,24 @@ int Deme::getDemeSize(){
 	return deme_size;
 }
 
+int Deme::getX(){
+	return x;
+}
+
+int Deme::getY(){
+	return y;
+}
+
 // // // // // // // // // // // // // //
 // // // // computing functions / // // /
 // // // // // // // // // // // // // //
 
 void Deme::Breed(){
 	double lambda = deme[0].getLambda();
+	int sel_loci = deme[0].getNumberOfSelectedLoci();
 	vector<double> fitnessVector;
 	vector<Chromosome> gamete1, gamete2;
+	vector<Chiasmata> chiasmata1, chiasmata2;
 	getFitnessVector(fitnessVector);
 
 	// for(unsigned int i = 0; i < fitnessVector.size(); i++){
@@ -144,9 +157,12 @@ void Deme::Breed(){
 
 	Individual *metademe = new Individual[deme_size];
 	for(int i=0;i<deme_size;i++){
-		deme[mothers[i]].makeGamete(gamete1);
-		deme[fathers[i]].makeGamete(gamete2);
-		metademe[i] = Individual(gamete1,gamete2,lambda);
+		deme[mothers[i]].makeGamete(gamete1, chiasmata1);
+		deme[fathers[i]].makeGamete(gamete2, chiasmata2);
+		std::tuple<int, int, int> ind_birthplace(x,y,i);
+		metademe[i] = Individual(gamete1, chiasmata1, gamete2, chiasmata2, lambda, sel_loci, ind_birthplace);
+		metademe[i].setParents(deme[mothers[i]].getBirthplace(),
+							   deme[fathers[i]].getBirthplace());
 	}
 
 	for(int i=0;i<deme_size;i++){
@@ -177,14 +193,14 @@ double Deme::getProportionOfHomozygotes(char population) const{
 	double proportion = 0;
 	if(population == 'A'){
 		for(int i = 0;i < deme_size;i++){
-			proportion += (deme[i].Acheck());
+			proportion += (deme[i].isPureA());
 		}
 		proportion = proportion / deme_size;
 		return proportion;
 	}
 	if(population == 'B'){
 		for(int i = 0;i < deme_size;i++){
-			proportion += (deme[i].Bcheck());
+			proportion += (deme[i].isPureB());
 		}
 		proportion = proportion / deme_size;
 		return proportion;
@@ -196,8 +212,8 @@ double Deme::getProportionOfHomozygotes(char population) const{
 double Deme::getProportionOfHeterozygotes() const{
 	double proportion = 0;
 	for(int i = 0;i < deme_size;i++){
-		proportion += (deme[i].Acheck());
-		proportion += (deme[i].Bcheck());
+		proportion += (deme[i].isPureA());
+		proportion += (deme[i].isPureB());
 	}
 	proportion = 1 - (proportion / deme_size);
 	return proportion;
@@ -207,13 +223,24 @@ double Deme::getProportionOfHeterozygotes() const{
 void Deme::getFitnessVector(vector<double> &fitnessVector){
 	double sum = 0, read_fitness = 0;
 	fitnessVector.reserve(deme_size);
-	for(int i = 0;i < deme_size;i++){
-		// getBprop > getHetProp ??
-		read_fitness = selection_model.getFitness(deme[i].getBprop());
-//		cout << " B prop: " << deme[i].getBprop() << " - fitness: " << read_fitness << endl;
-		sum += read_fitness;
-		fitnessVector.push_back(sum);
+	if(deme[0].getNumberOfLoci(0) == deme[0].getNumberOfSelectedLoci()){
+		for(int i = 0;i < deme_size;i++){
+			// getBprop > getHetProp ??
+			read_fitness = selection_model.getFitness(deme[i].getBprop());
+	//		cout << " B prop: " << deme[i].getBprop() << " - fitness: " << read_fitness << endl;
+			sum += read_fitness;
+			fitnessVector.push_back(sum);
+		}
+	} else {
+		for(int i = 0;i < deme_size;i++){
+			// getBprop > getHetProp ??
+			read_fitness = selection_model.getFitness(deme[i].getSelectedHybridIndex());
+	//		cout << " B prop: " << deme[i].getBprop() << " - fitness: " << read_fitness << endl;
+			sum += read_fitness;
+			fitnessVector.push_back(sum);
+		}
 	}
+
 	return;
 }
 
@@ -350,6 +377,10 @@ void Deme::streamSummary(ostream& stream){
 	for(int i = 0; i < neigbsize; i++){
 		stream << setw(5) << left << neigbours[i] << " ";
 	}
+	stream << setw(6) << left << x;
+	if(neigbours.size() > 2){
+		stream << setw(6) << left << y;
+	}
 	stream << setw(12) << left << roundForPrint(getMeanFitness())
 	<< setw(12) << left << roundForPrint(getProportionOfHeterozygotes())
 	<< setw(12) << left << roundForPrint(z)
@@ -375,7 +406,30 @@ void Deme::streamBlocks(ostream& stream){
 	vector<string> block_sizes;
 	for(int ind_index = 0; ind_index < deme_size; ind_index++){
 		deme[ind_index].getGenotype(block_sizes);
-		streamLine(stream,index,block_sizes);
+		stream << index << '\t';
+		streamLine(stream,block_sizes);
+	}
+}
+
+// small wrapper to stream tuples in streamChiasmata functions
+std::string cat_tuple(std::tuple<int, int, int> in_tup){
+	return to_string(get<0>(in_tup)) + ',' +
+	       to_string(get<1>(in_tup)) + ',' +
+	       to_string(get<2>(in_tup));
+}
+
+void Deme::streamChiasmata(ostream& stream){
+	std::tuple<int, int, int> birthplace, mum, dad;
+	vector<string> recombination_events;
+	for(int ind_index = 0; ind_index < deme_size; ind_index++){
+		deme[ind_index].getChiasmata(recombination_events);
+		birthplace = deme[ind_index].getBirthplace();
+		mum = deme[ind_index].getMum();
+		dad = deme[ind_index].getDad();
+		stream << cat_tuple(birthplace) << '\t';
+		stream << cat_tuple(mum) << '\t';
+		stream << cat_tuple(dad) << '\t';
+		streamLine(stream,recombination_events);
 	}
 }
 
@@ -386,7 +440,8 @@ void Deme::streamHIs(std::ostream& stream) const{
 	for(int i = 0;i < deme_size;i++){
 		HIs.push_back(deme[i].getBprop());
 	}
-	streamLine(stream, index, HIs);
+	stream << index << '\t';
+	streamLine(stream, HIs);
 	return;
 }
 
@@ -397,7 +452,8 @@ void Deme::streamJunctions(std::ostream& stream) const{
 	for(int i = 0;i < deme_size;i++){
 		juncs.push_back(deme[i].getNumberOfJunctions());
 	}
-	streamLine(stream, index, juncs);
+	stream << index << '\t';
+	streamLine(stream, juncs);
 	return;
 }
 
@@ -408,7 +464,8 @@ void Deme::streamHeterozygocity(std::ostream& stream) const{
 	for(int i = 0;i < deme_size;i++){
 		heterozs.push_back(deme[i].getHetProp());
 	}
-	streamLine(stream, index, heterozs);
+	stream << index << '\t';
+	streamLine(stream, heterozs);
 	return;
 }
 
@@ -449,8 +506,7 @@ int Deme::sum(vector<bool>& ve){
 
 // CURENTLY DUPLICIT IN WORLD (as save_line)
 template<typename T>
-int Deme::streamLine(ostream& stream, int index, vector<T>& vec) const{
-	stream << index << '\t';
+int Deme::streamLine(ostream& stream, vector<T>& vec) const{
 	for(unsigned int ind = 0; ind < vec.size(); ind++){
 		stream << vec[ind] << '\t';
 	}

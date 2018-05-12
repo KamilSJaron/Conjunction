@@ -9,7 +9,7 @@
 #define INCLUDE_SIMSET_H_
 
 struct SimulationSetting{
-	int loci, chromosomes, deme_size, generations;
+	int loci, selected_loci, chromosomes, deme_size, generations;
 	double lambda, selection, beta;
 
 	int saves, delay, seed;

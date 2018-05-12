@@ -71,6 +71,7 @@ int main(int argc, char* argv[]){
 	} else {
 		cerr << "OUCH, " << test_result << " test/s failed!\n " <<
 				"Contact kamiljaron (at) gmail (dot) com for a support.\n";
+		exit (EXIT_FAILURE);
 	}
 
 	return 0;

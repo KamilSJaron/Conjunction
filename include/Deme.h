@@ -8,7 +8,7 @@ class Deme
 {
 	public:
 // constructor / destructors
-		Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, double in_lambda);
+		Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loci, double in_lambda, int in_x, int in_y);
 		~Deme();
 
 // communication functions
@@ -17,6 +17,8 @@ class Deme
 		int getDemeIndex();
 		void setDemeSize(int size);
 		int getDemeSize();
+		int getX();
+		int getY();
 
 // computing functions
 		void Breed();
@@ -42,6 +44,7 @@ class Deme
 		void showDeme();
 		void streamSummary(std::ostream& stream);
 		void streamBlocks(std::ostream& stream);
+		void streamChiasmata(std::ostream& stream);
 		void streamHIs(std::ostream& stream) const;
 		void streamJunctions(std::ostream& stream) const;
 		void streamHeterozygocity(std::ostream& stream) const;
@@ -54,11 +57,12 @@ class Deme
 		int pickAnIndividual();
 		static int sum(std::vector<bool>& ve);
 		template<typename T>
-		int streamLine(std::ostream& stream, int index, std::vector<T>& vec) const;
+		int streamLine(std::ostream& stream, std::vector<T>& vec) const;
 		double roundForPrint(double number) const;
 
 		Individual *deme; // farme of individuals
 		int index; // index of deme in universe
+		int x, y;
 		int deme_size; // size of deme
 		std::vector<int> neigbours; // indices of neigbours
 		SelectionModel selection_model;

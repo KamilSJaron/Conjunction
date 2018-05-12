@@ -45,17 +45,20 @@ Simulation::Simulation(SimulationSetting& simulation_setting) {
 }
 
 int Simulation::simulate(){
+	int save_pos = -1;
 
-	if(saves >= 10){
-		file_name = file_name + "_0*.tsv";
-	} else {
-		if(saves > 1 and saves < 10){
-			file_name = file_name + "_*.tsv";
+	if(file_type != "backtrace"){
+		if(saves >= 10){
+			file_name = file_name + "_0*";
 		} else {
-			file_name = file_name + ".tsv";
+			if(saves > 1 and saves < 10){
+				file_name = file_name + "_*";
+			}
 		}
+		save_pos = file_name.find('*');
 	}
-	int save_pos = file_name.find('*');
+
+	file_name = file_name + ".tsv";
 
 	if(saves > 0){ // no saves means no saves
 		if(file_name[0] != '_' and file_name[0] != '.'){ // non specified name means no saves
@@ -86,7 +89,9 @@ int Simulation::simulate(){
 
 	for(int i=0; i < generations;i++){
 		t1=clock();
+		// cerr << "Migration: " << i + 1 << endl;
 		world.migration();
+		// cerr << "Breeding: " << i + 1 << endl;
 		world.globalBreeding();
 		t2=clock();
 		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
@@ -130,7 +135,8 @@ void Simulation::setWorld(SimulationSetting& simulation_setting){
 	cerr << "The SEED for random numbers is set to: " << simulation_setting.seed << endl;
 
 	world.setSlectionBetaLambda(simulation_setting.selection, simulation_setting.beta, simulation_setting.lambda);
-	world.setLociChromDeme(simulation_setting.loci, simulation_setting.chromosomes, simulation_setting.deme_size);
+	world.setLociSelLoci(simulation_setting.loci, simulation_setting.selected_loci);
+	world.setChromDeme(simulation_setting.chromosomes, simulation_setting.deme_size);
 
 	world.setHeight(simulation_setting.up_down_demes);
 	world.setWidth(simulation_setting.left_right_demes);
@@ -146,6 +152,13 @@ int Simulation::saveWorld(int order, int save_pos){
 	// always print summary to std out
 	if(file_type != "raspberrypi"){
 		world.summary(std::cout);
+		if(saves >= 1 || file_type == "backtrace"){
+			cerr << "Saving output to: " << file_name << endl;
+		}
+	}
+
+	if (file_type == "backtrace"){
+		return world.saveTheUniverse(file_type, file_name);
 	}
 	// only if number of saves and name of outfile are specified
 	if(saves >= 1 and file_name[0] != '.' and file_name[0] != '_'){
@@ -155,8 +168,7 @@ int Simulation::saveWorld(int order, int save_pos){
 		} else {
 			file_name[save_pos] = '0' + char(order);
 		}
-		cerr << "Saving output to: " << file_name << endl;
-		return world.SaveTheUniverse(file_type, file_name);
+		return world.saveTheUniverse(file_type, file_name);
 	}
 	return 0;
 }

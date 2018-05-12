@@ -54,7 +54,7 @@ void Chromosome::showChromosome() const{
 }
 
 /* COMUNICATION METHODS */
-bool Chromosome::Acheck() const{
+bool Chromosome::isPureA() const{
 	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(pos->second != 'A'){
 			return 0;
@@ -63,7 +63,7 @@ bool Chromosome::Acheck() const{
 	return 1;
 }
 
-bool Chromosome::Bcheck() const{
+bool Chromosome::isPureB() const{
 	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(pos->second != 'B'){
 			return 0;

@@ -5,8 +5,8 @@ int testImigrant(){
 //   double getFitness();
 //   double getBprop() const;
 //   void getSizesOfBBlocks(std::vector<int>& sizes);
-//   bool Acheck() const;
-//   bool Bcheck() const;
+//   bool isPureA() const;
+//   bool isPureB() const;
 //   int getSelectionPressure() const;
 	Imigrant Iakov(5, 2000, 1.53);
 	Imigrant Andrea('B', 5, 2000, 1);
@@ -33,8 +33,8 @@ int testImigrant(){
   //
   // Amina.readGenotype();
   //
-  // cerr << " Acheck: " << Amina.Acheck() << endl;
-  // cerr << " Bcheck: " << Amina.Bcheck() << endl;
+  // cerr << " isPureA: " << Amina.isPureA() << endl;
+  // cerr << " isPureB: " << Amina.isPureB() << endl;
 
 	return 0;
 }

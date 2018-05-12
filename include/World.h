@@ -18,14 +18,13 @@ class World {
 	// 	computing functions
 		int migration(); // int will be the errorcode
 		void Breed(int index);
-		void set(int index, std::string type);
 		void globalBreeding();
 		int getNumberOfDescendants(double fitness); // for imigrants
 
 	// 	testing functions vector<Chromosome>& gamete
-		bool Acheck(std::vector<Individual>& buffer);
-		bool Bcheck(std::vector<Individual>& buffer);
-		bool empty();
+		bool isPureA(std::vector<Individual>& buffer);
+		bool isPureB(std::vector<Individual>& buffer);
+		bool isEmpty();
 
 	// 	plotting functions
 		void listOfParameters() const;
@@ -33,7 +32,7 @@ class World {
 		void listOfDemes();
 		int summary(std::ostream& stream);
 		void showOneDeme(int index);
-		int SaveTheUniverse(std::string type, std::string filename);
+		int saveTheUniverse(std::string type, std::string filename);
 		void getLD();
 
 	// 	parameter changing functions
@@ -44,7 +43,9 @@ class World {
 		void setDimension(int dim);
 		void setNumberOfEdges(int nue);
 		void setSlectionBetaLambda(double s, double b, double l);
-		void setLociChromDeme(int l, int ch, int d);
+		void setLociSelLoci(int l, int L);
+		void setChromDeme(int ch, int d);
+
 		void restart(); // clear the space, creates a new one (2 columns, rows defined by user)
 		void clear();	// deletes all demes
 
@@ -54,13 +55,14 @@ class World {
 		int upperBorder(int index, int max_index); // function returns index of upper neigbour for new demes
 		int lowerBorder(int index, int max_index);
 		int sideBorder(int reflexive, int extending);
-		bool gameteAcheck(std::vector<Chromosome>& gamete);
+		bool isGameteA(std::vector<Chromosome>& gamete);
 
 	// saving methods
 		int saveLinesPerIndividual(std::ofstream& ofile, std::string type);
 		int saveLinesPerDeme(std::ostream& ofile, std::string type);
 		int saveRaspberrypi(std::ostream& ofile);
 		int saveBlocks(std::ofstream& ofile);
+		int saveBacktrace(std::ofstream& ofile);
 
 		void streamBlockSizesOf0DWorld(std::ostream& stream);
 
@@ -78,7 +80,7 @@ class World {
 		std::string type_of_l_r_edges, type_of_u_d_edges; // defines the behavior of the l / r and u /d edges of HZ
 
 	//	parameters:	deme, individual, chromosome setting
-		int deme_size, number_of_chromosomes, number_of_loci;
+		int deme_size, number_of_chromosomes, number_of_loci, number_of_selected_loci;
 		double selection, beta, lambda;
 
 	//	internal

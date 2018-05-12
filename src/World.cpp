@@ -62,6 +62,7 @@ World::World() {
 
 void World::basicUnitCreator(char type, char init){
 	int max_index = world.size();
+	int x_coordinate = 0;
 	vector<int> new_indexes;
 	int index;
 // 	1D world definition
@@ -79,13 +80,14 @@ void World::basicUnitCreator(char type, char init){
 				} else {
 					new_indexes.push_back(index_next_right);
 				}
-				world[0] = new Deme(0,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[0] = new Deme(0,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, 0);
 				break;
 			case 'l':
 				new_indexes.clear();
 				new_indexes.push_back(max_index + 2);
 				new_indexes.push_back(index_last_left);
-				world[index_next_left] = new Deme(index_next_left,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				x_coordinate = world[index_last_left]->getX() - 1;
+				world[index_next_left] = new Deme(index_next_left,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, 0);
 				index_last_left = index_next_left;
 				index_next_left = max_index + 2;
 				break;
@@ -116,8 +118,8 @@ void World::basicUnitCreator(char type, char init){
 						new_indexes.push_back(max_index + 2);
 					}
 				}
-
-				world[index_next_right] = new Deme(index_next_right,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				x_coordinate = world[index_last_right]->getX() + 1;
+				world[index_next_right] = new Deme(index_next_right,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, 0);
 				index_last_right = index_next_right;
 				index_next_right = max_index + 2;
 				break;
@@ -139,32 +141,34 @@ void World::basicUnitCreator(char type, char init){
 				new_indexes.push_back(i + number_of_demes_u_d * 2);
 				new_indexes.push_back(upperBorder(i,max_index));
 				new_indexes.push_back(lowerBorder(i,max_index));
-				world[i] = new Deme(i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[i] = new Deme(i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, 0, i);
 			}
 			break;
 		case 'l':
 			index = index_next_left;
 			index_next_left = max_index + 2 * number_of_demes_u_d;
+			x_coordinate = world[index_last_left]->getX() - 1;
 			for(int i=0;i<number_of_demes_u_d;i++){
 				new_indexes.clear();
 				new_indexes.push_back(sideBorder(index + i,index_next_left + i));
 				new_indexes.push_back(index_last_left + i);
 				new_indexes.push_back(upperBorder(index + i,index));
 				new_indexes.push_back(lowerBorder(index + i,index));
-				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, i);
 			}
 			index_last_left = index;
 			break;
 		case 'r':
 			index = index_next_right;
 			index_next_right = max_index + 2 * number_of_demes_u_d;
+			x_coordinate = world[index_last_right]->getX() + 1;
 			for(int i=0;i<number_of_demes_u_d;i++){
 				new_indexes.clear();
 				new_indexes.push_back(index_last_right + i);
 				new_indexes.push_back(sideBorder(index + i,index_next_right + i));
 				new_indexes.push_back(upperBorder(index + i,index));
 				new_indexes.push_back(lowerBorder(index + i,index));
-				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, lambda);
+				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, i);
 			}
 			index_last_right = index;
 			break;
@@ -231,6 +235,7 @@ int World::migration(){
 	vector<int> neigbours;
 	int MigInd = deme_size / (2 * edges_per_deme );
 	int deme_index;
+	int cartesian_x = 0, cartesian_y = 0;
 	/*bufferVectorMap is container for all individuals imigrating to all demes*/
 	for (map<int, Deme*>::const_iterator deme=world.begin(); deme!=world.end(); ++deme){
 		neigbours = deme->second->getNeigbours();
@@ -246,24 +251,27 @@ int World::migration(){
 	}
 
 	for(map<int, vector<Individual> >::iterator buff=ImmigranBuffer.begin(); buff!=ImmigranBuffer.end(); ++buff){
+		cartesian_y = buff->first % number_of_demes_u_d;
 		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
+			cartesian_x = world[index_last_left_fix]->getX() - 1;
 			for(int k=0;k < MigInd; k++){
-				ImmigranBuffer[buff->first].push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda));
+				ImmigranBuffer[buff->first].push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci, std::tuple<int, int, int>(cartesian_x, cartesian_y, -1)));
 			}
 		}
 		if(buff->first >= index_last_right_fix and buff->first < index_last_right_fix + number_of_demes_u_d){
+			cartesian_x = world[index_last_right_fix]->getX() + 1;
 			for(int k=0;k < MigInd; k++){
-				ImmigranBuffer[buff->first].push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda));
+				ImmigranBuffer[buff->first].push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci, std::tuple<int, int, int>(cartesian_x, cartesian_y,  -1)));
 			}
 		}
 		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
-			if(Acheck(buff->second)){
+			if(isPureA(buff->second)){
 				continue;
 			}
 			basicUnitCreator('l', 'A');
 		}
 		if(index_next_right <= buff->first and buff->first < index_next_right + number_of_demes_u_d){
-			if(Bcheck(buff->second)){
+			if(isPureB(buff->second)){
 				continue;
 			}
 			basicUnitCreator('r', 'B');
@@ -271,54 +279,6 @@ int World::migration(){
 		world[buff->first]->integrateMigrantVector(buff->second);
 	}
 	return 0;
-}
-
-void World::set(int index,string type){
-	int demesize = deme_size;
-	vector<Individual> migBuffer;
-	if(type == "pureA"){
-		for(int i=0;i<demesize;i++){
-			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda));
-		}
-		world[index]->integrateMigrantVector(migBuffer);
-		return;
-	}
-
-	if(type == "pureB"){
-		for(int i=0;i<demesize;i++){
-			migBuffer.push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda));
-		}
-		world[index]->integrateMigrantVector(migBuffer);
-		return;
-	}
-
-	if(type == "hetero"){
-		for(int i=0;i<demesize/4;i++){
-			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda));
-		}
-		for(int i=0;i<demesize/2;i++){
-			migBuffer.push_back(Individual('C', number_of_chromosomes, number_of_loci, lambda));
-		}
-		for(int i=0;i<demesize/4;i++){
-			migBuffer.push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda));
-		}
-		world[index]->integrateMigrantVector(migBuffer);
-		return;
-	}
-
-	if(type == "halfAhalfhetero"){
-		for(int i=0;i<demesize/2;i++){
-			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda));
-		}
-		for(int i=0;i<demesize/2;i++){
-			migBuffer.push_back(Individual('C', number_of_chromosomes, number_of_loci, lambda));
-		}
-		world[index]->integrateMigrantVector(migBuffer);
-		return;
-	}
-
-	cerr << "ERROR: unknown parameter " << type << " of Universe.set()";
-	return;
 }
 
 void World::globalBreeding(){
@@ -350,7 +310,7 @@ void World::globalBreeding(){
 				num_of_desc = poisson(fitness);
 				for(int i=0;i<num_of_desc;i++){
 					zeroD_immigrant_pool[index].makeGamete(gamete);
-					if(gameteAcheck(gamete)){
+					if(isGameteA(gamete)){
 						continue;
 					}
 					new_generation.push_back( Imigrant(gamete, lambda) );
@@ -402,9 +362,9 @@ void World::globalBreeding(){
  // LOGICAL METHODS//
 // // // // // // //
 
-bool World::Acheck(vector<Individual>& buffer){
+bool World::isPureA(vector<Individual>& buffer){
 	for(int i = 0; (unsigned)i < buffer.size(); i++){
-		if(buffer[i].Acheck()){
+		if(buffer[i].isPureA()){
 			continue;
 		}
 		return 0;
@@ -412,9 +372,9 @@ bool World::Acheck(vector<Individual>& buffer){
 	return 1;
 }
 
-bool World::Bcheck(vector<Individual>& buffer){
+bool World::isPureB(vector<Individual>& buffer){
 	for(int i = 0; (unsigned)i < buffer.size(); i++){
-		if(buffer[i].Bcheck()){
+		if(buffer[i].isPureB()){
 			continue;
 		}
 		return 0;
@@ -422,7 +382,7 @@ bool World::Bcheck(vector<Individual>& buffer){
 	return 1;
 }
 
-bool World::empty(){
+bool World::isEmpty(){
 	return (world.size() == 0);
 }
 
@@ -449,8 +409,11 @@ void World::listOfNumericalParameters(std::ostream& stream) const{
 	stream << "# Selection: " << selection << endl
 	<< "# Lambda: " << lambda << endl
 	<< "# Beta: " << beta << endl
-	<< "# Loci: " << number_of_loci << endl
-	<< "# Chromosomes: " << number_of_chromosomes << endl;
+	<< "# Loci: " << number_of_loci << endl;
+	if(number_of_selected_loci != number_of_loci){
+		stream << "# Selected loci : " << number_of_selected_loci << endl;
+	}
+	stream << "# Chromosomes: " << number_of_chromosomes << endl;
 	if(dimension == 0){
 		stream << "# Migrants per generation: ";
 	} else {
@@ -505,6 +468,10 @@ int World::summary(ostream& stream){
 		if(dimension == 2){
 			stream << setw(6) << left << "UP"
 			<< setw(6) << left << "DOWN";
+		}
+		stream << setw(6) << left << "X";
+		if(dimension == 2){
+			stream << setw(6) << left << "Y";
 		}
 		stream << setw(12) << left << "meanf"
 		<< setw(12) << left << "f(heter)"
@@ -576,18 +543,26 @@ void World::showOneDeme(int index){
 	world[index]->showDeme();
 }
 
-int World::SaveTheUniverse(string type, string filename){
+int World::saveTheUniverse(string type, string filename){
 	if(type == "raspberrypi"){
 		return saveRaspberrypi(cout);
 	}
 
 	ofstream ofile;
-	ofile.open(filename); // Opens file
+	int return_value = 1;
+
+	// for all dims, similar to blocks
+	if(type == "backtrace"){
+		ofile.open(filename, ios_base::app); // Opens file
+		return_value = saveBacktrace(ofile);
+	} else {
+		ofile.open(filename); // Opens file
+	}
+
 	if (ofile.fail()){
 		return 1;
 	}
 
-	int return_value = 1;
 	// for all dims; if one desires to save std out to separated files instead of one stream
 	if(type == "summary"){
 		return_value = summary(ofile);
@@ -649,8 +624,16 @@ void World::setSlectionBetaLambda(double s, double b, double l){
 	lambda = l;
 }
 
-void World::setLociChromDeme(int l, int ch, int d){
+void World::setLociSelLoci(int l, int L){
 	number_of_loci = l;
+	if(L == -1){
+		number_of_selected_loci = l;
+	} else {
+		number_of_selected_loci = L;
+	}
+}
+
+void World::setChromDeme(int ch, int d){
 	number_of_chromosomes = ch;
 	deme_size = d;
 }
@@ -753,9 +736,9 @@ int World::sideBorder(int reflexive, int extending){
 	return -1;
 }
 
-bool World::gameteAcheck(std::vector<Chromosome>& gamete){
+bool World::isGameteA(std::vector<Chromosome>& gamete){
 	for(int i=0;i<number_of_chromosomes;i++){
-		if(gamete[i].Acheck()){
+		if(gamete[i].isPureA()){
 			continue;
 		}
 		return 0;
@@ -777,6 +760,7 @@ int World::saveLinesPerDeme(ostream& stream, string type){
 	int comlumn_to_print = index_last_left;
 	int deme_to_print = -1;
 	int next_column = -1;
+	int total_columns = 0;
 	// iterates through columns
 	while(comlumn_to_print != index_next_right){
 		// iterate thought rows
@@ -787,6 +771,9 @@ int World::saveLinesPerDeme(ostream& stream, string type){
 			}
 			if(type == "blocks"){
 				world[deme_to_print]->streamBlocks(stream);
+			}
+			if(type == "backtrace"){
+				world[deme_to_print]->streamChiasmata(stream);
 			}
 			if(type == "hybridIndices" or type == "hybridIndicesJunctions" or type == "complete"){
 				world[deme_to_print]->streamHIs(stream);
@@ -805,6 +792,12 @@ int World::saveLinesPerDeme(ostream& stream, string type){
 			break;
 		}
 		comlumn_to_print = next_column;
+		total_columns++;
+	}
+
+	if(type == "backtrace"){
+		// # generation 1, individuals = 1536
+		stream << "# individuals = " << total_columns * number_of_demes_u_d * deme_size << endl;
 	}
 	return 0;
 }
@@ -856,6 +849,22 @@ int World::saveBlocks(ofstream& ofile){
 		}
 		ofile << endl;
 		saveLinesPerDeme(ofile, "blocks");
+	}
+	ofile.close();
+	return 0;
+}
+
+int World::saveBacktrace(ofstream& ofile){
+	if(dimension == 0){
+		throw runtime_error("Backtrace output is not implemented for 0D simulations. If you wish to have this functionality open an issue on https://github.com/KamilSJaron/Conjunction with tag feature_request.");
+	} else {
+		// PRINT HEADERS DEME_INDEX CH1h1 CH1h2 ...
+		ofile << "DEME_IND\tDEME_IND_h0\tDEME_IND_h1";
+		for(int ch = 0; ch < number_of_chromosomes; ch++){
+			ofile << "\tC" << ch+1 << "h0\tC" << ch+1 << "h1";
+		}
+		ofile << endl;
+		saveLinesPerDeme(ofile, "backtrace");
 	}
 	ofile.close();
 	return 0;

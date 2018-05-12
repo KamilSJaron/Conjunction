@@ -46,46 +46,48 @@ int main(int argc, char **argv)
 			cout << "details are online at wiki: https://github.com/KamilSJaron/Conjunction/wiki/setting" << endl;
 			cout << "\t conjunction [--version] [--help] [setting_file.txt]" << endl;
 
-			return 0;
+			return EXIT_SUCCESS;
 		}
 		if(strcmp( argv[1], "--version") == 0 or strcmp( argv[1], "-v") == 0){
 			cout << "Conjunction v1.2.development" << endl;
 			/* start of dev vesion */
 			cout << "\tcommit: " << GITVERSION << endl;
 			/* end */
-			return 0;
+			return EXIT_SUCCESS;
 		}
 
 		setting_file = argv[1];
-
 	}
 
-	cerr << "Running Conjunction" << endl;
-	/* start of dev vesion */
-	cerr << "Commit: " << GITVERSION << endl;
-	/* end */
-	cerr << "Loading ... " << setting_file << endl;
+	try {
+		cerr << "Running Conjunction" << endl;
+		/* start of dev vesion */
+		cerr << "Commit: " << GITVERSION << endl;
+		/* end */
+		cerr << "Loading ... " << setting_file << endl;
 
-	SettingHandler all_setting(setting_file);
-	SimulationSetting one_sim_setting;
-	Simulation *sim;
+		SettingHandler all_setting(setting_file);
+		SimulationSetting one_sim_setting;
+		Simulation *sim;
 
-	cerr << "Performing: "<< all_setting.getNumberOfSimulations() << " simulations\n";
-	all_setting.printWorld();
+		cerr << "Performing: "<< all_setting.getNumberOfSimulations() << " simulations\n";
+		all_setting.printWorld();
 
-	for(int sim_index = 0; sim_index < all_setting.getNumberOfSimulations(); sim_index++){
-		cerr << "########################" << endl;
-		cerr << "##### SIMULATION " << sim_index+1 << " #####" << endl;
-		cerr << "########################" << endl;
-		one_sim_setting = all_setting.getSimualtionSetting(sim_index);
-		sim = new Simulation(one_sim_setting);
-		if(sim->simulate() != 0){
-			cerr << " A problem during simulation " << sim_index << " has occurred \n";
-			return 1;
+		for(int sim_index = 0; sim_index < all_setting.getNumberOfSimulations(); sim_index++){
+			cerr << "########################" << endl;
+			cerr << "##### SIMULATION " << sim_index+1 << " #####" << endl;
+			cerr << "########################" << endl;
+			one_sim_setting = all_setting.getSimualtionSetting(sim_index);
+			sim = new Simulation(one_sim_setting);
+			if(sim->simulate() != 0){
+				cerr << " A problem during simulation " << sim_index << " has occurred \n";
+				return EXIT_FAILURE;
+			}
+			delete sim;
 		}
-		delete sim;
+	} catch(const runtime_error& exeption) {
+		cerr << "ERROR: " << exeption.what() << endl;
+		return EXIT_FAILURE;
 	}
-
-
-	return 0;
+	return EXIT_SUCCESS;
 }
