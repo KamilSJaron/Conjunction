@@ -18,7 +18,6 @@ class World {
 	// 	computing functions
 		int migration(); // int will be the errorcode
 		void Breed(int index);
-		void set(int index, std::string type);
 		void globalBreeding();
 		int getNumberOfDescendants(double fitness); // for imigrants
 
@@ -63,6 +62,7 @@ class World {
 		int saveLinesPerDeme(std::ostream& ofile, std::string type);
 		int saveRaspberrypi(std::ostream& ofile);
 		int saveBlocks(std::ofstream& ofile);
+		int saveBacktrace(std::ofstream& ofile);
 
 		void streamBlockSizesOf0DWorld(std::ostream& stream);
 

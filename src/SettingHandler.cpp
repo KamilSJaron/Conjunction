@@ -404,7 +404,7 @@ int SettingHandler::parseWorldDefinition(string& line){
 					return 0;
 				}
 				cerr << "Error: Unknown pre-defined world " << type << endl;
-				exit (EXIT_FAILURE);
+				throw "missing informaiton in setting!";
 			}
 		}
 
@@ -666,7 +666,7 @@ bool SettingHandler::checkParameters(){
 	bool correct_type = 1;
 
 	if(!file_name_patten.empty()){
-		vector<string> types{"complete", "summary", "hybridIndices", "hybridIndicesJunctions", "blocks", "raspberrypi"};
+		vector<string> types{"complete", "summary", "hybridIndices", "hybridIndicesJunctions", "blocks", "raspberrypi", "backtrace"};
 		for(unsigned int i = 0; i < types.size(); i++){
 			if(type_of_save == types[i]){
 				correct_type = !correct_type;

@@ -36,7 +36,8 @@ Individual::Individual(){
 }
 
 Individual::Individual(	char origin, int input_ch, int input_loci,
-						double input_lamda, int input_selected_loci){
+						double input_lamda, int input_selected_loci,
+						std::tuple<int, int, int> ind_birthplace){
 	number_of_chromosomes = input_ch;
 	lambda = input_lamda;
 	selected_loci = input_selected_loci;
@@ -54,21 +55,28 @@ Individual::Individual(	char origin, int input_ch, int input_loci,
 			genome[1].push_back(Chromosome('B', input_loci));
 		}
 	}
+	birthplace = ind_birthplace;
 }
 
-Individual::Individual(	vector<Chromosome>& gamete1,
-						vector<Chromosome>& gamete2,
-						double input_lamda, int input_selected_loci){
+Individual::Individual(	std::vector<Chromosome>& gamete1, std::vector<Chiasmata>& chaiasmata1,
+						std::vector<Chromosome>& gamete2, std::vector<Chiasmata>& chaiasmata2,
+						double input_lamda, int input_selected_loci,
+						std::tuple<int, int, int> ind_birthplace){
 	number_of_chromosomes = gamete1.size();
 	selected_loci = input_selected_loci;
 	lambda = input_lamda;
+	birthplace = ind_birthplace;
 
 	genome[0].reserve(number_of_chromosomes);
 	genome[1].reserve(number_of_chromosomes);
-	int i;
-	for(i=0;i<number_of_chromosomes;i++){
+	chiasmata[0].reserve(number_of_chromosomes);
+	chiasmata[1].reserve(number_of_chromosomes);
+
+	for(int i=0; i<number_of_chromosomes; i++){
 		genome[0].push_back(gamete1[i]);
 		genome[1].push_back(gamete2[i]);
+		chiasmata[0].push_back(chaiasmata1[i]);
+		chiasmata[1].push_back(chaiasmata2[i]);
 	}
 }
 
@@ -82,10 +90,12 @@ void Individual::replace_chromozome(int set, int position, map <int, char>  inpu
 	genome[set][position] = Chromosome(input_chrom, size);
 }
 
-void Individual::makeGamete(vector<Chromosome>& gamete){
+void Individual::makeGamete(vector<Chromosome>& gamete, vector<Chiasmata>& chiasmata){
 	gamete.clear(); // variable for new gamete
+	chiasmata.clear();
 	gamete.reserve(number_of_chromosomes);
-	vector<int> chiasmas; // vector of randomes chismas
+	chiasmata.reserve(number_of_chromosomes);
+	vector<int> local_chiasmata; // vector of randomes chismas
 	Chromosome recombinant_ch; // temp chromosome
 	char last_material_s1, last_material_s2;
 	int rec_pos, numberOfChaisma, starts_by;
@@ -103,6 +113,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 
 /* no chiasma mean inheritance of whole one parent chromosome */
 		if(numberOfChaisma == 0){
+			chiasmata.push_back(Chiasmata());
 			gamete.push_back(genome[starts_by][i]);
 			continue;
 		}
@@ -114,27 +125,36 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		last_material_s2 = genome[1][i].read(0);
 		int last_roll = -1;
 
-		chiasmas.clear();
+		local_chiasmata.clear();
 		recombinant_ch.clear();
 		recombinant_ch.setResolution(loci);
-/* roll the chiasmas positions */
+/* make sure that we start by 0 and do a crossover if not */
+		if(starts_by == 1){
+			local_chiasmata.push_back(0);
+			starts_by = 0;
+		}
+/* roll the chiasmata positions */
 		for(int index=0;index<numberOfChaisma;index++){
 			rec_pos = recombPosition(loci);
-			chiasmas.push_back(rec_pos);
+			local_chiasmata.push_back(rec_pos);
 		}
-		sort(chiasmas.begin(), chiasmas.end());
-
+		sort(local_chiasmata.begin(), local_chiasmata.end());
+		// construct that removes double recombination events on the same spot
 		for(int index=0;index<numberOfChaisma;index++){
-			if(last_roll == chiasmas[index]){
-				chiasmas.erase (chiasmas.begin()+index,chiasmas.begin()+index+1);
+			if(last_roll == local_chiasmata[index]){
+				local_chiasmata.erase (local_chiasmata.begin()+index,local_chiasmata.begin()+index+1);
 				index -= 2;
 				numberOfChaisma -= 2;
 				last_roll = -1;
 			} else {
-				last_roll = chiasmas[index];
+				last_roll = local_chiasmata[index];
 			}
 		}
-		if(chiasmas[0] != 0){
+
+		chiasmata.push_back(Chiasmata(local_chiasmata));
+
+// I think that given the code above we could replace starts_by by 0 in both expressions bellow
+		if(local_chiasmata[0] != 0){
 			recombinant_ch.write(0,genome[starts_by][i].read(0));
 		} else {
 			recombinant_ch.write(0,genome[(starts_by + 1) % 2][i].read(0));
@@ -143,7 +163,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 		pos2++;
 
 		for(int index=0;index<numberOfChaisma;index++){
-			rec_pos = chiasmas[index];
+			rec_pos = local_chiasmata[index];
 			if(rec_pos == 0){
 				starts_by = (starts_by + 1) % 2;
 				continue;
@@ -163,10 +183,10 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 					pos2++;
 				}
 				if(last_material_s1 == 'A' and last_material_s2 == 'B'){
-					recombinant_ch.write(chiasmas[index],last_material_s2);
+					recombinant_ch.write(local_chiasmata[index],last_material_s2);
 				}
 				if(last_material_s1 == 'B' and last_material_s2 == 'A'){
-					recombinant_ch.write(chiasmas[index],last_material_s2);
+					recombinant_ch.write(local_chiasmata[index],last_material_s2);
 				}
 			} else {
 				while(pos2->first < rec_pos and pos2->first != genome[1][i].end()->first){
@@ -179,10 +199,10 @@ void Individual::makeGamete(vector<Chromosome>& gamete){
 					pos1++;
 				}
 				if(last_material_s1 == 'A' and last_material_s2 == 'B'){
-					recombinant_ch.write(chiasmas[index],last_material_s1);
+					recombinant_ch.write(local_chiasmata[index],last_material_s1);
 				}
 				if(last_material_s1 == 'B' and last_material_s2 == 'A'){
-					recombinant_ch.write(chiasmas[index],last_material_s1);
+					recombinant_ch.write(local_chiasmata[index],last_material_s1);
 				}
 			}
 			starts_by = (starts_by + 1) % 2;
@@ -435,6 +455,11 @@ void Individual::setLambda(double Rr){
 	lambda = Rr;
 }
 
+void Individual::setParents(std::tuple<int,int,int> in_mum, std::tuple<int,int,int> in_dad){
+	mum = in_mum;
+	dad = in_dad;
+}
+
 int Individual::getNumberOfChromosomes() const{
 	return number_of_chromosomes;
 }
@@ -473,6 +498,27 @@ void Individual::getGenotype(std::vector<std::string>& hapl) const{
 	}
 }
 
+void Individual::getChiasmata(std::vector<std::string>& rec) const{
+	rec.clear();
+	rec.reserve(number_of_chromosomes*2);
+	for(int chrom = 0; chrom < number_of_chromosomes; chrom++){
+		for(int ploidy = 0; ploidy < 2; ploidy++){
+			rec.push_back(chiasmata[ploidy][chrom].collapse());
+		}
+	}
+}
+
+std::tuple<int,int,int> Individual::getBirthplace() const {
+	return birthplace;
+}
+
+std::tuple<int,int,int> Individual::getMum() const {
+	return mum;
+}
+
+std::tuple<int,int,int> Individual::getDad() const {
+	return dad;
+}
 /* PRIVATE */
 
 int Individual::getOneChromeHetero(bool write, map<int, char>::const_iterator& pos, int chromosome, int last_pos){
