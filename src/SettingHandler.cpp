@@ -34,17 +34,12 @@ SettingHandler::SettingHandler(string filename) {
 		parseSetting(setting_file);
 		fillDefault();
 	} else {
-		cerr << "Can not open setting file: " << filename
-		<< "; It does not exist or you do not have premssion to read it.\n";
-		exit (EXIT_FAILURE);
+		throw runtime_error("Can not open setting file: " + filename + "; It does not exist or you do not have premssion to read it.");
 	}
 
 	setting_file.close();
 
-	if(checkParameters() != 0){
-		cerr << "Setting file: " << filename << " is not valid\n";
-		exit (EXIT_FAILURE);
-	}
+	checkParameters();
 }
 
 /* 	getSimualtionSetting is a lazy loader of settings, all the parameters are read from the vector parameters_in_order
@@ -216,8 +211,7 @@ int SettingHandler::parseSetting(ifstream& myfile){
 				}
 				if(parameter.substr(0,16) == "NAMEofOUTPUTfile" or parameter.substr(0,16) == "TYPEofOUTPUTfile"){
 					if(line[i] == '.' or line[i] == '~' or line[i] == '*' or line[i] == '/' or line[i] == '\\'){
-						cerr << "Error: Symbols '.' '*' '~' and '/' are not allowed in any parameter value. \n";
-						exit (EXIT_FAILURE);
+						throw runtime_error("Symbols '.' '*' '~' and '/' are not allowed in any parameter value.");
 					}
 					if(!isspace(line[i])){
 						number += line[i];
@@ -327,8 +321,7 @@ int SettingHandler::parseWorldDefinition(string& line){
 // 						switcher = 22;
 // 						continue;
 // 					}
-					cerr << "ERROR: the " << type << " world description is not defined (yet)." << endl;
-					exit (EXIT_FAILURE);
+					throw runtime_error("ERROR: the " + type + " world description is not defined (yet?)");
 				}
 			}
 		}
@@ -468,9 +461,7 @@ int SettingHandler::parseWorldDefinition(string& line){
 			}
 		}
 	}
-
-	cerr << "ERROR: unknown problem during loading setting file (contact us please)" << endl;
-	exit (EXIT_FAILURE);
+	throw runtime_error("ERROR: unknown problem during loading setting file (contact us please)");
 }
 
 void SettingHandler::parameterSave(std::string& parameter, double value){
@@ -630,7 +621,7 @@ void SettingHandler::adjustFileName(string& name, char par, int total, int refac
 	}
 }
 
-bool SettingHandler::checkParameters(){
+void SettingHandler::checkParameters(){
 
 //	if(parameters_in_order.size() < 9){
 //		cerr << " Error: non specified parameters. \n Expected: \n Found: ";
@@ -645,8 +636,7 @@ bool SettingHandler::checkParameters(){
 
 	for(unsigned int i = 0; i < gen.size(); i++){
 		if(gen[i] < 0){
-			cerr << "Error: Negative NUMBERofGENERATIONS. \n";
-			return 1;
+			throw runtime_error("Negative NUMBERofGENERATIONS.");
 		}
 		for(unsigned int j = 0; j < saves.size(); j++){
 			if(saves[j] == 0){
@@ -654,9 +644,9 @@ bool SettingHandler::checkParameters(){
 			}
 			for(unsigned int k = 0; k < delay.size(); k++){
 				if(saves[j] > (gen[i] - delay[k])){
-					cerr << "The number of saves is greater than number of generations after delay.\n";
-					cerr << "SAVES: "<< saves[j] << " GENRATIONS: " << gen[i] << " DELAY: " << delay[k] << endl;
-					return 1;
+					throw runtime_error("The number of saves (" + to_string(saves[j]) +
+										") is greater than number of generations after delay (" +
+										to_string(gen[i] - delay[k]) + ")." );
 				}
 			}
 		}
@@ -675,8 +665,7 @@ bool SettingHandler::checkParameters(){
 		}
 
 		if(correct_type > 0){
-			cerr << "Type of save is invalid: " << type_of_save << endl;
-			return 1;
+			throw runtime_error("Type of save is invalid: " + type_of_save);
 		}
 	}
 
@@ -691,8 +680,7 @@ bool SettingHandler::checkParameters(){
 	// basic parameters
 
 	if(deme.size() == 0){
-		cerr << "The DEMEsize was not set.\n";
-		return 1;
+		throw runtime_error("The DEMEsize was not set.");
 	}
 //	for(unsigned int i = 0; i < deme.size(); i++){
 //		if(deme[i] < 4){
@@ -701,8 +689,7 @@ bool SettingHandler::checkParameters(){
 //	}
 
 	if(lambda.size() == 0){
-		cerr << "The LAMBDA ( mean number of crossovers per chromosome per generation) was not set.\n";
-		return 1;
+		throw runtime_error("The LAMBDA ( mean number of crossovers per chromosome per generation) was not set.");
 	}
 //	for(unsigned int i = 0; i < lambda.size(); i++){
 //		if(lambda[i] == -1){
@@ -712,8 +699,7 @@ bool SettingHandler::checkParameters(){
 //	}
 
 	if(loci.size() == 0){
-		cerr << "The number of loci per chromosome was not set.\n";
-		return 1;
+		throw runtime_error("The number of loci per chromosome was not set.");
 	}
 
 //	for(unsigned int i = 0; i < loci.size(); i++){
@@ -727,9 +713,7 @@ bool SettingHandler::checkParameters(){
 	for(unsigned int i = 0; i < selected_loci.size(); i++){
 		if(selected_loci[i] == 0){
 			if(selected_loci.size() > 1){
-				cerr << "If selected loci parameter is set to 0 it is expected to be only one value only\n";
-				cerr << "Is selected loci are set to 0, all the loci are selected\n";
-				return 1;
+				throw runtime_error("If selected loci parameter is set to 0 it is expected to be only one value only\nIs selected loci are set to 0, all the loci are selected.");
 			}
 		} else {
 			for(unsigned int j = 0; j < loci.size(); j++){
@@ -741,15 +725,14 @@ bool SettingHandler::checkParameters(){
 					cerr	<< "\t(loci - selected_loci) % (selected_loci - 1)" << endl;
 					cerr	<< "\thas to be equal to 0, but in this case..." << endl;
 					cerr	<< "\t(" << loci[j] << " - " << selected_loci[i] << ") % (" << selected_loci[i] << " - 1) = " << neutral_block_size << endl;
-					return 1;
+					throw runtime_error("yeah, it's bit messy!");
 				}
 			}
 		}
 	}
 
 	if(sel.size() == 0){
-		cerr << "The selection pressure was not set.\n";
-		return 1;
+		throw runtime_error("The selection pressure was not set.");
 	}
 
 //	for(unsigned int i = 0; i < sel.size(); i++){
@@ -759,8 +742,7 @@ bool SettingHandler::checkParameters(){
 //	}
 
 	if(beta.size() == 0){
-		cerr << "The BETA (epistatic interaction between loci) was not set.\n";
-		return 1;
+		throw runtime_error("The BETA (epistatic interaction between loci) was not set.");
 	}
 	for(unsigned int i = 0; i < beta.size(); i++){
 		if(beta[i] < 0.0001 or beta[i] > 32){
@@ -769,39 +751,34 @@ bool SettingHandler::checkParameters(){
 	}
 
 	if((unsigned)number_of_simulations != seed.size()){
-		cerr << "Error: The number of seeds is not equal to number of simulation\n";
+		cerr << "The number of seeds is not equal to number of simulation\n";
 		cerr << "Possible SEED: none (seeds will be random generated using time)\n";
 		cerr << "               one value (other seeds will be generated using defined seed)\n";
 		cerr << "               vector of values (has to have length equal to total number of simulations)\n";
-		return 1;
+		throw runtime_error("SEED problem.");
 	}
 
 	//cerr << "Checking World definition\n";
 	if(dimension == -1){
-		cerr << "Dimension was not set.\n";
-		return 1;
+		throw runtime_error("Dimension was not set.");
 	}
 
 	if(dimension >= 3){
-		cerr << "Dimension was not set correctly.\n";
-		return 1;
+		throw runtime_error("Dimension was not set correctly.");
 	}
 
 	if(left_right_demes < 1 and dimension > 0){
-		cerr << "The width of world was not set.\n";
-		return 1;
+		throw runtime_error("The width of world was not set.");
 	}
 
 	if(up_down_demes < 1 and dimension > 0){
-		cerr << "The height of world was not set.\n";
-		return 1;
+		throw runtime_error("The height of world was not set.");
 	}
 
 	if(dimension > 0){
 		vector<string> edges {"extending","wrapping","infinite","reflexive"};
 		if(type_of_leftright_edges.empty()){
-			cerr << "The type of left right edges of world was not set.\n";
-			return 1;
+			throw runtime_error("The type of left right edges of world was not set.");
 		} else {
 			correct_type = 1;
 			for(unsigned int i = 0; i < edges.size(); i++){
@@ -811,15 +788,13 @@ bool SettingHandler::checkParameters(){
 				}
 			}
 			if(correct_type){
-				cerr << "Type of left-right edges is invalid: " << type_of_leftright_edges << endl;
-				return 1;
+				throw runtime_error("Type of left-right edges is invalid: " + type_of_leftright_edges);
 			}
 		}
 
 		if(type_of_updown_edges.empty()){
 			if(dimension == 2){
-				cerr << "The type of up-down edges of 2D world was not set.\n";
-				return 1;
+				throw runtime_error("The type of up-down edges of 2D world was not set.");
 			}
 		} else {
 			correct_type = 1;
@@ -830,13 +805,12 @@ bool SettingHandler::checkParameters(){
 				}
 			}
 			if(correct_type){
-				cerr << "Type of UpDown edges is invalid: " << type_of_updown_edges << endl;
-				return 1;
+				throw runtime_error("Type of UpDown edges is invalid: " + type_of_updown_edges);
 			}
 		}
 	}
 
-	return 0;
+	return;
 }
 
 void SettingHandler::fillDefault(){

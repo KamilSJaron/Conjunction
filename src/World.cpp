@@ -856,8 +856,7 @@ int World::saveBlocks(ofstream& ofile){
 
 int World::saveBacktrace(ofstream& ofile){
 	if(dimension == 0){
-		cerr << "ERROR : not implemented for 0D simulations. If you wish to have this functionality open an issue on https://github.com/KamilSJaron/Conjunction with tag feature_request.\n";
-		exit(1);
+		throw runtime_error("Backtrace output is not implemented for 0D simulations. If you wish to have this functionality open an issue on https://github.com/KamilSJaron/Conjunction with tag feature_request.");
 	} else {
 		// PRINT HEADERS DEME_INDEX CH1h1 CH1h2 ...
 		ofile << "DEME_IND\tDEME_IND_h0\tDEME_IND_h1";

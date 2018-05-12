@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 #include "../include/Chiasmata.h"
 
@@ -41,9 +42,8 @@ int Chiasmata::length() const{
 }
 
 int Chiasmata::get(int index) const{
-	if( index > chiasmata.size()){
-		std::cerr << "Problematic request, index bigger than number of chiasmata\n";
-		exit(-1);
+	if( index > length()){
+		throw runtime_error("Problematic request on chiasmata.get(index), index bigger than number of chiasmata");
 	}
 	return chiasmata[index];
 }
@@ -62,7 +62,7 @@ std::string Chiasmata::collapse() const{
 		return "~";
 	}
 	string collapsed = "";
-	for(unsigned int chiasma = 0; chiasma < length(); chiasma++){
+	for(int chiasma = 0; chiasma < length(); chiasma++){
 		if(collapsed == ""){
 			collapsed = to_string(chiasmata[chiasma]);
 		} else {

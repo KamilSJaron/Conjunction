@@ -16,7 +16,7 @@ class SettingHandler{
 		int getNumberOfSimulations() const;
 
 		// testing
-		bool checkParameters();
+		void checkParameters();
 		void fillDefault();
 
 		// printing functions
