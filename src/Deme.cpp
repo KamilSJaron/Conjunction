@@ -46,13 +46,13 @@ Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, dou
 	deme_size = size;
 	deme = new Individual[deme_size];
 	if(init == 'A' or init == 'B'){
-			Individual temp(init, in_ch, in_loc, in_lambda, in_sel_loci);
+			Individual temp(init, in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
 			for(int i=0;i<deme_size;i++){
 				deme[i] = temp;
 			}
 	} else {
-		Individual tempA('A', in_ch, in_loc, in_lambda, in_sel_loci);
-		Individual tempB('B', in_ch, in_loc, in_lambda, in_sel_loci);
+		Individual tempA('A', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
+		Individual tempB('B', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
 		int i = 0;
 		while(i< (deme_size / 2)){
 			deme[i] = tempA;
@@ -411,20 +411,24 @@ void Deme::streamBlocks(ostream& stream){
 	}
 }
 
+// small wrapper to stream tuples in streamChiasmata functions
+std::string cat_tuple(std::tuple<int, int, int> in_tup){
+	return to_string(get<0>(in_tup)) + ',' +
+	       to_string(get<1>(in_tup)) + ',' +
+	       to_string(get<2>(in_tup));
+}
+
 void Deme::streamChiasmata(ostream& stream){
 	std::tuple<int, int, int> birthplace, mum, dad;
 	vector<string> recombination_events;
 	for(int ind_index = 0; ind_index < deme_size; ind_index++){
-		// birthindex = deme[ind_index].getBirtheme();
-		// birthdeme = deme[ind_index].getBirthindex();
-		// mum_birthdeme = deme[ind_index].getMumBirtheme();
-		// mum_birthindex = deme[ind_index].getMumBirthindex();
-		// dad_birthdeme = deme[ind_index].getDadBirtheme();
-		// dad_birthindex = deme[ind_index].getDadBirthindex();
 		deme[ind_index].getChiasmata(recombination_events);
-		// stream << birthindex << ',' << birthdeme << '\t';
-		// stream << mum_birthdeme << ',' << mum_birthindex << '\t';
-		// stream << dad_birthdeme << ',' << dad_birthindex << '\t';
+		birthplace = deme[ind_index].getBirthplace();
+		mum = deme[ind_index].getMum();
+		dad = deme[ind_index].getDad();
+		stream << cat_tuple(birthplace) << '\t';
+		stream << cat_tuple(mum) << '\t';
+		stream << cat_tuple(dad) << '\t';
 		streamLine(stream,recombination_events);
 	}
 }

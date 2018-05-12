@@ -18,7 +18,6 @@ class World {
 	// 	computing functions
 		int migration(); // int will be the errorcode
 		void Breed(int index);
-		void set(int index, std::string type);
 		void globalBreeding();
 		int getNumberOfDescendants(double fitness); // for imigrants
 

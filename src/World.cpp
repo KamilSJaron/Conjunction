@@ -235,6 +235,7 @@ int World::migration(){
 	vector<int> neigbours;
 	int MigInd = deme_size / (2 * edges_per_deme );
 	int deme_index;
+	int cartesian_x = 0, cartesian_y = 0;
 	/*bufferVectorMap is container for all individuals imigrating to all demes*/
 	for (map<int, Deme*>::const_iterator deme=world.begin(); deme!=world.end(); ++deme){
 		neigbours = deme->second->getNeigbours();
@@ -250,14 +251,17 @@ int World::migration(){
 	}
 
 	for(map<int, vector<Individual> >::iterator buff=ImmigranBuffer.begin(); buff!=ImmigranBuffer.end(); ++buff){
+		cartesian_y = buff->first % number_of_demes_u_d;
 		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
+			cartesian_x = world[index_last_left_fix]->getX() - 1;
 			for(int k=0;k < MigInd; k++){
-				ImmigranBuffer[buff->first].push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci));
+				ImmigranBuffer[buff->first].push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci, std::tuple<int, int, int>(cartesian_x, cartesian_y, -1)));
 			}
 		}
 		if(buff->first >= index_last_right_fix and buff->first < index_last_right_fix + number_of_demes_u_d){
+			cartesian_x = world[index_last_right_fix]->getX() + 1;
 			for(int k=0;k < MigInd; k++){
-				ImmigranBuffer[buff->first].push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci));
+				ImmigranBuffer[buff->first].push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci, std::tuple<int, int, int>(cartesian_x, cartesian_y,  -1)));
 			}
 		}
 		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
@@ -275,54 +279,6 @@ int World::migration(){
 		world[buff->first]->integrateMigrantVector(buff->second);
 	}
 	return 0;
-}
-
-void World::set(int index,string type){
-	int demesize = deme_size;
-	vector<Individual> migBuffer;
-	if(type == "pureA"){
-		for(int i=0;i<demesize;i++){
-			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci));
-		}
-		world[index]->integrateMigrantVector(migBuffer);
-		return;
-	}
-
-	if(type == "pureB"){
-		for(int i=0;i<demesize;i++){
-			migBuffer.push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci));
-		}
-		world[index]->integrateMigrantVector(migBuffer);
-		return;
-	}
-
-	if(type == "hetero"){
-		for(int i=0;i<demesize/4;i++){
-			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci));
-		}
-		for(int i=0;i<demesize/2;i++){
-			migBuffer.push_back(Individual('C', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci));
-		}
-		for(int i=0;i<demesize/4;i++){
-			migBuffer.push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci));
-		}
-		world[index]->integrateMigrantVector(migBuffer);
-		return;
-	}
-
-	if(type == "halfAhalfhetero"){
-		for(int i=0;i<demesize/2;i++){
-			migBuffer.push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci));
-		}
-		for(int i=0;i<demesize/2;i++){
-			migBuffer.push_back(Individual('C', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci));
-		}
-		world[index]->integrateMigrantVector(migBuffer);
-		return;
-	}
-
-	cerr << "ERROR: unknown parameter " << type << " of Universe.set()";
-	return;
 }
 
 void World::globalBreeding(){

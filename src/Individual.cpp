@@ -36,7 +36,8 @@ Individual::Individual(){
 }
 
 Individual::Individual(	char origin, int input_ch, int input_loci,
-						double input_lamda, int input_selected_loci){
+						double input_lamda, int input_selected_loci,
+						std::tuple<int, int, int> ind_birthplace){
 	number_of_chromosomes = input_ch;
 	lambda = input_lamda;
 	selected_loci = input_selected_loci;
@@ -54,7 +55,7 @@ Individual::Individual(	char origin, int input_ch, int input_loci,
 			genome[1].push_back(Chromosome('B', input_loci));
 		}
 	}
-	birthplace = std::tuple<int, int, int>(-1, -1, -1);
+	birthplace = ind_birthplace;
 }
 
 Individual::Individual(	std::vector<Chromosome>& gamete1, std::vector<Chiasmata>& chaiasmata1,

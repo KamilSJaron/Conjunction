@@ -8,7 +8,7 @@ class Individual
 	public:
 /* DECLARATION */
 		Individual();
-		Individual(char origin, int input_ch, int input_loci, double input_lamda, int input_selected_loci);
+		Individual(char origin, int input_ch, int input_loci, double input_lamda, int input_selected_loci, std::tuple<int, int, int> ind_birthplace);
 		Individual(	std::vector<Chromosome>& gamete1,
 					std::vector<Chromosome>& gamete2,
 					double input_lamda, int input_selected_loci); /*init Individual by gametes on imput */
