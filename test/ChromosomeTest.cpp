@@ -10,13 +10,13 @@ int testChromosome(){
 	Chromosome ch2('B',50);
 	// second type of inicitation
 
-	if(!ch1.Acheck()){
-		cerr << "UNEXPECTED ch(A, 50).Acheck is " << ch1.Bcheck() << endl;
+	if(!ch1.isPureA()){
+		cerr << "UNEXPECTED ch(A, 50).isPureA is " << ch1.isPureA() << endl;
 		return 1;
 	}
 
-	if(ch1.Bcheck()){
-		cerr << "UNEXPECTED ch(A, 50).Bcheck is " << ch1.Bcheck() << endl;
+	if(ch1.isPureB()){
+		cerr << "UNEXPECTED ch(A, 50).isPureB is " << ch1.isPureB() << endl;
 		return 1;
 	}
 
