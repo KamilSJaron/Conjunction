@@ -255,13 +255,13 @@ int World::migration(){
 		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
 			cartesian_x = world[index_last_left_fix]->getX() - 1;
 			for(int k=0;k < MigInd; k++){
-				ImmigranBuffer[buff->first].push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci, std::tuple<int, int, int>(cartesian_x, cartesian_y, -1)));
+				ImmigranBuffer[buff->first].push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci, std::tuple<int, int, int>(cartesian_x, cartesian_y, k)));
 			}
 		}
 		if(buff->first >= index_last_right_fix and buff->first < index_last_right_fix + number_of_demes_u_d){
 			cartesian_x = world[index_last_right_fix]->getX() + 1;
 			for(int k=0;k < MigInd; k++){
-				ImmigranBuffer[buff->first].push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci, std::tuple<int, int, int>(cartesian_x, cartesian_y,  -1)));
+				ImmigranBuffer[buff->first].push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci, std::tuple<int, int, int>(cartesian_x, cartesian_y,  k)));
 			}
 		}
 		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
@@ -796,8 +796,21 @@ int World::saveLinesPerDeme(ostream& stream, string type){
 	}
 
 	if(type == "backtrace"){
-		// # generation 1, individuals = 1536
-		stream << "# individuals = " << total_columns * number_of_demes_u_d * deme_size << endl;
+		stream << "# individuals = " << total_columns * number_of_demes_u_d * deme_size  << "; Lvec=[";
+		for(int ch = 0; ch < number_of_chromosomes; ch++){
+			stream << number_of_loci;
+			if ( (ch + 1) < number_of_chromosomes) {
+				stream << ",";
+			}
+		}
+		stream << "] SL=[";
+		for(int ch = 0; ch < number_of_chromosomes; ch++){
+			stream << number_of_selected_loci;
+			if ( (ch + 1) < number_of_chromosomes) {
+				stream << ",";
+			}
+		}
+		stream << "]" << endl;
 	}
 	return 0;
 }
@@ -858,12 +871,6 @@ int World::saveBacktrace(ofstream& ofile){
 	if(dimension == 0){
 		throw runtime_error("Backtrace output is not implemented for 0D simulations. If you wish to have this functionality open an issue on https://github.com/KamilSJaron/Conjunction with tag feature_request.");
 	} else {
-		// PRINT HEADERS DEME_INDEX CH1h1 CH1h2 ...
-		ofile << "DEME_IND\tDEME_IND_h0\tDEME_IND_h1";
-		for(int ch = 0; ch < number_of_chromosomes; ch++){
-			ofile << "\tC" << ch+1 << "h0\tC" << ch+1 << "h1";
-		}
-		ofile << endl;
 		saveLinesPerDeme(ofile, "backtrace");
 	}
 	ofile.close();

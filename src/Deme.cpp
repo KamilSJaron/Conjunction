@@ -46,20 +46,17 @@ Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, dou
 	deme_size = size;
 	deme = new Individual[deme_size];
 	if(init == 'A' or init == 'B'){
-			Individual temp(init, in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
-			for(int i=0;i<deme_size;i++){
-				deme[i] = temp;
-			}
+		for(int i=0;i<deme_size;i++){
+			deme[i] = Individual(init, in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(in_x, in_y, i));
+		}
 	} else {
-		Individual tempA('A', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
-		Individual tempB('B', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
 		int i = 0;
 		while(i< (deme_size / 2)){
-			deme[i] = tempA;
+			deme[i] = Individual('A', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(in_x, in_y, i));
 			i++;
 		}
 		while(i< deme_size){
-			deme[i] = tempB;
+			deme[i] = Individual('B', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(in_x, in_y, i));
 			i++;
 		}
 	}
