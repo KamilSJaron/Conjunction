@@ -23,7 +23,6 @@ class Individual
 
 /* COMPUTIONG METHODS */
 		void replace_chromozome(int set, int position,std::map <int, char> input_chrom, int size);
-		int getChiasma();
 		void makeGamete(std::vector<Chromosome>& gamete, std::vector<Chiasmata>& chiasmata);
 		int getBcount() const;
 		double getBprop() const;

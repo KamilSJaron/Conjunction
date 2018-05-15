@@ -44,20 +44,17 @@ Deme::Deme(const Context& context, int ind, std::vector<int> neigb, char init, i
 	deme_size = size;
 	deme = new Individual[deme_size];
 	if(init == 'A' or init == 'B'){
-			Individual temp(&context, init, in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
-			for(int i=0;i<deme_size;i++){
-				deme[i] = temp;
-			}
+		for(int i=0;i<deme_size;i++){
+			deme[i] = Individual(&context, init, in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(in_x, in_y, i));
+		}
 	} else {
-		Individual tempA(&context, 'A', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
-		Individual tempB(&context, 'B', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
 		int i = 0;
 		while(i< (deme_size / 2)){
-			deme[i] = tempA;
+			deme[i] = Individual(&context, 'A', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(in_x, in_y, i));
 			i++;
 		}
 		while(i< deme_size){
-			deme[i] = tempB;
+			deme[i] = Individual(&context, 'B', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(in_x, in_y, i));
 			i++;
 		}
 	}
