@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-World::World() {
+World::World() : context{} {
 	// USER
 	// space
 	dimension = -1;
@@ -80,14 +80,14 @@ void World::basicUnitCreator(char type, char init){
 				} else {
 					new_indexes.push_back(index_next_right);
 				}
-				world[0] = new Deme(0,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, 0);
+				world[0] = new Deme(context, 0,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, 0);
 				break;
 			case 'l':
 				new_indexes.clear();
 				new_indexes.push_back(max_index + 2);
 				new_indexes.push_back(index_last_left);
 				x_coordinate = world[index_last_left]->getX() - 1;
-				world[index_next_left] = new Deme(index_next_left,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, 0);
+				world[index_next_left] = new Deme(context, index_next_left,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, 0);
 				index_last_left = index_next_left;
 				index_next_left = max_index + 2;
 				break;
@@ -119,7 +119,7 @@ void World::basicUnitCreator(char type, char init){
 					}
 				}
 				x_coordinate = world[index_last_right]->getX() + 1;
-				world[index_next_right] = new Deme(index_next_right,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, 0);
+				world[index_next_right] = new Deme(context, index_next_right,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, 0);
 				index_last_right = index_next_right;
 				index_next_right = max_index + 2;
 				break;
@@ -141,7 +141,7 @@ void World::basicUnitCreator(char type, char init){
 				new_indexes.push_back(i + number_of_demes_u_d * 2);
 				new_indexes.push_back(upperBorder(i,max_index));
 				new_indexes.push_back(lowerBorder(i,max_index));
-				world[i] = new Deme(i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, 0, i);
+				world[i] = new Deme(context, i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, 0, i);
 			}
 			break;
 		case 'l':
@@ -154,7 +154,7 @@ void World::basicUnitCreator(char type, char init){
 				new_indexes.push_back(index_last_left + i);
 				new_indexes.push_back(upperBorder(index + i,index));
 				new_indexes.push_back(lowerBorder(index + i,index));
-				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, i);
+				world[index + i] = new Deme(context, index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, i);
 			}
 			index_last_left = index;
 			break;
@@ -168,7 +168,7 @@ void World::basicUnitCreator(char type, char init){
 				new_indexes.push_back(sideBorder(index + i,index_next_right + i));
 				new_indexes.push_back(upperBorder(index + i,index));
 				new_indexes.push_back(lowerBorder(index + i,index));
-				world[index + i] = new Deme(index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, i);
+				world[index + i] = new Deme(context, index + i,new_indexes,init, deme_size, selection, beta, number_of_chromosomes, number_of_loci, number_of_selected_loci, lambda, x_coordinate, i);
 			}
 			index_last_right = index;
 			break;
@@ -215,7 +215,7 @@ int World::migration(){
 //		cerr << "Premigration Population size: " << zeroD_immigrant_pool.size() << endl;
 		zeroD_immigrant_pool.reserve(zeroD_immigrant_pool.size() + deme_size);
 		for(int i = 0; i < deme_size;i++){
-			zeroD_immigrant_pool.push_back(Imigrant(number_of_chromosomes, number_of_loci, lambda));
+			zeroD_immigrant_pool.push_back(Imigrant(context, number_of_chromosomes, number_of_loci, lambda));
 		}
 //		cerr << "Postmigration Population size: " << zeroD_immigrant_pool.size() << endl;
 		return 0;
@@ -255,13 +255,13 @@ int World::migration(){
 		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
 			cartesian_x = world[index_last_left_fix]->getX() - 1;
 			for(int k=0;k < MigInd; k++){
-				ImmigranBuffer[buff->first].push_back(Individual('A', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci, std::tuple<int, int, int>(cartesian_x, cartesian_y, -1)));
+				ImmigranBuffer[buff->first].push_back(Individual(&context, 'A', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci, std::tuple<int, int, int>(cartesian_x, cartesian_y, -1)));
 			}
 		}
 		if(buff->first >= index_last_right_fix and buff->first < index_last_right_fix + number_of_demes_u_d){
 			cartesian_x = world[index_last_right_fix]->getX() + 1;
 			for(int k=0;k < MigInd; k++){
-				ImmigranBuffer[buff->first].push_back(Individual('B', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci, std::tuple<int, int, int>(cartesian_x, cartesian_y,  -1)));
+				ImmigranBuffer[buff->first].push_back(Individual(&context, 'B', number_of_chromosomes, number_of_loci, lambda, number_of_selected_loci, std::tuple<int, int, int>(cartesian_x, cartesian_y,  -1)));
 			}
 		}
 		if(index_next_left <= buff->first and buff->first < index_next_left + number_of_demes_u_d){
@@ -307,13 +307,13 @@ void World::globalBreeding(){
 			fitness = selection_model.getFitness(hybrid_index);
 //			every7 individual has 2 attempts to mate
 			for(int attempt = 0; attempt < 2; attempt++){
-				num_of_desc = poisson(fitness);
+				num_of_desc = context.random.poisson(fitness);
 				for(int i=0;i<num_of_desc;i++){
 					zeroD_immigrant_pool[index].makeGamete(gamete);
 					if(isGameteA(gamete)){
 						continue;
 					}
-					new_generation.push_back( Imigrant(gamete, lambda) );
+					new_generation.push_back( Imigrant(context, gamete, lambda) );
 				}
 			}
 		}

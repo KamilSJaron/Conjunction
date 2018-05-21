@@ -27,11 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <iomanip>
 
-#include "../include/Chromosome.h"
-#include "../include/Individual.h"
-#include "../include/Imigrant.h"
-#include "../include/SelectionModel.h"
-#include "../include/Deme.h"
 #include "../include/World.h"
 #include "../include/SimulationSetting.h"
 #include "../include/Simulation.h"

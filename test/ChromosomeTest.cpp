@@ -9,6 +9,7 @@ int testChromosome(){
 	Chromosome ch1('A',50);
 	Chromosome ch2('B',50);
 	// second type of inicitation
+	Context context;
 
 	if(!ch1.isPureA()){
 		cerr << "UNEXPECTED ch(A, 50).isPureA is " << ch1.isPureA() << endl;
@@ -33,7 +34,7 @@ int testChromosome(){
 				<< ch1.getNumberOfJunctions() << endl;
 	}
 
-	int toss = tossAcoin();
+	int toss = context.random.tossAcoin();
 	if(!(toss == 0 or toss == 1)){
 		cerr << "tossAcoin function is flawed." << endl;
 	}
@@ -41,7 +42,7 @@ int testChromosome(){
 	for(int i = 0; i < 1000; i++){
 		Chromosome ch3('A', rand());
 		int loci = ch3.getResolution();
-		if(recombPosition(loci) >= loci){
+		if(context.random.recombPosition(loci) >= loci){
 			cerr << "recombPosition generated position larger that the size of the chromosome."
 				<< endl;
 			return 1;
@@ -61,14 +62,14 @@ int testChromosome(){
 		return 1;
 	}
 
-	ch1.makeRecombinant(ch3, 5);
+	ch1.makeRecombinant(ch3, 5, context);
 
 	if(ch3.getNumberOfJunctions() != 0){
 		cerr << "ERROR: recombination of two pure A chromosome resulted in chromosome with junctions." << endl;
 		return 1;
 	}
 
-	ch2.makeRecombinant(ch3, 5);
+	ch2.makeRecombinant(ch3, 5, context);
 
 	if(ch3.getNumberOfJunctions() < 4){
 		cerr << "WARNING: very unlike scenario in random generation of junctions" << endl;

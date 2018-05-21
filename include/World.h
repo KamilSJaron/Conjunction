@@ -8,6 +8,13 @@
 #ifndef INCLUDE_WORLD_H_
 #define INCLUDE_WORLD_H_
 
+
+#include "../include/Context.h"
+#include "../include/Chromosome.h"
+#include "../include/Individual.h"
+#include "../include/Imigrant.h"
+#include "../include/Deme.h"
+
 class World {
 	public:
 		World();
@@ -87,6 +94,8 @@ class World {
 		int edges_per_deme; // defines migration and extension of hybrid zone
 		int index_last_left, index_next_left; // variables handling dynamic extension of hybrid zone
 		int index_last_right, index_next_right;
+		
+		Context context;
 };
 
 #endif /* INCLUDE_WORLD_H_ */

@@ -4,11 +4,14 @@
 #ifndef DEME_H
 #define DEME_H
 
+#include "../include/SelectionModel.h"
+#include "../include/Context.h"
+
 class Deme
 {
 	public:
 // constructor / destructors
-		Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loci, double in_lambda, int in_x, int in_y);
+		Deme(const Context& context, int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loci, double in_lambda, int in_x, int in_y);
 		~Deme();
 
 // communication functions
@@ -54,6 +57,8 @@ class Deme
 		void readGenotypeFrequencies();
 
 	private:
+		const Context& context;
+
 		int pickAnIndividual();
 		static int sum(std::vector<bool>& ve);
 		template<typename T>

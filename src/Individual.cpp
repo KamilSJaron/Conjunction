@@ -29,15 +29,18 @@ using namespace std;
 
 /* DECLARATION */
 
-Individual::Individual(){
+Individual::Individual() : context{nullptr} {
 	number_of_chromosomes = -1;
 	lambda = -1;
 	selected_loci = -1;
 }
 
-Individual::Individual(	char origin, int input_ch, int input_loci,
-						double input_lamda, int input_selected_loci,
-						std::tuple<int, int, int> ind_birthplace){
+Individual::Individual( const Context *context,
+		char origin, int input_ch, int input_loci,
+		double input_lamda, int input_selected_loci,
+		std::tuple<int, int, int> ind_birthplace )
+	: context{context}
+{
 	number_of_chromosomes = input_ch;
 	lambda = input_lamda;
 	selected_loci = input_selected_loci;
@@ -58,10 +61,13 @@ Individual::Individual(	char origin, int input_ch, int input_loci,
 	birthplace = ind_birthplace;
 }
 
-Individual::Individual(	std::vector<Chromosome>& gamete1, std::vector<Chiasmata>& chaiasmata1,
-						std::vector<Chromosome>& gamete2, std::vector<Chiasmata>& chaiasmata2,
-						double input_lamda, int input_selected_loci,
-						std::tuple<int, int, int> ind_birthplace){
+Individual::Individual( const Context *context,
+		std::vector<Chromosome>& gamete1, std::vector<Chiasmata>& chaiasmata1,
+		std::vector<Chromosome>& gamete2, std::vector<Chiasmata>& chaiasmata2,
+		double input_lamda, int input_selected_loci,
+		std::tuple<int, int, int> ind_birthplace)
+	: context{context}
+{
 	number_of_chromosomes = gamete1.size();
 	selected_loci = input_selected_loci;
 	lambda = input_lamda;
@@ -108,8 +114,8 @@ void Individual::makeGamete(vector<Chromosome>& gamete, vector<Chiasmata>& chias
 //			genome[3][i].getResolution();
 //		}
 		int loci = genome[0][i].getResolution();
-		numberOfChaisma = poisson(lambda);
-		starts_by = tossAcoin();
+		numberOfChaisma = context->random.poisson(lambda);
+		starts_by = context->random.tossAcoin();
 
 /* no chiasma mean inheritance of whole one parent chromosome */
 		if(numberOfChaisma == 0){
@@ -135,7 +141,7 @@ void Individual::makeGamete(vector<Chromosome>& gamete, vector<Chiasmata>& chias
 		}
 /* roll the chiasmata positions */
 		for(int index=0;index<numberOfChaisma;index++){
-			rec_pos = recombPosition(loci);
+			rec_pos = context->random.recombPosition(loci);
 			local_chiasmata.push_back(rec_pos);
 		}
 		sort(local_chiasmata.begin(), local_chiasmata.end());

@@ -38,7 +38,9 @@ using namespace std;
 // constructor/destructors functions / //
 // // // // // // // // // // // // // //
 
-Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loci, double in_lambda, int in_x, int in_y){
+Deme::Deme(const Context& context, int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loci, double in_lambda, int in_x, int in_y)
+	: context{context}
+{
 	x = in_x;
 	y = in_y;
 	index = ind;
@@ -46,13 +48,13 @@ Deme::Deme(int ind, std::vector<int> neigb, char init, int size, double sel, dou
 	deme_size = size;
 	deme = new Individual[deme_size];
 	if(init == 'A' or init == 'B'){
-			Individual temp(init, in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
+			Individual temp(&context, init, in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
 			for(int i=0;i<deme_size;i++){
 				deme[i] = temp;
 			}
 	} else {
-		Individual tempA('A', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
-		Individual tempB('B', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
+		Individual tempA(&context, 'A', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
+		Individual tempB(&context, 'B', in_ch, in_loc, in_lambda, in_sel_loci, std::tuple<int, int, int>(-1, -1, -1));
 		int i = 0;
 		while(i< (deme_size / 2)){
 			deme[i] = tempA;
@@ -129,10 +131,10 @@ void Deme::Breed(){
 	vector<int> fathers(deme_size);
 
 	for(int i=0;i < deme_size*2;i++){
-		roll = (uniform() * RandMax);
+		roll = (context.random.uniform() * RandMax);
 		it = parentPick.find(roll);
 		while(it != parentPick.end()){ //rolling twice same number will overwrite the first one, but this event is so rare, that solution is to just roll again without any bias
-			roll = (uniform() * RandMax);
+			roll = (context.random.uniform() * RandMax);
 			it = parentPick.find(roll);
 		}
 		parentPick[roll] = i;
@@ -160,7 +162,7 @@ void Deme::Breed(){
 		deme[mothers[i]].makeGamete(gamete1, chiasmata1);
 		deme[fathers[i]].makeGamete(gamete2, chiasmata2);
 		std::tuple<int, int, int> ind_birthplace(x,y,i);
-		metademe[i] = Individual(gamete1, chiasmata1, gamete2, chiasmata2, lambda, sel_loci, ind_birthplace);
+		metademe[i] = Individual(&context, gamete1, chiasmata1, gamete2, chiasmata2, lambda, sel_loci, ind_birthplace);
 		metademe[i].setParents(deme[mothers[i]].getBirthplace(),
 							   deme[fathers[i]].getBirthplace());
 	}

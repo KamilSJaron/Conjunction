@@ -26,7 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-Imigrant::Imigrant(int input_ch, int size, double input_lambda){
+Imigrant::Imigrant(const Context &context, int input_ch, int size, double input_lambda)
+	: context{context}
+{
 	lambda = input_lambda;
 	number_of_chromosomes = input_ch;
 	genome.reserve(number_of_chromosomes);
@@ -35,7 +37,9 @@ Imigrant::Imigrant(int input_ch, int size, double input_lambda){
 	}
 }
 
-Imigrant::Imigrant(char origin, int input_ch, int size, double input_lambda){
+Imigrant::Imigrant(const Context &context, char origin, int input_ch, int size, double input_lambda)
+	: context{context}
+{
 	lambda = input_lambda;
 	number_of_chromosomes = input_ch;
 	genome.reserve(number_of_chromosomes);
@@ -44,7 +48,9 @@ Imigrant::Imigrant(char origin, int input_ch, int size, double input_lambda){
 	}
 }
 
-Imigrant::Imigrant(vector<Chromosome>& gamete, double input_lambda){
+Imigrant::Imigrant(const Context &context, vector<Chromosome>& gamete, double input_lambda)
+	: context{context}
+{
 	lambda = input_lambda;
 	number_of_chromosomes = gamete.size();
 	genome.reserve(number_of_chromosomes);
@@ -63,9 +69,9 @@ void Imigrant::makeGamete(std::vector<Chromosome>& gamete){
 	Chromosome CHtemp;
 	int chiasmata = 0;
 	for(int ch = 0; ch < number_of_chromosomes;ch++){
-		chiasmata = poisson(lambda);
+		chiasmata = context.random.poisson(lambda);
 //		cerr << " CH: " << ch+1 << " will get " << chiasmata << " chiasmata.\n";
-		genome[ch].makeRecombinant(CHtemp, chiasmata);
+		genome[ch].makeRecombinant(CHtemp, chiasmata, context);
 		gamete.push_back(CHtemp);
 	}
 }

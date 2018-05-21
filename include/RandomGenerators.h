@@ -8,9 +8,13 @@
 #ifndef INCLUDE_RANDOM_GENERATOR_H_
 #define INCLUDE_RANDOM_GENERATOR_H_
 
-int tossAcoin();
-int recombPosition(int loci);
-double uniform();
-int poisson(double lambda);
+class RandomGenerator
+{
+	public :
+		int tossAcoin();
+		int recombPosition(int loci);
+		double uniform();
+		int poisson(double lambda);
+};
 
 #endif /* INCLUDE_RANDOM_GENERATOR_H_ */

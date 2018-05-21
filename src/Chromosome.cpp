@@ -136,9 +136,9 @@ void Chromosome::getSizesOfBlocks(vector<int>& sizes) const{
 	sizes.push_back(loci - last_val);
 }
 
-void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
+void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma, const Context &context){
 // 	starts_by 0 home, 1 alien
-	int starts_by = tossAcoin();
+	int starts_by = context.random.tossAcoin();
 	vector<int> recombination;
 	chromNew.clear();
 	chromNew.setResolution(loci);
@@ -156,7 +156,7 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 	int index, lastposition = 0;
 
 	for(index=0;index<numberOfChaisma;index++){
-		recombination.push_back(recombPosition(loci));
+		recombination.push_back(context.random.recombPosition(loci));
 	}
 
 	sort(recombination.begin(), recombination.end());

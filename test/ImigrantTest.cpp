@@ -1,4 +1,5 @@
 int testImigrant(){
+	Context context; 
 // // /* COMPUTIONG METHODS */
 //   int getChiasma();
 //   void makeGamete(std::vector<Chromosome>& gamete); //this method should be rewriten to accept vector of chromosomes instead of pointer to imigrant
@@ -8,8 +9,8 @@ int testImigrant(){
 //   bool isPureA() const;
 //   bool isPureB() const;
 //   int getSelectionPressure() const;
-	Imigrant Iakov(5, 2000, 1.53);
-	Imigrant Andrea('B', 5, 2000, 1);
+	Imigrant Iakov(context, 5, 2000, 1.53);
+	Imigrant Andrea(context, 'B', 5, 2000, 1);
 
   // for(int i = 0; i < 10000; i++){
   //   cout << Andrea.getChiasma() << endl;
@@ -18,7 +19,7 @@ int testImigrant(){
 	std::vector<Chromosome> gamete;
 	Andrea.makeGamete(gamete);
 
-	Imigrant Amina(gamete, 1.53);
+	Imigrant Amina(context, gamete, 1.53);
 
   // cerr << "Individual\tBprop\n";
   // cerr << "Iakov\t" << Iakov.getBprop() << endl;

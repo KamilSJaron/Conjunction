@@ -1,10 +1,11 @@
 int testIndividual(){
+	Context context;
 	Individual Lili;
-	Individual Igor('C', 3, 40, 2.3, 4, std::tuple<int, int, int>(-1, -1, -1));
+	Individual Igor(&context, 'C', 3, 40, 2.3, 4, std::tuple<int, int, int>(-1, -1, -1));
 
 	double sumCh = 0.0;
 	for(int i = 0; i < 10000; i++){
-		sumCh += poisson(Igor.getLambda());
+		sumCh += context.random.poisson(Igor.getLambda());
 	}
 	sumCh = sumCh / 10000;
 
@@ -27,7 +28,7 @@ int testIndividual(){
 		gamete2.push_back(Chromosome('A',gamete1[i].getResolution()));
 		chiasma2.push_back(Chiasmata());
 	}
-	Individual Stuart(gamete1, chiasma1, gamete2, chiasma2, 1.6, Igor.getNumberOfSelectedLoci(), std::tuple<int, int, int>(-1, -1, -1));
+	Individual Stuart(&context, gamete1, chiasma1, gamete2, chiasma2, 1.6, Igor.getNumberOfSelectedLoci(), std::tuple<int, int, int>(-1, -1, -1));
 
 	if(Igor.getSelectedHybridIndex() != 0.5){
 		cerr << "f1 hybrid has selected hybrid index != 0.5!" << endl;
@@ -91,7 +92,7 @@ int testIndividual(){
 	ch1.write(13,'A'); ch2.write(14,'B');
 	gamete1.clear(); gamete1.push_back(ch1);
 	gamete2.clear(); gamete2.push_back(ch2);
-	Individual Anna(gamete1, chiasma1, gamete2, chiasma2, 1.6, 4, std::tuple<int, int, int>(-1, -1, -1));
+	Individual Anna(&context, gamete1, chiasma1, gamete2, chiasma2, 1.6, 4, std::tuple<int, int, int>(-1, -1, -1));
 	if(Anna.getSelectedHybridIndex() != 0.375){
 		cerr << "Folowing individual :" << endl;
 		Anna.readGenotype();

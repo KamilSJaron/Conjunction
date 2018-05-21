@@ -2,14 +2,15 @@
 #define INDIVIDUAL_H
 
 #include "../include/Chiasmata.h"
+#include "../include/Context.h"
 
 class Individual
 {
 	public:
 /* DECLARATION */
 		Individual();
-		Individual(char origin, int input_ch, int input_loci, double input_lamda, int input_selected_loci, std::tuple<int, int, int> ind_birthplace);
-		Individual(	std::vector<Chromosome>& gamete1, std::vector<Chiasmata>& chaiasmata1,
+		Individual(const Context *context, char origin, int input_ch, int input_loci, double input_lamda, int input_selected_loci, std::tuple<int, int, int> ind_birthplace);
+		Individual(const Context *context, std::vector<Chromosome>& gamete1, std::vector<Chiasmata>& chaiasmata1,
 					std::vector<Chromosome>& gamete2, std::vector<Chiasmata>& chaiasmata2,
 					double input_lamda, int input_selected_loci,
 					std::tuple<int, int, int> ind_birthplace); /*init Individual by gametes on imput */
@@ -50,6 +51,7 @@ class Individual
 		std::tuple<int,int,int> getDad() const;
 
 	private:
+		const Context *context;
 	/*data*/
 		std::vector<Chromosome> genome[2];
 		std::vector<Chiasmata> chiasmata[2];
