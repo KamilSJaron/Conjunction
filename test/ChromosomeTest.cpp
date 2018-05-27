@@ -9,7 +9,7 @@ int testChromosome(){
 	Chromosome ch1('A',50);
 	Chromosome ch2('B',50);
 	// second type of inicitation
-	Context context;
+	Context context = createTestContext();
 
 	if(!ch1.isPureA()){
 		cerr << "UNEXPECTED ch(A, 50).isPureA is " << ch1.isPureA() << endl;

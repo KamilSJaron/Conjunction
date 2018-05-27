@@ -11,6 +11,8 @@
 class RandomGenerator
 {
 	public :
+		explicit RandomGenerator(int seed);
+		
 		int tossAcoin();
 		int recombPosition(int loci);
 		double uniform();

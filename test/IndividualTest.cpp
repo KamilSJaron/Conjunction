@@ -1,5 +1,5 @@
 int testIndividual(){
-	Context context;
+	Context context = createTestContext();
 	Individual Lili;
 	Individual Igor(&context, 'C', 3, 40, 2.3, 4, std::tuple<int, int, int>(-1, -1, -1));
 

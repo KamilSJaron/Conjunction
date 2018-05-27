@@ -6,18 +6,34 @@
  */
 
 
+SimulationSetting createSimulationSetting () {
+	SimulationSetting setting;
+	setting.up_down_demes = 2;
+	setting.left_right_demes = 2;
+	setting.type_of_leftright_edges = "reflexive";
+	setting.type_of_updown_edges = "reflexive";
+	setting.dimension = 2;
+	setting.edges_per_deme = 4;
+	
+	setting.selection = 0.1;
+	setting.beta = 1;
+	setting.lambda = 1.5;
+
+	setting.selected_loci = 16;
+	setting.loci = 16;
+
+	setting.chromosomes = 4;
+	setting.deme_size = 64;
+
+	setting.seed = RANDOM_SEED;
+	return setting;
+}
+
+
 int testWorld(){
 
-	Context context;
-	World world;
-
-//	world.listOfParameters();
-	world.setHeight(2);
-	world.setWidth(2);
-	world.setLREdgesType("reflexive");
-	world.setUDEdgesType("reflexive");
-	world.setDimension(2);
-	world.setNumberOfEdges(4);
+	Context context = createTestContext();
+	World world(createSimulationSetting());
 
 	int number_descendants = 0;
 	for(int i = 0; i < 10000; i++){
@@ -29,9 +45,6 @@ int testWorld(){
 		<< " descendants\n";
 	}
 
-	world.setSlectionBetaLambda(0.1, 1, 1.5);
-	world.setLociSelLoci(16, 16);
-	world.setChromDeme(4, 64);
 //	world.listOfParameters();
 
 //	world.listOfDemes();

@@ -23,6 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
+RandomGenerator::RandomGenerator(int seed) {
+	cerr << "The SEED for random numbers is set to: " << seed << endl;
+	srand(seed);
+}
+
+
 // alternative, modulo bias is negligible if there is any
 int RandomGenerator::tossAcoin (){
 	return rand() % 2;

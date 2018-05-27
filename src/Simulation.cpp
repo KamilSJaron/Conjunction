@@ -33,9 +33,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-Simulation::Simulation(SimulationSetting& simulation_setting) {
-	World world;
-
+Simulation::Simulation(SimulationSetting& simulation_setting) :
+	world{simulation_setting}
+{
 	setWorld(simulation_setting);
 }
 
@@ -124,23 +124,6 @@ void Simulation::setWorld(SimulationSetting& simulation_setting){
 	generations = simulation_setting.generations;
 	file_name = simulation_setting.file_to_save;
 	file_type = simulation_setting.type_of_save;
-
-	srand(simulation_setting.seed);
-	cout << "  SEED: " << simulation_setting.seed << ';';
-	cerr << "The SEED for random numbers is set to: " << simulation_setting.seed << endl;
-
-	world.setSlectionBetaLambda(simulation_setting.selection, simulation_setting.beta, simulation_setting.lambda);
-	world.setLociSelLoci(simulation_setting.loci, simulation_setting.selected_loci);
-	world.setChromDeme(simulation_setting.chromosomes, simulation_setting.deme_size);
-
-	world.setHeight(simulation_setting.up_down_demes);
-	world.setWidth(simulation_setting.left_right_demes);
-	world.setLREdgesType(simulation_setting.type_of_leftright_edges);
-	world.setUDEdgesType(simulation_setting.type_of_updown_edges);
-	world.setDimension(simulation_setting.dimension);
-	world.setNumberOfEdges(simulation_setting.edges_per_deme);
-
-	return;
 }
 
 int Simulation::saveWorld(int order, int save_pos){

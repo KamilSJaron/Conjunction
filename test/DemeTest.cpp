@@ -6,7 +6,7 @@ int testDeme(){
     int myints[] = {1,2};
     std::vector<int> neigb (myints, myints + sizeof(myints) / sizeof(int) );
 
-    Context context;
+    Context context = createTestContext();
 // index, neigb, init, size, selection, beta, in_ch, in_loc, in_lambda
     Deme Hell(context, 0, neigb, 'C', 10000, 0.8, 1, 1, 16, 16, 10, 666, 666);
 

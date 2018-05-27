@@ -36,29 +36,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-World::World() : context{} {
+World::World(const SimulationSetting& simulationSetting) :
+	context{simulationSetting.seed},
 	// USER
 	// space
-	dimension = -1;
-	number_of_demes_l_r = -1;
-	type_of_l_r_edges = "nothing";
-	number_of_demes_u_d = -1;
-	type_of_u_d_edges = "nothing";
-	deme_size = -1;
-	number_of_chromosomes = -1;
-	lambda = -1;
-	number_of_loci = -1;
-	selection = -1;
-	beta = -1;
+	number_of_demes_l_r{simulationSetting.left_right_demes},
+	number_of_demes_u_d{simulationSetting.up_down_demes},
+	dimension{simulationSetting.dimension},
+	type_of_l_r_edges{simulationSetting.type_of_leftright_edges},
+	type_of_u_d_edges{simulationSetting.type_of_updown_edges},
 
+	deme_size{simulationSetting.deme_size},
+	number_of_chromosomes{simulationSetting.chromosomes},
+	number_of_loci{simulationSetting.loci},
+	number_of_selected_loci{
+		-1 == simulationSetting.selected_loci
+			? simulationSetting.loci
+			: simulationSetting.selected_loci
+	},
 
+	selection{simulationSetting.selection},
+	beta{simulationSetting.beta},
+	lambda{simulationSetting.lambda},
 	// INTERNAL
-	edges_per_deme = -1;
-	index_last_left = -1;
-	index_next_left = -1;
-	index_last_right = -1;
-	index_next_right = -1;
-}
+	edges_per_deme{simulationSetting.edges_per_deme},
+	index_last_left{-1},
+	index_next_left{-1},
+	index_last_right{-1},
+	index_next_right{-1}
+{}
 
 void World::basicUnitCreator(char type, char init){
 	int max_index = world.size();
@@ -592,52 +598,6 @@ void World::getLD(){
   // // // // // // // //
  // PARAMETER HANDLING//
 // // // // // // // //
-
-void World::setHeight(int heig){
-	number_of_demes_u_d = heig;
-}
-
-void World::setWidth(int width){
-	number_of_demes_l_r = width;
-}
-
-
-void World::setLREdgesType(string ed_type){
-	type_of_l_r_edges = ed_type;
-}
-
-void World::setUDEdgesType(string ed_type){
-	type_of_u_d_edges = ed_type;
-}
-
-void World::setDimension(int dim){
-	dimension = dim;
-}
-
-void World::setNumberOfEdges(int nue){
-	edges_per_deme = nue;
-}
-
-void World::setSlectionBetaLambda(double s, double b, double l){
-	selection = s;
-	beta = b;
-	lambda = l;
-}
-
-void World::setLociSelLoci(int l, int L){
-	number_of_loci = l;
-	if(L == -1){
-		number_of_selected_loci = l;
-	} else {
-		number_of_selected_loci = L;
-	}
-}
-
-void World::setChromDeme(int ch, int d){
-	number_of_chromosomes = ch;
-	deme_size = d;
-}
-
 void World::restart(){
 	if(dimension == 0){
 		zeroD_immigrant_pool.clear();

@@ -16,7 +16,7 @@ private:
 	RandomGenerator _random;
 
 public:
-	Context();
+	explicit Context(int seed);
 	Context(const Context& orig);
 	virtual ~Context();
 	

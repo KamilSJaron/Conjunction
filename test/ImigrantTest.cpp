@@ -1,5 +1,5 @@
 int testImigrant(){
-	Context context; 
+	Context context = createTestContext(); 
 // // /* COMPUTIONG METHODS */
 //   int getChiasma();
 //   void makeGamete(std::vector<Chromosome>& gamete); //this method should be rewriten to accept vector of chromosomes instead of pointer to imigrant

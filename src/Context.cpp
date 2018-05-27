@@ -7,7 +7,7 @@
 
 #include "../include/Context.h"
 
-Context::Context() : _random{}, random{_random} {
+Context::Context(int seed) : _random{seed}, random{_random} {
 }
 
 Context::Context(const Context& orig) : _random{orig._random}, random{_random} {
