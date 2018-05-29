@@ -3,8 +3,6 @@
 #include <vector>
 #include <cmath>
 
-using namespace std;
-
 #include "../include/RandomGenerators.h"
 #include "../include/Chromosome.h"
 #include "../include/Imigrant.h"
@@ -32,15 +30,15 @@ Context createTestContext() {
 
 int main(int argc, char* argv[]){
 	int test_result = 0;
-	cerr << "Running all tests with random seed: " << RANDOM_SEED << endl;
+	std::cerr << "Running all tests with random seed: " << RANDOM_SEED << std::endl;
 
 	typedef int (*test_t)();
 	auto runTest = [&test_result](test_t test, std::string name) {
 		if (test() == 0) {
-			cerr << name << " ... passed\n";
+			std::cerr << name << " ... passed\n";
 		} else {
 			test_result++;
-			cerr << name << ": HAD A PROBLEM!\n";
+			std::cerr << name << ": HAD A PROBLEM!\n";
 		}
 	};
 	runTest(&testChromosome, "Chromosome");
@@ -51,9 +49,9 @@ int main(int argc, char* argv[]){
 	runTest(&testParameterLoading, "Parameter loading");
 
 	if(test_result == 0){
-		cerr << "HURRAY, everything seems to be working.\n";
+		std::cerr << "HURRAY, everything seems to be working.\n";
 	} else {
-		cerr << "OUCH, " << test_result << " test/s failed!\n " <<
+		std::cerr << "OUCH, " << test_result << " test/s failed!\n " <<
 				"Contact kamiljaron (at) gmail (dot) com for a support.\n";
 		exit (EXIT_FAILURE);
 	}

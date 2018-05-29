@@ -1,6 +1,9 @@
 #ifndef IMIGRANT_H
 #define IMIGRANT_H
 
+#include <vector>
+
+#include "../include/Chromosome.h"
 #include "../include/Context.h"
 
 class Imigrant

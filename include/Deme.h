@@ -4,6 +4,9 @@
 #ifndef DEME_H
 #define DEME_H
 
+#include <vector>
+
+#include "../include/Individual.h"
 #include "../include/SelectionModel.h"
 #include "../include/Context.h"
 
@@ -26,7 +29,7 @@ class Deme
 // computing functions
 		void Breed();
 		void integrateMigrantVector(std::vector<Individual>& migBuffer);
-// 		vector<double> getBproportions() const; // not used
+// 		std::vector<double> getBproportions() const; // not used
 		void getBproportions(std::vector<double>& props) const;
 		//void getJunctionNumbers(std::vector<double>& juncs) const;
 		//void getHeterozygoty(std::vector<double>& heterozs);

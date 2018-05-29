@@ -21,10 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "../include/RandomGenerators.h"
 
-using namespace std;
-
 RandomGenerator::RandomGenerator(int seed) {
-	cerr << "The SEED for random numbers is set to: " << seed << endl;
+	std::cerr << "The SEED for random numbers is set to: " << seed << std::endl;
 	srand(seed);
 }
 

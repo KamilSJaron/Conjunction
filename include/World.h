@@ -8,6 +8,8 @@
 #ifndef INCLUDE_WORLD_H_
 #define INCLUDE_WORLD_H_
 
+#include <map>
+#include <vector>
 
 #include "../include/Context.h"
 #include "../include/Chromosome.h"

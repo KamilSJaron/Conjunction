@@ -16,15 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <vector>
 #include <string>
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
 
 #include "../include/Chiasmata.h"
-
-using namespace std;
 
 /* INITIATION */
 
@@ -44,7 +41,7 @@ int Chiasmata::length() const{
 
 int Chiasmata::get(int index) const{
 	if( index > length()){
-		throw runtime_error("Problematic request on chiasmata.get(index), index bigger than number of chiasmata");
+		throw std::runtime_error("Problematic request on chiasmata.get(index), index bigger than number of chiasmata");
 	}
 	return chiasmata[index];
 }
@@ -62,12 +59,12 @@ std::string Chiasmata::collapse() const{
 	if( length() == 0){
 		return "~";
 	}
-	string collapsed = "";
+	std::string collapsed;
 	for(int chiasma = 0; chiasma < length(); chiasma++){
 		if(collapsed == ""){
-			collapsed = to_string(chiasmata[chiasma]);
+			collapsed = std::to_string(chiasmata[chiasma]);
 		} else {
-			collapsed = collapsed + "," + to_string(chiasmata[chiasma]);
+			collapsed = collapsed + "," + std::to_string(chiasmata[chiasma]);
 		}
 	}
 	return collapsed;

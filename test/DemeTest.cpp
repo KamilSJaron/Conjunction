@@ -3,60 +3,60 @@
 // the unnecessery constructors should be deleted.
 
 int testDeme(){
-    int myints[] = {1,2};
-    std::vector<int> neigb (myints, myints + sizeof(myints) / sizeof(int) );
+	int myints[] = {1,2};
+	std::vector<int> neigb (myints, myints + sizeof(myints) / sizeof(int) );
 
-    Context context = createTestContext();
-// index, neigb, init, size, selection, beta, in_ch, in_loc, in_lambda
-    Deme Hell(context, 0, neigb, 'C', 10000, 0.8, 1, 1, 16, 16, 10, 666, 666);
+	Context context = createTestContext();
+//	index, neigb, init, size, selection, beta, in_ch, in_loc, in_lambda
+	Deme Hell(context, 0, neigb, 'C', 10000, 0.8, 1, 1, 16, 16, 10, 666, 666);
 
-  //  cout << "*****S*****" << endl;
-  //  Hell.streamSummary(cout);
-  //  cout << "*****FG*****" << endl;
-  //  Hell.readGenotypeFrequencies();
-  //  cout << endl;
+//	std::cout << "*****S*****" << std::endl;
+//	Hell.streamSummary(cout);
+//	std::cout << "*****FG*****" << std::endl;
+//	Hell.readGenotypeFrequencies();
+//	std::cout << std::endl;
 
-  //  vector<double> fv;
-  //  Hell.getFitnessVector(fv);
-   //
-  //  for(unsigned int i = 0; i < fv.size(); i++){
-  //    cout << " D " << fv[i] << " D ";
-  //  }
-  //  cout << " Mean fitness: " << Hell.getMeanFitness() << endl;
+//	std::vector<double> fv;
+//	Hell.getFitnessVector(fv);
+//
+//	for(unsigned int i = 0; i < fv.size(); i++){
+//		std::cout << " D " << fv[i] << " D ";
+//	}
+//	std::cout << " Mean fitness: " << Hell.getMeanFitness() << std::endl;
 
-   Hell.Breed();
+	Hell.Breed();
 
-  //  cout << "*****S*****" << endl;
-  //  Hell.streamSummary(cout);
-  //  cout << "*****FG*****" << endl;
-  //  Hell.readGenotypeFrequencies();
-  //  cout << endl;
+//	std::cout << "*****S*****" << std::endl;
+//	Hell.streamSummary(cout);
+//	std::cout << "*****FG*****" << std::endl;
+//	Hell.readGenotypeFrequencies();
+//	std::cout << std::endl;
 
-  //  Hell.getFitnessVector(fv);
-  //  for(unsigned int i = 0; i < fv.size(); i++){
-  //    cout << " C " << fv[i] << " C ";
-  //  }
+//	Hell.getFitnessVector(fv);
+//	for(unsigned int i = 0; i < fv.size(); i++){
+//		std::cout << " C " << fv[i] << " C ";
+//	}
 
-  // cout << " Mean fitness: " << Hell.getMeanFitness() << endl;
+//	std::cout << " Mean fitness: " << Hell.getMeanFitness() << std::endl;
 
-    Hell.Breed();
+	Hell.Breed();
 
-  //  cout << "*****S*****" << endl;
-  //  Hell.streamSummary(cout);
-  //  cout << "*****FG*****" << endl;
-  //  Hell.readGenotypeFrequencies();
-  //  cout << endl;
+//	std::cout << "*****S*****" << std::endl;
+//	Hell.streamSummary(cout);
+//	std::cout << "*****FG*****" << std::endl;
+//	Hell.readGenotypeFrequencies();
+//	std::cout << std::endl;
 
-  if(Hell.getProportionOfHomozygotes('A') > 0.2 or Hell.getProportionOfHomozygotes('A') < 0.15 ){
-    cerr << "Warnig: Selection has unexpected behavior" << endl;
-  }
+	if(Hell.getProportionOfHomozygotes('A') > 0.2 or Hell.getProportionOfHomozygotes('A') < 0.15 ){
+		std::cerr << "Warnig: Selection has unexpected behavior" << std::endl;
+	}
 
-  //  Hell.getFitnessVector(fv);
-  //  for(unsigned int i = 0; i < fv.size(); i++){
-  //    cout << " X " << fv[i] << " X ";
-  //  }
+//	Hell.getFitnessVector(fv);
+//	for(unsigned int i = 0; i < fv.size(); i++){
+//		std::cout << " X " << fv[i] << " X ";
+//	}
 
-//   cout << " Mean fitness: " << Hell.getMeanFitness() << endl;
+//	std::cout << " Mean fitness: " << Hell.getMeanFitness() << std::endl;
 
 //		std::vector<int> getNeigbours();
 //		Individual getIndividual(int index);
@@ -68,7 +68,7 @@ int testDeme(){
 //		void Breed();
 //		void permutation(); // permutation function
 //		void integrateMigrantVector(std::vector<Individual>& migBuffer);
-//// 		vector<double> getBproportions() const; // not used
+//// 		std::vector<double> getBproportions() const; // not used
 //		void getBproportions(std::vector<double>& props) const;
 //		void getJunctionNumbers(std::vector<double>& juncs) const;
 //		void getHeterozygoty(std::vector<double>& heterozs);

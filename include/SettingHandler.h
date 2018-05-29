@@ -8,6 +8,12 @@
 #ifndef SRC_DISPATCHER_H_
 #define SRC_DISPATCHER_H_
 
+#include <vector>
+#include <string>
+#include <fstream>
+
+#include "../include/SimulationSetting.h"
+
 class SettingHandler{
 	public:
 		SettingHandler(std::string filename);

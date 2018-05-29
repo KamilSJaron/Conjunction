@@ -20,18 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
 #include <fstream>
-#include <map>
-#include <vector>
 #include <string>
 #include <math.h>
 #include <cmath>
-#include <iomanip>
 
-#include "../include/World.h"
 #include "../include/SimulationSetting.h"
 #include "../include/Simulation.h"
-
-using namespace std;
 
 Simulation::Simulation(SimulationSetting& simulation_setting) :
 	world{simulation_setting}
@@ -57,11 +51,11 @@ int Simulation::simulate(){
 
 	if(saves > 0){ // no saves means no saves
 		if(file_name[0] != '_' and file_name[0] != '.'){ // non specified name means no saves
-			cerr << "##### OUTPUT  INFO #####" << endl;
-			cerr << "# Name of the file(s): " << file_name << endl;
-			cerr << "# Type of the file(s): " << file_type << endl;
-			cerr << "#       Files to save: " << saves << endl;
-			cerr << "########################" << endl;
+			std::cerr << "##### OUTPUT  INFO #####\n";
+			std::cerr << "# Name of the file(s): " << file_name << "\n";
+			std::cerr << "# Type of the file(s): " << file_type << "\n";
+			std::cerr << "#       Files to save: " << saves << "\n";
+			std::cerr << "########################\n";
 		}
 	}
 
@@ -76,25 +70,25 @@ int Simulation::simulate(){
 		modulo = 1;
 	}
 	// modulo only for non-zero saves
-	// cout << modulo << endl;
-	cerr << "###### PARAMETERS ######" << endl;
+	// std::cout << modulo << std::endl;
+	std::cerr << "###### PARAMETERS ######\n";
 	world.listOfNumericalParameters(std::cerr);
-	cerr << "########################" << endl;
+	std::cerr << "########################\n";
 	world.restart();
 
 	for(int i=0; i < generations;i++){
 		t1=clock();
-		// cerr << "Migration: " << i + 1 << endl;
+		// std::cerr << "Migration: " << i + 1 << std::endl;
 		world.migration();
-		// cerr << "Breeding: " << i + 1 << endl;
+		// std::cerr << "Breeding: " << i + 1 << std::endl;
 		world.globalBreeding();
 		t2=clock();
-		cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+		std::cerr << "Generation: " << i + 1 << " done in " << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << "\n";
 		if((((i - delay) % modulo)+1) == modulo and (i - delay < generations - modulo or i+1 == generations)){
 			order++;
 			check = saveWorld(order, save_pos);
 			if(check != 0){
-				cerr << "Error in saving the output." << endl;
+				std::cerr << "Error in saving the output.\n";
 				return 1;
 			}
 		}
@@ -105,13 +99,13 @@ int Simulation::simulate(){
 		order++;
 		check = saveWorld(order, save_pos);
 		if(check != 0){
-			cerr << "Error in saving the output." << endl;
+			std::cerr << "Error in saving the output." << std::endl;
 			return 1;
 		}
 	}
 
 	t_total2 = clock();
-	cerr << "Total time of simulation: " << ((float)t_total2 - (float)t_total1) / CLOCKS_PER_SEC << endl;
+	std::cerr << "Total time of simulation: " << ((float)t_total2 - (float)t_total1) / CLOCKS_PER_SEC << std::endl;
 	world.clear();
 
 	return 0;
@@ -131,7 +125,7 @@ int Simulation::saveWorld(int order, int save_pos){
 	if(file_type != "raspberrypi"){
 		world.summary(std::cout);
 		if(saves >= 1 || file_type == "backtrace"){
-			cerr << "Saving output to: " << file_name << endl;
+			std::cerr << "Saving output to: " << file_name << std::endl;
 		}
 	}
 

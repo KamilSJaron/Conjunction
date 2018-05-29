@@ -1,6 +1,9 @@
 #ifndef CHROMOSOME_H
 #define CHROMOSOME_H
 
+#include <map>
+#include <vector>
+
 #include "../include/Context.h"
 
 class Chromosome

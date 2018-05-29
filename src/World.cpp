@@ -18,8 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
 #include <fstream>
-#include <map>
-#include <vector>
 #include <string>
 #include <math.h>
 #include <cmath>
@@ -27,14 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 
 #include "../include/RandomGenerators.h"
-#include "../include/Chromosome.h"
-#include "../include/Individual.h"
 #include "../include/Imigrant.h"
 #include "../include/SelectionModel.h"
 #include "../include/Deme.h"
 #include "../include/World.h"
-
-using namespace std;
 
 World::World(const SimulationSetting& simulationSetting) :
 	context{simulationSetting.seed},
@@ -69,7 +63,7 @@ World::World(const SimulationSetting& simulationSetting) :
 void World::basicUnitCreator(char type, char init){
 	int max_index = world.size();
 	int x_coordinate = 0;
-	vector<int> new_indexes;
+	std::vector<int> new_indexes;
 	int index;
 // 	1D world definition
 	if(dimension == 1){
@@ -179,7 +173,7 @@ void World::basicUnitCreator(char type, char init){
 			index_last_right = index;
 			break;
 		default:
-			cerr << "Error: I have no idea, what do you mean by... " << type << " I understand only 'b' basic, 'l' left and 'r' right, type of basic unit.. try it again please." << endl;
+			std::cerr << "Error: I have no idea, what do you mean by... " << type << " I understand only 'b' basic, 'l' left and 'r' right, type of basic unit.. try it again please." << std::endl;
 			break;
 	}
 	return;
@@ -218,16 +212,16 @@ void World::worldSlave(){
 int World::migration(){
 //	const int demesize = deme_size;
 	if(dimension == 0){
-//		cerr << "Premigration Population size: " << zeroD_immigrant_pool.size() << endl;
+//		std::cerr << "Premigration Population size: " << zeroD_immigrant_pool.size() << std::endl;
 		zeroD_immigrant_pool.reserve(zeroD_immigrant_pool.size() + deme_size);
 		for(int i = 0; i < deme_size;i++){
 			zeroD_immigrant_pool.push_back(Imigrant(context, number_of_chromosomes, number_of_loci, lambda));
 		}
-//		cerr << "Postmigration Population size: " << zeroD_immigrant_pool.size() << endl;
+//		std::cerr << "Postmigration Population size: " << zeroD_immigrant_pool.size() << std::endl;
 		return 0;
 	}
 	if(world.empty()){
-		cerr << "ERROR: Missing demes" << endl;
+		std::cerr << "ERROR: Missing demes" << std::endl;
 		return -1;
 	}
 	if(edges_per_deme == 0){
@@ -236,14 +230,14 @@ int World::migration(){
 
 	int index_last_left_fix = index_last_left;
 	int index_last_right_fix = index_last_right;
-	map<int, vector<Individual> > ImmigranBuffer;
+	std::map<int, std::vector<Individual> > ImmigranBuffer;
 
-	vector<int> neigbours;
+	std::vector<int> neigbours;
 	int MigInd = deme_size / (2 * edges_per_deme );
 	int deme_index;
 	int cartesian_x = 0, cartesian_y = 0;
 	/*bufferVectorMap is container for all individuals imigrating to all demes*/
-	for (map<int, Deme*>::const_iterator deme=world.begin(); deme!=world.end(); ++deme){
+	for (std::map<int, Deme*>::const_iterator deme=world.begin(); deme!=world.end(); ++deme){
 		neigbours = deme->second->getNeigbours();
 		for(unsigned int j=0;j < neigbours.size();j++){
 			deme_index = neigbours[j];
@@ -256,7 +250,7 @@ int World::migration(){
 		}
 	}
 
-	for(map<int, vector<Individual> >::iterator buff=ImmigranBuffer.begin(); buff!=ImmigranBuffer.end(); ++buff){
+	for(std::map<int, std::vector<Individual> >::iterator buff=ImmigranBuffer.begin(); buff!=ImmigranBuffer.end(); ++buff){
 		cartesian_y = buff->first % number_of_demes_u_d;
 		if(buff->first >= index_last_left_fix and buff->first < index_last_left_fix + number_of_demes_u_d){
 			cartesian_x = world[index_last_left_fix]->getX() - 1;
@@ -297,11 +291,11 @@ void World::globalBreeding(){
 	for(unsigned int i = 0;i < zeroD_immigrant_pool.size();i++){
 		material += zeroD_immigrant_pool[i].getBprop();
 	}
-		// cout << "Starting population size: " << zeroD_immigrant_pool.size() << endl;
-		// cout << "Amount of material: " << material << endl;
+		// std::cout << "Starting population size: " << zeroD_immigrant_pool.size() << std::endl;
+		// std::cout << "Amount of material: " << material << std::endl;
 
-		vector<Imigrant> new_generation;
-		vector<Chromosome> gamete;
+		std::vector<Imigrant> new_generation;
+		std::vector<Chromosome> gamete;
 
 		new_generation.reserve(zeroD_immigrant_pool.size());
 		gamete.reserve(number_of_chromosomes);
@@ -333,8 +327,8 @@ void World::globalBreeding(){
 		return;
 	}
 
-	vector<int> indexes;
-	for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
+	std::vector<int> indexes;
+	for (std::map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
 		indexes.push_back(i->first);
 	}
 
@@ -351,7 +345,7 @@ void World::globalBreeding(){
 // 		int tnum = 1;
 // 		#endif
 //
-// 		cout << "Number of threads " << tnum << " "<< i_size << endl;
+// 		std::cout << "Number of threads " << tnum << " "<< i_size << std::endl;
 // 		}
 //
 // 	#pragma omp parallel for
@@ -368,7 +362,7 @@ void World::globalBreeding(){
  // LOGICAL METHODS//
 // // // // // // //
 
-bool World::isPureA(vector<Individual>& buffer){
+bool World::isPureA(std::vector<Individual>& buffer){
 	for(int i = 0; (unsigned)i < buffer.size(); i++){
 		if(buffer[i].isPureA()){
 			continue;
@@ -378,7 +372,7 @@ bool World::isPureA(vector<Individual>& buffer){
 	return 1;
 }
 
-bool World::isPureB(vector<Individual>& buffer){
+bool World::isPureB(std::vector<Individual>& buffer){
 	for(int i = 0; (unsigned)i < buffer.size(); i++){
 		if(buffer[i].isPureB()){
 			continue;
@@ -397,52 +391,58 @@ bool World::isEmpty(){
 // // // // // // // //
 
 void World::listOfParameters() const{
-	cerr << "***************" << endl;
+	std::cerr << "***************" << std::endl;
 	if(dimension != 0){
-		cerr << "Size of World: " << world.size() << " Dim: " << dimension << " edges_per_deme: " << edges_per_deme << endl
-		<< "Number of demes l/r: " << number_of_demes_l_r << " Number of demes u/d: " << number_of_demes_u_d << endl
-		<< "Type of l/r edges: " << type_of_l_r_edges << " Type of u/d edges: " << type_of_u_d_edges << endl
-		<< "Last left index: " << index_last_left << " Last right index: " << index_last_right << endl
-		<< "Next left index: " << index_next_left << " Next right index: " << index_next_right << endl
-		<< "***************" << endl;
+		std::cerr << "Size of World: " << world.size() << " Dim: " << dimension << " edges_per_deme: " << edges_per_deme << std::endl
+		<< "Number of demes l/r: " << number_of_demes_l_r << " Number of demes u/d: " << number_of_demes_u_d << std::endl
+		<< "Type of l/r edges: " << type_of_l_r_edges << " Type of u/d edges: " << type_of_u_d_edges << std::endl
+		<< "Last left index: " << index_last_left << " Last right index: " << index_last_right << std::endl
+		<< "Next left index: " << index_next_left << " Next right index: " << index_next_right << std::endl
+		<< "***************" << std::endl;
 	}
 	listOfNumericalParameters(std::cerr);
-	cerr << "***************" << endl;
+	std::cerr << "***************" << std::endl;
 	return;
 }
 
 void World::listOfNumericalParameters(std::ostream& stream) const{
-	stream << "# Selection: " << selection << endl
-	<< "# Lambda: " << lambda << endl
-	<< "# Beta: " << beta << endl
-	<< "# Loci: " << number_of_loci << endl;
+	stream << "# Selection: " << selection << std::endl
+	<< "# Lambda: " << lambda << std::endl
+	<< "# Beta: " << beta << std::endl
+	<< "# Loci: " << number_of_loci << std::endl;
 	if(number_of_selected_loci != number_of_loci){
-		stream << "# Selected loci : " << number_of_selected_loci << endl;
+		stream << "# Selected loci : " << number_of_selected_loci << std::endl;
 	}
-	stream << "# Chromosomes: " << number_of_chromosomes << endl;
+	stream << "# Chromosomes: " << number_of_chromosomes << std::endl;
 	if(dimension == 0){
 		stream << "# Migrants per generation: ";
 	} else {
 		stream << "# Deme size: ";
 	}
-	stream << deme_size << endl;
+	stream << deme_size << std::endl;
 	return;
 }
 
 void World::listOfDemes(){
-	cerr << "of dimension: " << dimension << endl;
+	std::cerr << "of dimension: " << dimension << std::endl;
 	if(dimension == 0){
-		cerr << "Population of imigrants has " << zeroD_immigrant_pool.size() << endl;
+		std::cerr << "Population of imigrants has " << zeroD_immigrant_pool.size() << std::endl;
 	} else {
-		cerr << "World of size " << world.size() << endl;
-		cerr << "Number of demes up to down: " << number_of_demes_u_d << endl;
-		cerr << "Type of borders top and bottom: " << type_of_u_d_edges << endl;
+		std::cerr << "World of size " << world.size() << std::endl;
+		std::cerr << "Number of demes up to down: " << number_of_demes_u_d << std::endl;
+		std::cerr << "Type of borders top and bottom: " << type_of_u_d_edges << std::endl;
 		if(type_of_l_r_edges != "extending"){
-			cerr << "Number of demes left to right: " << number_of_demes_l_r << endl;
+			std::cerr << "Number of demes left to right: " << number_of_demes_l_r << std::endl;
 		}
-		cerr << "Type of borders left to right: " << type_of_l_r_edges << endl;
-		cerr << "                 EDGE" << endl;
-		cerr << setw(7) << right << "DEME " << setw(7) << left << " LEFT" << setw(6) << left << "RIGHT" << setw(5) << left << "UP" << setw(6) << left << "DOWN" << endl;
+		std::cerr << "Type of borders left to right: " << type_of_l_r_edges << std::endl;
+		std::cerr << "                 EDGE" << std::endl;
+		std::cerr
+			<< std::setw(7) << std::right << "DEME "
+			<< std::setw(7) << std::left << " LEFT"
+			<< std::setw(6) << std::left << "RIGHT"
+			<< std::setw(5) << std::left << "UP"
+			<< std::setw(6) << std::left << "DOWN"
+			<< std::endl;
 
 		int deme_to_print = index_last_left;
 		while(deme_to_print != index_next_right){
@@ -453,49 +453,49 @@ void World::listOfDemes(){
 	}
 }
 
-int World::summary(ostream& stream){
+int World::summary(std::ostream& stream){
 	if(dimension == 0){
 		stream << " 0D summary\n";
-		stream << setw(12) << left <<  "Population"
-		<< setw(12) << left << "Material"
-		<< setw(16) << left << "TotalBlocks"
-		<< setw(12) << left << "MeanFitness" << endl;
-		stream << setw(12) << left <<  zeroD_immigrant_pool.size()
-		<< setw(12) << left <<  getMaterial()
-		<< setw(16) << left <<  getTotalNumberOfBBlocks()
-		<< setw(12) << left <<  getMeanFitness() << endl;
+		stream << std::setw(12) << std::left <<  "Population"
+		<< std::setw(12) << std::left << "Material"
+		<< std::setw(16) << std::left << "TotalBlocks"
+		<< std::setw(12) << std::left << "MeanFitness" << std::endl;
+		stream << std::setw(12) << std::left <<  zeroD_immigrant_pool.size()
+		<< std::setw(12) << std::left <<  getMaterial()
+		<< std::setw(16) << std::left <<  getTotalNumberOfBBlocks()
+		<< std::setw(12) << std::left <<  getMeanFitness() << std::endl;
 	} else {
 		int worlsize = world.size();
-		cerr << "World of size " << worlsize << endl;
-		stream << "       EDGE" << endl;
-		stream << setw(7) << right << "DEME "
-		<< setw(7) << left << " LEFT"
-		<< setw(6) << left << "RIGHT";
+		std::cerr << "World of size " << worlsize << std::endl;
+		stream << "       EDGE" << std::endl;
+		stream << std::setw(7) << std::right << "DEME "
+		<< std::setw(7) << std::left << " LEFT"
+		<< std::setw(6) << std::left << "RIGHT";
 		if(dimension == 2){
-			stream << setw(6) << left << "UP"
-			<< setw(6) << left << "DOWN";
+			stream << std::setw(6) << std::left << "UP"
+			<< std::setw(6) << std::left << "DOWN";
 		}
-		stream << setw(6) << left << "X";
+		stream << std::setw(6) << std::left << "X";
 		if(dimension == 2){
-			stream << setw(6) << left << "Y";
+			stream << std::setw(6) << std::left << "Y";
 		}
-		stream << setw(12) << left << "meanf"
-		<< setw(12) << left << "f(heter)"
-		<< setw(12) << left << "meanHI"
-		<< setw(12) << left << "var(HI)";
+		stream << std::setw(12) << std::left << "meanf"
+		<< std::setw(12) << std::left << "f(heter)"
+		<< std::setw(12) << std::left << "meanHI"
+		<< std::setw(12) << std::left << "var(HI)";
 		if(number_of_loci * number_of_chromosomes > 1){
-			stream << setw(12) << left << "var(p)"
-			<< setw(12) << left << "LD";
+			stream << std::setw(12) << std::left << "var(p)"
+			<< std::setw(12) << std::left << "LD";
 		}
 
 		if(number_of_loci * number_of_chromosomes <= 16){
 			for(int ch = 0;ch < number_of_chromosomes;ch++){
 				for(int l = 0; l < number_of_loci;l++){
-					stream << left << "Ch" << ch+1 << "l" << l+1 << setw(7) << ' ';
+					stream << std::left << "Ch" << ch+1 << "l" << l+1 << std::setw(7) << ' ';
 				}
 			}
 		}
-		stream << endl;
+		stream << std::endl;
 		saveLinesPerDeme(stream, "summary");
 	}
 	return 0;
@@ -509,7 +509,7 @@ double World::getMaterial() const{
 			material += zeroD_immigrant_pool[i].getBprop();
 		}
 	} else {
-		cerr << "getMaterial is not implemented for " << dimension << "D\n";
+		std::cerr << "getMaterial is not implemented for " << dimension << "D\n";
 	}
 	return material;
 }
@@ -521,7 +521,7 @@ int World::getTotalNumberOfBBlocks(){
 			blocks += zeroD_immigrant_pool[i].getNumberOfBBlocks();
 		}
 	} else {
-		cerr << "getTotalJunctions is not implemented for " << dimension << "D\n";
+		std::cerr << "getTotalJunctions is not implemented for " << dimension << "D\n";
 	}
 	return blocks;
 }
@@ -540,7 +540,7 @@ double World::getMeanFitness() const{
 		}
 		total_fitness = total_fitness / pop_size;
 	} else {
-		cerr << "getMeanFitness is not implemented for " << dimension << "D\n";
+		std::cerr << "getMeanFitness is not implemented for " << dimension << "D\n";
 	}
 	return total_fitness;
 }
@@ -549,17 +549,17 @@ void World::showOneDeme(int index){
 	world[index]->showDeme();
 }
 
-int World::saveTheUniverse(string type, string filename){
+int World::saveTheUniverse(std::string type, std::string filename){
 	if(type == "raspberrypi"){
-		return saveRaspberrypi(cout);
+		return saveRaspberrypi(std::cout);
 	}
 
-	ofstream ofile;
+	std::ofstream ofile;
 	int return_value = 1;
 
 	// for all dims, similar to blocks
 	if(type == "backtrace"){
-		ofile.open(filename, ios_base::app); // Opens file
+		ofile.open(filename, std::ios_base::app); // Opens file
 		return_value = saveBacktrace(ofile);
 	} else {
 		ofile.open(filename); // Opens file
@@ -589,10 +589,10 @@ int World::saveTheUniverse(string type, string filename){
 }
 
 void World::getLD(){
-	for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
-		cout << i->second->getLD() << '\t';
+	for (std::map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
+		std::cout << i->second->getLD() << '\t';
 	}
-	cout << endl;
+	std::cout << std::endl;
 }
 
   // // // // // // // //
@@ -605,7 +605,7 @@ void World::restart(){
 		clear();
 		worldSlave();
 	}
-	cerr << "World is reset." << endl;
+	std::cerr << "World is reset." << std::endl;
 	return;
 }
 
@@ -613,7 +613,7 @@ void World::clear(){
 	if(dimension == 0){
 		zeroD_immigrant_pool.clear();
 	} else {
-		for (map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
+		for (std::map<int, Deme*>::const_iterator i=world.begin(); i!=world.end(); ++i){
 			delete i->second;
 		}
 		world.clear();
@@ -640,7 +640,7 @@ int World::upperBorder(int index, int max_index){
 			return index - 1;
 		}
 	}
-	cerr << "Error: The type of upper-down edges is not valid." << endl;
+	std::cerr << "Error: The type of upper-down edges is not valid." << std::endl;
 	return -1;
 }
 
@@ -659,7 +659,7 @@ int World::lowerBorder(int index, int max_index){
 			return index + 1;
 		}
 	}
-	cerr << "Error: The type of upper-down edges is not valid." << endl;
+	std::cerr << "Error: The type of upper-down edges is not valid." << std::endl;
 	return -1;
 }
 
@@ -692,7 +692,7 @@ int World::sideBorder(int reflexive, int extending){
 			return -8;
 		}
 	}
-	cerr << "Error: The type of left-right edges is not valid." << endl;
+	std::cerr << "Error: The type of left-right edges is not valid." << std::endl;
 	return -1;
 }
 
@@ -706,7 +706,7 @@ bool World::isGameteA(std::vector<Chromosome>& gamete){
 	return 1;
 }
 
-int World::saveLinesPerIndividual(ofstream& ofile, string type){
+int World::saveLinesPerIndividual(std::ofstream& ofile, std::string type){
 	if(dimension == 0){
 		// TO DO
 	} else {
@@ -716,7 +716,7 @@ int World::saveLinesPerIndividual(ofstream& ofile, string type){
 	return 0;
 }
 
-int World::saveLinesPerDeme(ostream& stream, string type){
+int World::saveLinesPerDeme(std::ostream& stream, std::string type){
 	int comlumn_to_print = index_last_left;
 	int deme_to_print = -1;
 	int next_column = -1;
@@ -757,20 +757,20 @@ int World::saveLinesPerDeme(ostream& stream, string type){
 
 	if(type == "backtrace"){
 		// # generation 1, individuals = 1536
-		stream << "# individuals = " << total_columns * number_of_demes_u_d * deme_size << endl;
+		stream << "# individuals = " << total_columns * number_of_demes_u_d * deme_size << std::endl;
 	}
 	return 0;
 }
 
-int World::saveRaspberrypi(ostream& stream){
+int World::saveRaspberrypi(std::ostream& stream){
 
 	if(world.size() != 64){
-		cerr << "Wrong number of demes (" << world.size() << "), define 64 demes for raspberrypi file output \n";
+		std::cerr << "Wrong number of demes (" << world.size() << "), define 64 demes for raspberrypi file output \n";
 		return 1;
 	}
 
 	usleep(900);
-	stream << 'c' << endl;
+	stream << 'c' << std::endl;
 	usleep(100);
 
 	int index = index_last_left;
@@ -783,7 +783,7 @@ int World::saveRaspberrypi(ostream& stream){
 			LD = world[index+y]->getLD();
 			R = (int) (hybridIndex * 255 * 0.5);
 			G = (int) (abs(LD) * 4 * 255);
-// 			cerr << LD << ' ';
+// 			std::cerr << LD << ' ';
 			B = (int) ((1 - hybridIndex) * 255 * 0.5);
 			stream << R << ' ' << G << ' ' << B << ' ';
 //			R G B 0 255 FF0, 00F
@@ -794,11 +794,11 @@ int World::saveRaspberrypi(ostream& stream){
 			break;
 		}
 	}
-	stream << endl;
+	stream << std::endl;
 	return 0;
 }
 
-int World::saveBlocks(ofstream& ofile){
+int World::saveBlocks(std::ofstream& ofile){
 	if(dimension == 0){
 		streamBlockSizesOf0DWorld(ofile);
 	} else {
@@ -807,23 +807,23 @@ int World::saveBlocks(ofstream& ofile){
 		for(int ch = 0; ch < number_of_chromosomes; ch++){
 			ofile << "\tC" << ch+1 << "h0\tC" << ch+1 << "h1";
 		}
-		ofile << endl;
+		ofile << std::endl;
 		saveLinesPerDeme(ofile, "blocks");
 	}
 	ofile.close();
 	return 0;
 }
 
-int World::saveBacktrace(ofstream& ofile){
+int World::saveBacktrace(std::ofstream& ofile){
 	if(dimension == 0){
-		throw runtime_error("Backtrace output is not implemented for 0D simulations. If you wish to have this functionality open an issue on https://github.com/KamilSJaron/Conjunction with tag feature_request.");
+		throw std::runtime_error("Backtrace output is not implemented for 0D simulations. If you wish to have this functionality open an issue on https://github.com/KamilSJaron/Conjunction with tag feature_request.");
 	} else {
 		// PRINT HEADERS DEME_INDEX CH1h1 CH1h2 ...
 		ofile << "DEME_IND\tDEME_IND_h0\tDEME_IND_h1";
 		for(int ch = 0; ch < number_of_chromosomes; ch++){
 			ofile << "\tC" << ch+1 << "h0\tC" << ch+1 << "h1";
 		}
-		ofile << endl;
+		ofile << std::endl;
 		saveLinesPerDeme(ofile, "backtrace");
 	}
 	ofile.close();
@@ -831,11 +831,11 @@ int World::saveBacktrace(ofstream& ofile){
 }
 
 void World::streamBlockSizesOf0DWorld(std::ostream& stream){
-	vector<int> blockSizes;
+	std::vector<int> blockSizes;
 	for(unsigned int index = 0; index < zeroD_immigrant_pool.size(); index++){
 		zeroD_immigrant_pool[index].getSizesOfBBlocks(blockSizes);
 		for(unsigned int i = 0;i < blockSizes.size(); i++){
-			stream << fixed << blockSizes[i] / double(number_of_loci) << endl;
+			stream << std::fixed << blockSizes[i] / double(number_of_loci) << std::endl;
 		}
 		blockSizes.clear();
 	}

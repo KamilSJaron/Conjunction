@@ -1,6 +1,11 @@
 #ifndef INDIVIDUAL_H
 #define INDIVIDUAL_H
 
+#include <map>
+#include <vector>
+#include <tuple>
+
+#include "../include/Chromosome.h"
 #include "../include/Chiasmata.h"
 #include "../include/Context.h"
 

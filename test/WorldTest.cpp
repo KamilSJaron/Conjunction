@@ -40,8 +40,8 @@ int testWorld(){
 		number_descendants += context.random.poisson(1);
 	}
 	if(number_descendants < 9000 or number_descendants > 11000){
-		cerr << "Warning: unxepected behavious of generator of descendants\n";
-		cerr << "10000 rolls with fitness 1 resulted in " << number_descendants
+		std::cerr << "Warning: unxepected behavious of generator of descendants\n";
+		std::cerr << "10000 rolls with fitness 1 resulted in " << number_descendants
 		<< " descendants\n";
 	}
 

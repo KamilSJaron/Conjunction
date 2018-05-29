@@ -8,6 +8,8 @@
 #ifndef INCLUDE_SIMSET_H_
 #define INCLUDE_SIMSET_H_
 
+#include <string>
+
 struct SimulationSetting{
 	int loci, selected_loci, chromosomes, deme_size, generations;
 	double lambda, selection, beta;

@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
 #include <map>
-#include <vector>
 #include <cmath>
 #include <iomanip>
 #include <fstream>
@@ -26,11 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../include/RandomGenerators.h"
 #include "../include/Chiasmata.h"
 #include "../include/Chromosome.h"
-#include "../include/Individual.h"
 #include "../include/SelectionModel.h"
 #include "../include/Deme.h"
-
-using namespace std;
 
 /* DECLARATION */
 
@@ -113,22 +109,22 @@ int Deme::getY(){
 void Deme::Breed(){
 	double lambda = deme[0].getLambda();
 	int sel_loci = deme[0].getNumberOfSelectedLoci();
-	vector<double> fitnessVector;
-	vector<Chromosome> gamete1, gamete2;
-	vector<Chiasmata> chiasmata1, chiasmata2;
+	std::vector<double> fitnessVector;
+	std::vector<Chromosome> gamete1, gamete2;
+	std::vector<Chiasmata> chiasmata1, chiasmata2;
 	getFitnessVector(fitnessVector);
 
 	// for(unsigned int i = 0; i < fitnessVector.size(); i++){
-	// 	cout << " " << fitnessVector[i] << " ";
+	// 	std::cout << " " << fitnessVector[i] << " ";
 	// }
 
 	double RandMax = fitnessVector[deme_size-1];
-	// cout << " RAND MAX: " << RandMax << endl;
+	// std::cout << " RAND MAX: " << RandMax << std::endl;
 	double roll;
-	map<double, int> parentPick;
-	map<double, int>::iterator it;
-	vector<int> mothers(deme_size);
-	vector<int> fathers(deme_size);
+	std::map<double, int> parentPick;
+	std::map<double, int>::iterator it;
+	std::vector<int> mothers(deme_size);
+	std::vector<int> fathers(deme_size);
 
 	for(int i=0;i < deme_size*2;i++){
 		roll = (context.random.uniform() * RandMax);
@@ -141,7 +137,7 @@ void Deme::Breed(){
 	}
 
 	int i = 0;
-	map<double, int>::iterator pos=parentPick.begin();
+	std::map<double, int>::iterator pos=parentPick.begin();
 
 	while(pos!=parentPick.end()){
 
@@ -173,7 +169,7 @@ void Deme::Breed(){
 	delete[] metademe;
 }
 
-void Deme::integrateMigrantVector(vector<Individual>& migBuffer){
+void Deme::integrateMigrantVector(std::vector<Individual>& migBuffer){
 	unsigned int i = 0;
 	while(i < migBuffer.size()){
 		deme[i] = migBuffer[i];
@@ -187,7 +183,7 @@ double Deme::getMeanBproportion() const{
 	for(int i = 0;i < deme_size;i++){
 		props += deme[i].getBprop();
 	}
-//	cout << props / deme_size << props << " / " << deme_size << endl;
+//	std::cout << props / deme_size << props << " / " << deme_size << std::endl;
 	return (props / deme_size);
 }
 
@@ -222,14 +218,14 @@ double Deme::getProportionOfHeterozygotes() const{
 }
 
 
-void Deme::getFitnessVector(vector<double> &fitnessVector){
+void Deme::getFitnessVector(std::vector<double> &fitnessVector){
 	double sum = 0, read_fitness = 0;
 	fitnessVector.reserve(deme_size);
 	if(deme[0].getNumberOfLoci(0) == deme[0].getNumberOfSelectedLoci()){
 		for(int i = 0;i < deme_size;i++){
 			// getBprop > getHetProp ??
 			read_fitness = selection_model.getFitness(deme[i].getBprop());
-	//		cout << " B prop: " << deme[i].getBprop() << " - fitness: " << read_fitness << endl;
+	//		std::cout << " B prop: " << deme[i].getBprop() << " - fitness: " << read_fitness << std::endl;
 			sum += read_fitness;
 			fitnessVector.push_back(sum);
 		}
@@ -237,7 +233,7 @@ void Deme::getFitnessVector(vector<double> &fitnessVector){
 		for(int i = 0;i < deme_size;i++){
 			// getBprop > getHetProp ??
 			read_fitness = selection_model.getFitness(deme[i].getSelectedHybridIndex());
-	//		cout << " B prop: " << deme[i].getBprop() << " - fitness: " << read_fitness << endl;
+	//		std::cout << " B prop: " << deme[i].getBprop() << " - fitness: " << read_fitness << std::endl;
 			sum += read_fitness;
 			fitnessVector.push_back(sum);
 		}
@@ -271,7 +267,7 @@ double Deme::getVARp(){
 	// number of chromosomes / loci is called form first individual of deme, and its first chromosome
 	int number_chromosomes = deme[0].getNumberOfChromosomes(), number_loci = deme[0].getNumberOfLoci(0);
 	double p = 0, varp = 0, pmean = getMeanBproportion();
-	vector<double> ps;
+	std::vector<double> ps;
 	for(int ch = 0; ch < number_chromosomes; ch++){
 		getps(ps,ch);
 		for(unsigned int locus = 0;locus < ps.size();locus++){
@@ -284,13 +280,13 @@ double Deme::getVARp(){
 	return varp;
 }
 
-void Deme::getps(vector<double>& ps, int ch){
+void Deme::getps(std::vector<double>& ps, int ch){
 	double p = 0;
 	int TotalCHnum = deme_size * 2; //total number of chromosomes in deme (which one is computed using parameter ch)
 	int number_loci = deme[0].getNumberOfLoci(0);
-	vector<bool> states;	// 0 'A', 1 'B'
-	vector<map<int, char>::iterator> chroms; //vector with chromosome junctions
-	vector<int> ch_sizes; //vector with number of chromosome junctions
+	std::vector<bool> states;	// 0 'A', 1 'B'
+	std::vector<std::map<int, char>::iterator> chroms; //vector with chromosome junctions
+	std::vector<int> ch_sizes; //vector with number of chromosome junctions
 
 	chroms.reserve(TotalCHnum);
 	ch_sizes.reserve(TotalCHnum);
@@ -329,8 +325,8 @@ void Deme::getps(vector<double>& ps, int ch){
 			}
 		}
 		p = sum(states) / (double)(deme_size * 2);
-//		cout << "\n " << index << "-ch: " << i << " \n";
-//		cout << p << " = " << sum(states) << " / " << (double)(deme_size * 2) << endl;
+//		std::cout << "\n " << index << "-ch: " << i << " \n";
+//		std::cout << p << " = " << sum(states) << " / " << (double)(deme_size * 2) << std::endl;
 		ps.push_back(p);
 	}
 }
@@ -362,50 +358,50 @@ double Deme::getLD(double z,double varz,double varp){
 
 void Deme::showDeme(){
 	int neigbsize = neigbours.size();
-	cerr << setw(5) << right << index << ":  ";
+	std::cerr << std::setw(5) << std::right << index << ":  ";
 	for(int i = 0; i < neigbsize; i++){
-		cerr << setw(5) << left << neigbours[i] << " ";
+		std::cerr << std::setw(5) << std::left << neigbours[i] << " ";
 	}
-	cerr << endl;
+	std::cerr << std::endl;
 }
 
-void Deme::streamSummary(ostream& stream){
+void Deme::streamSummary(std::ostream& stream){
 	int number_chromosomes = deme[0].getNumberOfChromosomes(), number_loci = deme[0].getNumberOfLoci(0);
 	double z = getMeanBproportion();
 	double varz = getVARhi();
 	double varp = getVARp();
 	int neigbsize = neigbours.size();
-	stream << setw(5) << right << index << ":  ";
+	stream << std::setw(5) << std::right << index << ":  ";
 	for(int i = 0; i < neigbsize; i++){
-		stream << setw(5) << left << neigbours[i] << " ";
+		stream << std::setw(5) << std::left << neigbours[i] << " ";
 	}
-	stream << setw(6) << left << x;
+	stream << std::setw(6) << std::left << x;
 	if(neigbours.size() > 2){
-		stream << setw(6) << left << y;
+		stream << std::setw(6) << std::left << y;
 	}
-	stream << setw(12) << left << roundForPrint(getMeanFitness())
-	<< setw(12) << left << roundForPrint(getProportionOfHeterozygotes())
-	<< setw(12) << left << roundForPrint(z)
-	<< setw(12) << left << roundForPrint(varz);
+	stream << std::setw(12) << std::left << roundForPrint(getMeanFitness())
+	<< std::setw(12) << std::left << roundForPrint(getProportionOfHeterozygotes())
+	<< std::setw(12) << std::left << roundForPrint(z)
+	<< std::setw(12) << std::left << roundForPrint(varz);
 	if(number_loci * number_chromosomes > 1){
-		stream	<< setw(12) << left << roundForPrint(varp)
-		<< setw(12) << left << roundForPrint(getLD(z,varz,varp));
+		stream	<< std::setw(12) << std::left << roundForPrint(varp)
+		<< std::setw(12) << std::left << roundForPrint(getLD(z,varz,varp));
 	}
 	if((number_loci * number_chromosomes) <= 16){
-		vector<double> ps;
+		std::vector<double> ps;
 		for(int ch = 0;ch < number_chromosomes; ch++){
 			ps.clear();
 			getps(ps,ch);
 			for(unsigned int l = 0; l < ps.size();l++){
-				stream << setw(12) << left << roundForPrint(ps[l]);
+				stream << std::setw(12) << std::left << roundForPrint(ps[l]);
 			}
 		}
 	}
-	stream << endl;
+	stream << std::endl;
 }
 
-void Deme::streamBlocks(ostream& stream){
-	vector<string> block_sizes;
+void Deme::streamBlocks(std::ostream& stream){
+	std::vector<std::string> block_sizes;
 	for(int ind_index = 0; ind_index < deme_size; ind_index++){
 		deme[ind_index].getGenotype(block_sizes);
 		stream << index << '\t';
@@ -415,14 +411,14 @@ void Deme::streamBlocks(ostream& stream){
 
 // small wrapper to stream tuples in streamChiasmata functions
 std::string cat_tuple(std::tuple<int, int, int> in_tup){
-	return to_string(get<0>(in_tup)) + ',' +
-	       to_string(get<1>(in_tup)) + ',' +
-	       to_string(get<2>(in_tup));
+	return std::to_string(std::get<0>(in_tup)) + ',' +
+	       std::to_string(std::get<1>(in_tup)) + ',' +
+	       std::to_string(std::get<2>(in_tup));
 }
 
-void Deme::streamChiasmata(ostream& stream){
+void Deme::streamChiasmata(std::ostream& stream){
 	std::tuple<int, int, int> birthplace, mum, dad;
-	vector<string> recombination_events;
+	std::vector<std::string> recombination_events;
 	for(int ind_index = 0; ind_index < deme_size; ind_index++){
 		deme[ind_index].getChiasmata(recombination_events);
 		birthplace = deme[ind_index].getBirthplace();
@@ -436,7 +432,7 @@ void Deme::streamChiasmata(ostream& stream){
 }
 
 void Deme::streamHIs(std::ostream& stream) const{
-	vector<double> HIs;
+	std::vector<double> HIs;
  	HIs.clear();
  	HIs.reserve(deme_size);
 	for(int i = 0;i < deme_size;i++){
@@ -448,7 +444,7 @@ void Deme::streamHIs(std::ostream& stream) const{
 }
 
 void Deme::streamJunctions(std::ostream& stream) const{
-	vector<double> juncs;
+	std::vector<double> juncs;
  	juncs.clear();
  	juncs.reserve(deme_size);
 	for(int i = 0;i < deme_size;i++){
@@ -460,7 +456,7 @@ void Deme::streamJunctions(std::ostream& stream) const{
 }
 
 void Deme::streamHeterozygocity(std::ostream& stream) const{
-	vector<double> heterozs;
+	std::vector<double> heterozs;
  	heterozs.clear();
  	heterozs.reserve(deme_size);
 	for(int i = 0;i < deme_size;i++){
@@ -473,7 +469,7 @@ void Deme::streamHeterozygocity(std::ostream& stream) const{
 
 void Deme::readAllGenotypes(){
 	for(int i=0;i<deme_size;i++){
-		cerr << "Individual: " << i << " B proportion: " << deme[i].getBprop() << endl;
+		std::cerr << "Individual: " << i << " B proportion: " << deme[i].getBprop() << std::endl;
 		deme[i].readGenotype();
 	}
 }
@@ -481,7 +477,7 @@ void Deme::readAllGenotypes(){
 
 void Deme::readGenotypeFrequencies(){
 	int number_chromosomes = deme[0].getNumberOfChromosomes(), number_loci = deme[0].getNumberOfLoci(0);
-	vector<double> freqs;
+	std::vector<double> freqs;
 	freqs.reserve(number_chromosomes*number_loci*2 + 1);
 	for(int i=0;i < number_chromosomes*number_loci*2 + 1;i++){
 		freqs.push_back(0);
@@ -490,7 +486,7 @@ void Deme::readGenotypeFrequencies(){
 		freqs[deme[i].getBcount()]++;
 	}
 	for(int i=0;i < number_chromosomes*number_loci*2 + 1;i++){
-		cout << ((round((freqs[i] / deme_size) * 10000)) / 10000) << ' ';
+		std::cout << ((round((freqs[i] / deme_size) * 10000)) / 10000) << ' ';
 	}
 }
 
@@ -498,7 +494,7 @@ void Deme::readGenotypeFrequencies(){
 //  PRIVATE //
 // // // // //
 
-int Deme::sum(vector<bool>& ve){
+int Deme::sum(std::vector<bool>& ve){
 	int sum = 0;
 	for(unsigned int i = 0; i < ve.size();i++){
 		sum += ve[i];
@@ -508,11 +504,11 @@ int Deme::sum(vector<bool>& ve){
 
 // CURENTLY DUPLICIT IN WORLD (as save_line)
 template<typename T>
-int Deme::streamLine(ostream& stream, vector<T>& vec) const{
+int Deme::streamLine(std::ostream& stream, std::vector<T>& vec) const{
 	for(unsigned int ind = 0; ind < vec.size(); ind++){
 		stream << vec[ind] << '\t';
 	}
-	stream << endl;
+	stream << std::endl;
 	return 0;
 }
 
