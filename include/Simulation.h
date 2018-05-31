@@ -8,6 +8,11 @@
 #ifndef INCLUDE_SIMULATION_H_
 #define INCLUDE_SIMULATION_H_
 
+#include <string>
+
+#include "../include/World.h"
+#include "../include/SimulationSetting.h"
+
 class Simulation {
 	public:
 		Simulation(SimulationSetting& simulation_setting);

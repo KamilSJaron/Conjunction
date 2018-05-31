@@ -1,16 +1,20 @@
 #ifndef IMIGRANT_H
 #define IMIGRANT_H
 
+#include <vector>
+
+#include "../include/Chromosome.h"
+#include "../include/Context.h"
 
 class Imigrant
 {
 	public:
 		/* DECLARATION */
-		Imigrant(int input_ch, int size, double input_lambda);
+		Imigrant(const Context &context, int input_ch, int size, double input_lambda);
 		/* init Individual as 'A', 'B' or pure "AB" heterozygot*/
-		Imigrant(char origin, int input_ch, int size, double input_lambda);
+		Imigrant(const Context &context, char origin, int input_ch, int size, double input_lambda);
 		/*init Individual by gametes on imput */
-		Imigrant(std::vector<Chromosome>& gamete, double input_lambda);
+		Imigrant(const Context &context, std::vector<Chromosome>& gamete, double input_lambda);
 		~Imigrant(); /* destructor */
 
 		/* COMPUTIONG METHODS */
@@ -34,6 +38,7 @@ class Imigrant
 		void readGenotype();
 
 	private:
+		const Context &context;
 		std::vector<Chromosome> genome;
 		int number_of_chromosomes;
 		double lambda;

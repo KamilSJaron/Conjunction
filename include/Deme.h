@@ -4,11 +4,17 @@
 #ifndef DEME_H
 #define DEME_H
 
+#include <vector>
+
+#include "../include/Individual.h"
+#include "../include/SelectionModel.h"
+#include "../include/Context.h"
+
 class Deme
 {
 	public:
 // constructor / destructors
-		Deme(int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loci, double in_lambda, int in_x, int in_y);
+		Deme(const Context& context, int ind, std::vector<int> neigb, char init, int size, double sel, double beta, int in_ch, int in_loc, int in_sel_loci, double in_lambda, int in_x, int in_y);
 		~Deme();
 
 // communication functions
@@ -23,7 +29,7 @@ class Deme
 // computing functions
 		void Breed();
 		void integrateMigrantVector(std::vector<Individual>& migBuffer);
-// 		vector<double> getBproportions() const; // not used
+// 		std::vector<double> getBproportions() const; // not used
 		void getBproportions(std::vector<double>& props) const;
 		//void getJunctionNumbers(std::vector<double>& juncs) const;
 		//void getHeterozygoty(std::vector<double>& heterozs);
@@ -47,13 +53,15 @@ class Deme
 		void streamChiasmata(std::ostream& stream);
 		void streamHIs(std::ostream& stream) const;
 		void streamJunctions(std::ostream& stream) const;
-		void streamHeterozygocity(std::ostream& stream) const;
+		void streamHeterozygosity(std::ostream& stream) const;
 
 
 		void readAllGenotypes();
 		void readGenotypeFrequencies();
 
 	private:
+		const Context& context;
+
 		int pickAnIndividual();
 		static int sum(std::vector<bool>& ve);
 		template<typename T>

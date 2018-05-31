@@ -3,8 +3,6 @@
 #include <vector>
 #include <cmath>
 
-using namespace std;
-
 #include "../include/RandomGenerators.h"
 #include "../include/Chromosome.h"
 #include "../include/Imigrant.h"
@@ -17,6 +15,12 @@ using namespace std;
 #include "../include/Simulation.h"
 
 
+const int RANDOM_SEED = 910401;
+
+Context createTestContext() {
+	return Context(RANDOM_SEED);
+}
+
 #include "ChromosomeTest.cpp"
 #include "ImigrantTest.cpp"
 #include "IndividualTest.cpp"
@@ -26,50 +30,28 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 	int test_result = 0;
-	int seed = 910401;
-	srand (seed);
-	cerr << "Running all tests with random seed: " << seed << endl;
+	std::cerr << "Running all tests with random seed: " << RANDOM_SEED << std::endl;
 
-	if(testChromosome() == 0){
-		cerr << "Chromosome ... passed" << endl;
-	} else {
-		test_result++;
-		cerr << "Chromosome: HAD A PROBLEM!" << endl;
-	}
-	// if(testImigrant() == 0){
-	// 	cerr << "Imigrant ... passed" << endl;
-	// } else {
-	// 	test_result++;
-	// 	cerr << "Imigrant: HAD A PROBLEM!" << endl;
-	// }
-	if(testIndividual() == 0){
-		cerr << "Individual ... passed" << endl;
-	} else {
-		test_result++;
-		cerr << "Individual: HAD A PROBLEM!" << endl;
-	}
-	if(testDeme() == 0){
-		cerr << "Deme ... passed" << endl;
-	} else {
-		test_result++;
-		cerr << "Deme: HAD A PROBLEM!" << endl;
-	}
-	if(testWorld() == 0){
-		cerr << "World ... passed" << endl;
-	} else {
-		test_result++;
-		cerr << "World: HAD A PROBLEM!" << endl;
-	}
-	if(testParameterLoading() == 0){
-		cerr << "Parameter loading ... passed" << endl;
-	} else {
-		test_result++;
-		cerr << "Parameter loading: HAD A PROBLEM!" << endl;
-	}
+	typedef int (*test_t)();
+	auto runTest = [&test_result](test_t test, std::string name) {
+		if (test() == 0) {
+			std::cerr << name << " ... passed\n";
+		} else {
+			test_result++;
+			std::cerr << name << ": HAD A PROBLEM!\n";
+		}
+	};
+	runTest(&testChromosome, "Chromosome");
+//	runTest(&testImigrant, "Imigrant");
+	runTest(&testIndividual, "Individual");
+	runTest(&testDeme, "Deme");
+	runTest(&testWorld, "World");
+	runTest(&testParameterLoading, "Parameter loading");
+
 	if(test_result == 0){
-		cerr << "HURRAY, everything seems to be working.\n";
+		std::cerr << "HURRAY, everything seems to be working.\n";
 	} else {
-		cerr << "OUCH, " << test_result << " test/s failed!\n " <<
+		std::cerr << "OUCH, " << test_result << " test/s failed!\n " <<
 				"Contact kamiljaron (at) gmail (dot) com for a support.\n";
 		exit (EXIT_FAILURE);
 	}

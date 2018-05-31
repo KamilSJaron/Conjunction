@@ -19,31 +19,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <cmath>
 
-using namespace std;
+#include "../include/RandomGenerators.h"
+
+RandomGenerator::RandomGenerator(int seed) {
+	std::cerr << "The SEED for random numbers is set to: " << seed << std::endl;
+	srand(seed);
+}
+
 
 // alternative, modulo bias is negligible if there is any
-int tossAcoin (){
-  return rand() % 2;
+int RandomGenerator::tossAcoin (){
+	return rand() % 2;
 }
 
 // discrete uniform (integers between 0 and ceil - 1)
-int recombPosition(int loci){
-  if(loci == 1){
-    return 0;
-  }
-  // this construction handles modulo bias; (of rand do uniform 0, RAND_MAX
-  // overhang of size RAND_MAX % loci would cause small disproportion of smaller
-  // values, not crutial for small numbers of locu, but very more important for big numbers
-  // similar construction is used in function bellow
-  int roll = RAND_MAX;
-  while(roll >= RAND_MAX - (RAND_MAX % loci)){
-    roll = rand();
-  }
-  return (roll % (loci-1)) + 1;
+int RandomGenerator::recombPosition(int loci){
+	if(loci == 1){
+		return 0;
+	}
+	// this construction handles modulo bias; (of rand do uniform 0, RAND_MAX
+	// overhang of size RAND_MAX % loci would cause small disproportion of smaller
+	// values, not crutial for small numbers of locu, but very more important for big numbers
+	// similar construction is used in function bellow
+	int roll = RAND_MAX;
+	while(roll >= RAND_MAX - (RAND_MAX % loci)){
+		roll = rand();
+	}
+	return (roll % (loci-1)) + 1;
 }
 
 // continuus unifrom; corrected for modulo bias
-double uniform(){
+double RandomGenerator::uniform(){
 	int roll = RAND_MAX;
 	int detailness = 1000000;
 	while(roll >= RAND_MAX - (RAND_MAX % detailness)){
@@ -53,8 +59,8 @@ double uniform(){
 }
 
 // Poisson (by transformation from uniform)
-int poisson(double lambda){
-  int result = 0;
+int RandomGenerator::poisson(double lambda){
+	int result = 0;
 	double q = exp(-lambda);
 	double p = q;
 	double roll = uniform();

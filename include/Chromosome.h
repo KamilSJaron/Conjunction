@@ -1,6 +1,11 @@
 #ifndef CHROMOSOME_H
 #define CHROMOSOME_H
 
+#include <map>
+#include <vector>
+
+#include "../include/Context.h"
+
 class Chromosome
 {
 	public :
@@ -22,7 +27,7 @@ class Chromosome
 		void getSizesOfBBlocks(std::vector<int>& sizes); /*fills vector of ints by sizes of B blocks in chromosome*/
 		void getSizesOfABlocks(std::vector<int>& sizes);
 		void getSizesOfBlocks(std::vector<int>& sizes) const;
-		void makeRecombinant(Chromosome& chromNew,int numberOfChaisma);
+		void makeRecombinant(Chromosome& chromNew,int numberOfChaisma, const Context &context);
 
 /* COMUNICATION METHODS */
 		void setResolution(int res);

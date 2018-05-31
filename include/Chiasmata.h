@@ -1,6 +1,9 @@
 #ifndef CHIASMATA_H
 #define CHIASMATA_H
 
+#include <vector>
+#include <string>
+
 class Chiasmata
 {
 	public :

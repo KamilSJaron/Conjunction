@@ -17,15 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <iostream>
-#include <map>
-#include <vector>
 #include <algorithm>
 
 #include "../include/Chromosome.h"
 #include "../include/RandomGenerators.h"
 
-using namespace std;
-
+typedef std::map<int, char>::const_iterator const_iterator;
 /* INITIATION */
 
 Chromosome::Chromosome(){
@@ -37,7 +34,7 @@ Chromosome::Chromosome(char starting_char, int size){
 	loci = size;
 }
 
-Chromosome::Chromosome(map <int, char> input_chrom, int size){
+Chromosome::Chromosome(std::map <int, char> input_chrom, int size){
 	chromosome = input_chrom;
 	loci = size;
 }
@@ -48,14 +45,14 @@ Chromosome::~Chromosome(){
 
 /* PLOTTING METHODS */
 void Chromosome::showChromosome() const{
-	for(map<int, char>::const_iterator i=chromosome.begin(); i!=chromosome.end(); ++i){
-		cout << i->first << ':' << i->second << '\n';
+	for(const_iterator i=chromosome.begin(); i!=chromosome.end(); ++i){
+		std::cout << i->first << ':' << i->second << '\n';
 	}
 }
 
 /* COMUNICATION METHODS */
 bool Chromosome::isPureA() const{
-	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+	for(const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(pos->second != 'A'){
 			return 0;
 		}
@@ -64,7 +61,7 @@ bool Chromosome::isPureA() const{
 }
 
 bool Chromosome::isPureB() const{
-	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+	for(const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(pos->second != 'B'){
 			return 0;
 		}
@@ -76,7 +73,7 @@ int Chromosome::countB() const{
 	int sum = 0;
 	char last_seq = 'A';
 	int last_val = 0;
-	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+	for(const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(last_seq == 'B'){
 			sum += (pos->first - last_val);
 		}
@@ -93,10 +90,10 @@ int Chromosome::getNumberOfJunctions() const{
 	return chromosome.size() - 1;
 }
 
-void Chromosome::getSizesOfBBlocks(vector<int>& sizes){
+void Chromosome::getSizesOfBBlocks(std::vector<int>& sizes){
 	char last_seq = 'A';
 	int last_val = 0;
-	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+	for(const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(last_seq == 'B'){
 			sizes.push_back(pos->first - last_val);
 		}
@@ -108,10 +105,10 @@ void Chromosome::getSizesOfBBlocks(vector<int>& sizes){
 	}
 }
 
-void Chromosome::getSizesOfABlocks(vector<int>& sizes){
+void Chromosome::getSizesOfABlocks(std::vector<int>& sizes){
 	char last_seq = 'B';
 	int last_val = 0;
-	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+	for(const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(last_seq == 'A'){
 			sizes.push_back(pos->first - last_val);
 		}
@@ -123,9 +120,9 @@ void Chromosome::getSizesOfABlocks(vector<int>& sizes){
 	}
 }
 
-void Chromosome::getSizesOfBlocks(vector<int>& sizes) const{
+void Chromosome::getSizesOfBlocks(std::vector<int>& sizes) const{
 	int last_val = 0;
-	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+	for (const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		if(pos->first != 0){
 			sizes.push_back(pos->first - last_val);
 		} else if (pos->second == 'B') {
@@ -136,10 +133,10 @@ void Chromosome::getSizesOfBlocks(vector<int>& sizes) const{
 	sizes.push_back(loci - last_val);
 }
 
-void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
+void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma, const Context &context){
 // 	starts_by 0 home, 1 alien
-	int starts_by = tossAcoin();
-	vector<int> recombination;
+	int starts_by = context.random.tossAcoin();
+	std::vector<int> recombination;
 	chromNew.clear();
 	chromNew.setResolution(loci);
 	chromNew.write(0,'A');
@@ -156,7 +153,7 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 	int index, lastposition = 0;
 
 	for(index=0;index<numberOfChaisma;index++){
-		recombination.push_back(recombPosition(loci));
+		recombination.push_back(context.random.recombPosition(loci));
 	}
 
 	sort(recombination.begin(), recombination.end());
@@ -167,7 +164,7 @@ void Chromosome::makeRecombinant(Chromosome& chromNew, int numberOfChaisma){
 	cout << endl;*/
 
 	index = 0;
-	for(map<int, char>::const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
+	for(const_iterator pos=chromosome.begin(); pos!=chromosome.end(); ++pos){
 		while(recombination[index] <= pos->first && index < numberOfChaisma){
 			if (chromosome[lastposition] != 'A'){
 				if (starts_by == 1){
