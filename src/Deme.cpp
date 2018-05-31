@@ -401,7 +401,7 @@ void Deme::streamBlocks(std::ostream& stream){
 	std::vector<std::string> block_sizes;
 	for(int ind_index = 0; ind_index < deme_size; ind_index++){
 		deme[ind_index].getGenotype(block_sizes);
-		stream << index << '\t';
+		stream << x << "," << y << "," << ind_index << '\t';
 		streamLine(stream,block_sizes);
 	}
 }
@@ -435,7 +435,7 @@ void Deme::streamHIs(std::ostream& stream) const{
 	for(int i = 0;i < deme_size;i++){
 		HIs.push_back(deme[i].getBprop());
 	}
-	stream << index << '\t';
+	stream << x << "," << y << '\t';
 	streamLine(stream, HIs);
 	return;
 }
@@ -447,19 +447,19 @@ void Deme::streamJunctions(std::ostream& stream) const{
 	for(int i = 0;i < deme_size;i++){
 		juncs.push_back(deme[i].getNumberOfJunctions());
 	}
-	stream << index << '\t';
+	stream << x << "," << y << '\t';
 	streamLine(stream, juncs);
 	return;
 }
 
-void Deme::streamHeterozygocity(std::ostream& stream) const{
+void Deme::streamHeterozygosity(std::ostream& stream) const{
 	std::vector<double> heterozs;
  	heterozs.clear();
  	heterozs.reserve(deme_size);
 	for(int i = 0;i < deme_size;i++){
 		heterozs.push_back(deme[i].getHetProp());
 	}
-	stream << index << '\t';
+	stream << x << "," << y << '\t';
 	streamLine(stream, heterozs);
 	return;
 }

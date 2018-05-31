@@ -53,7 +53,7 @@ class Deme
 		void streamChiasmata(std::ostream& stream);
 		void streamHIs(std::ostream& stream) const;
 		void streamJunctions(std::ostream& stream) const;
-		void streamHeterozygocity(std::ostream& stream) const;
+		void streamHeterozygosity(std::ostream& stream) const;
 
 
 		void readAllGenotypes();

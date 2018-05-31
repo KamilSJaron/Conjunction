@@ -742,7 +742,7 @@ int World::saveLinesPerDeme(std::ostream& stream, std::string type){
 				world[deme_to_print]->streamJunctions(stream);
 			}
 			if(type == "complete"){
-				world[deme_to_print]->streamHeterozygocity(stream);
+				world[deme_to_print]->streamHeterozygosity(stream);
 			}
 
 		}
@@ -795,7 +795,7 @@ int World::saveRaspberrypi(std::ostream& stream){
 			hybridIndex = world[index+y]->getMeanBproportion();
 			LD = world[index+y]->getLD();
 			R = (int) (hybridIndex * 255 * 0.5);
-			G = (int) (abs(LD) * 4 * 255);
+			G = (int) (std::abs(LD) * 4 * 255);
 // 			std::cerr << LD << ' ';
 			B = (int) ((1 - hybridIndex) * 255 * 0.5);
 			stream << R << ' ' << G << ' ' << B << ' ';
@@ -816,7 +816,7 @@ int World::saveBlocks(std::ofstream& ofile){
 		streamBlockSizesOf0DWorld(ofile);
 	} else {
 		// PRINT HEADERS DEME_INDEX CH1h1 CH1h2 ...
-		ofile << "DEME";
+		ofile << "Dx,Dy,Di";
 		for(int ch = 0; ch < number_of_chromosomes; ch++){
 			ofile << "\tC" << ch+1 << "h0\tC" << ch+1 << "h1";
 		}
